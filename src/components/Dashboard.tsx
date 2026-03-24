@@ -216,7 +216,7 @@ const Dashboard: React.FC<ModalProps> = ({onClose , isOpen}) => {
                                     <div id="profileContainer" className="profileContainer">
                                         <label className="mainHeader">PROFILE</label>
                                         <div className="imgWrapper">
-                                            <img src={userData?.gender === 'Female' ? "/assets/Character/StaticFemale.gif" : "/assets/Character/StaticMale.gif"} alt="Avatar" />
+                                            <img src={userData?.gender === 'Female' ? "assets/Character/StaticFemale.gif" : "assets/Character/StaticMale.gif"} alt="Avatar" />
                                         </div>
 
                                         <div className="idContainer">
@@ -232,7 +232,7 @@ const Dashboard: React.FC<ModalProps> = ({onClose , isOpen}) => {
                                                         typeof="text/svg"
                                                         style={{ filter: "invert()", width: "24px", height: "auto" }}
                                                         onClick={() => copyToClipboard(userData?.email)}
-                                                        src={"/assets/WebAssets/Copy.svg"} 
+                                                        src={"assets/WebAssets/Copy.svg"} 
                                                         alt="Copy Email" 
                                                     />
                                                 )}
@@ -252,7 +252,7 @@ const Dashboard: React.FC<ModalProps> = ({onClose , isOpen}) => {
                                                         typeof="text/svg"
                                                         style={{ filter: "invert()", width: "24px", height: "auto" }}
                                                         onClick={() => copyToClipboard(userData?.email)}
-                                                        src={"/assets/WebAssets/Copy.svg"} 
+                                                        src={"assets/WebAssets/Copy.svg"} 
                                                         alt="Copy Email" 
                                                     />
                                                 )}
@@ -276,7 +276,7 @@ const Dashboard: React.FC<ModalProps> = ({onClose , isOpen}) => {
                                                 {(userData?.pass || userData.pass === "No Password") && (
                                                     <img
                                                         onClick={() => setShowPassword(!showPassword)}
-                                                        src={`/assets/WebAssets/Padlock${showPassword ? 'Opened' : 'Closed'}.png`} 
+                                                        src={`assets/WebAssets/Padlock${showPassword ? 'Opened' : 'Closed'}.png`} 
                                                         alt="Show/Hide Password" 
                                                     />
                                                 )}
@@ -300,7 +300,7 @@ const Dashboard: React.FC<ModalProps> = ({onClose , isOpen}) => {
                                                 {(userData?.pin || userData.pin === "No PIN") && (
                                                     <img
                                                         onClick={() => setShowPin(!showPin)}
-                                                        src={`/assets/WebAssets/Padlock${showPin ? 'Opened' : 'Closed'}.png`} 
+                                                        src={`assets/WebAssets/Padlock${showPin ? 'Opened' : 'Closed'}.png`} 
                                                         alt="Show/Hide PIN" 
                                                     />
                                                 )}

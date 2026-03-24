@@ -34,6 +34,6 @@
     "moduleDetection": "force",
     "skipLibCheck": true,
   },
-  "include": ["src", "index.js", "backend/gemini.js"],
+  "include": ["src", "index.js"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

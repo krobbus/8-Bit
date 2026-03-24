@@ -288,8 +288,8 @@ export default class Hallway extends Phaser.Scene {
             .clear()
             .fillStyle(0x125729, 0.9)
             .lineStyle(4, 0xffffff, 1)
-            .fillRoundedRect(-20, -15, 300, 155, 10)
-            .strokeRoundedRect(-20, -15, 300, 155, 10);
+            .fillRoundedRect(-20, -15, 310, 155, 10)
+            .strokeRoundedRect(-20, -15, 310, 155, 10);
 
         this.hintPart1.setVisible(!isMenu);
         this.hintPart2.setVisible(!isMenu);

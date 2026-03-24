@@ -9,6 +9,7 @@ import '../styles/AccountManagement.css';
 const AccountManagement: React.FC<ModalProps> = ({ isOpen, onClose }) => {
     const [view, setView] = useState<'character' | 'preference' | 'account'>('character');
     const [loading, setLoading] = useState(true);
+    const [isExistingPlayer, setIsExistingPlayer] = useState(false);
 
     const [selectedTags, setSelectedTags] = useState<any[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
@@ -66,6 +67,8 @@ const AccountManagement: React.FC<ModalProps> = ({ isOpen, onClose }) => {
             const data = snapshot.val();
             
             if (data) {
+                setIsExistingPlayer(true);
+
                 setName(data.name || "");
                 validateName(data.name || "");
                 setSelectedTags(data.tags || []);
@@ -89,6 +92,7 @@ const AccountManagement: React.FC<ModalProps> = ({ isOpen, onClose }) => {
 
         const existingPlayerID = localStorage.getItem("playerID");
         if (!existingPlayerID) {
+            setIsExistingPlayer(false);
             setLoading(false);
         } else {
             initDatabaseListener(existingPlayerID);
@@ -277,6 +281,7 @@ const AccountManagement: React.FC<ModalProps> = ({ isOpen, onClose }) => {
             await dbRef.child(playerID).set(updatedData);
             localStorage.setItem("playerData", JSON.stringify(updatedData));
 
+            setIsExistingPlayer(true);
             alert(isSavingAsPermanent ? "Account Updated Successfully!" : "Guest Progress Saved!");
             onClose();
         } catch (error) {
@@ -328,7 +333,7 @@ const AccountManagement: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                                                 <div className="genderContainer">
                                                     <div className='imgContainer'>
                                                         <img
-                                                            src={`/assets/Character/Static${gender.charAt(0).toUpperCase() + gender.slice(1)}.gif`}
+                                                            src={`assets/Character/Static${gender.charAt(0).toUpperCase() + gender.slice(1)}.gif`}
                                                             alt='Preview'
                                                         />
                                                     </div>
@@ -586,7 +591,7 @@ const AccountManagement: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                                                             onClick={() => setShowPassword(!showPassword)}
                                                         >
                                                             <img 
-                                                                src={`/assets/WebAssets/Padlock${showPassword ? 'Opened' : 'Closed'}.png`}
+                                                                src={`assets/WebAssets/Padlock${showPassword ? 'Opened' : 'Closed'}.png`}
                                                                 alt="Show/Hide Password"
                                                             />
                                                         </button>
@@ -612,7 +617,7 @@ const AccountManagement: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                                                             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                                                         >
                                                             <img 
-                                                                src={`/assets/WebAssets/Padlock${showConfirmPassword ? 'Opened' : 'Closed'}.png`}
+                                                                src={`assets/WebAssets/Padlock${showConfirmPassword ? 'Opened' : 'Closed'}.png`}
                                                                 alt="Show/Hide Password"
                                                             />
                                                         </button>
@@ -643,7 +648,7 @@ const AccountManagement: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                                                                 onClick={() => setShowPin(!showPin)}
                                                             >
                                                                 <img 
-                                                                    src={`/assets/WebAssets/Padlock${showPin ? 'Opened' : 'Closed'}.png`}
+                                                                    src={`assets/WebAssets/Padlock${showPin ? 'Opened' : 'Closed'}.png`}
                                                                     alt="Show/Hide PIN"
                                                                 />
                                                             </button>
@@ -670,7 +675,7 @@ const AccountManagement: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                                                                 onClick={() => setShowConfirmPin(!showConfirmPin)}
                                                             >
                                                                 <img 
-                                                                    src={`/assets/WebAssets/Padlock${showConfirmPin ? 'Opened' : 'Closed'}.png`}
+                                                                    src={`assets/WebAssets/Padlock${showConfirmPin ? 'Opened' : 'Closed'}.png`}
                                                                     alt="Show/Hide PIN"
                                                                 />
                                                             </button>
@@ -690,11 +695,12 @@ const AccountManagement: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                             {formError?.field === 'general' && ( <div className="errorContainer"><p className="combinedErrorText">{formError.message}</p></div> )}
                             <div className="btnWrapper">
                                 <button id="saveButton" onClick={handleSave}>
-                                    {view === 'account' 
-                                        ? "CREATE ACCOUNT" 
-                                        : isPermanent 
-                                            ? "UPDATE ACCOUNT" 
-                                            : "SAVE PREFERENCES"}
+                                    {view === 'character' 
+                                        ? (isExistingPlayer ? "UPDATE PROFILE" : "SAVE PROFILE")
+                                        : view === 'preference'
+                                            ? (isExistingPlayer ? "UPDATE PREFERENCES" : "SAVE PREFERENCES")
+                                            : (isExistingPlayer ? "UPDATE ACCOUNT" : "CREATE ACCOUNT")
+                                    }
                                 </button>
                             </div>         
                         </section>

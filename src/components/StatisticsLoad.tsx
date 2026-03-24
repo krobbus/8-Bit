@@ -20,7 +20,7 @@ const StatisticsLoad: React.FC<StatisticsProps> = ({ stats, userData, isGenerati
                     <label className="subHeader">SELECTED COURSES</label>
                     <img 
                         className={`drawerArrow ${isSelectedOpen ? 'open' : ''}`}
-                        src={`/assets/WebAssets/Drawer.png`}
+                        src={`assets/WebAssets/Drawer.png`}
                         onClick={() => setIsSelectedOpen(!isSelectedOpen)}
                     />
                 </div>
@@ -42,7 +42,7 @@ const StatisticsLoad: React.FC<StatisticsProps> = ({ stats, userData, isGenerati
                     <label className="subHeader">OTHER AVAILABLE COURSES</label>
                     <img 
                         className={`drawerArrow ${isNonselectedOpen ? 'open' : ''}`}
-                        src={`/assets/WebAssets/Drawer.png`}
+                        src={`assets/WebAssets/Drawer.png`}
                         onClick={() => setIsNonselectedOpen(!isNonselectedOpen)}
                     />
                 </div>

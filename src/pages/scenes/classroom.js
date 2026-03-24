@@ -14,6 +14,14 @@ export default class Classroom extends Phaser.Scene {
     }
 
     init(data) {
+        if (!data || !data.selectedCourse) {
+            console.warn("No course selected. Redirecting to Hallway...");
+            this.time.delayedCall(1, () => {
+                this.scene.start('Hallway'); 
+            });
+            return;
+        }
+
         const courseNames = {
             CITCS: "COLLEGE OF INFORMATION TECHNOLOGY AND COMPUTER STUDIES (CITCS)",
             CCJ: "COLLEGE OF CRIMINAL JUSTICE (CCJ)",
@@ -30,6 +38,7 @@ export default class Classroom extends Phaser.Scene {
             Skill: "SKILL ASSESSMENT",
             Personality: "PERSONALITY ASSESSMENT",
         };
+
         this.courseCode = data.selectedCourse; 
         this.rawType = data.selectedType;
         this.selectedCourse = courseNames[data.selectedCourse] || "GENERAL";
@@ -45,7 +54,7 @@ export default class Classroom extends Phaser.Scene {
         const userData = snapshot.val();
         const playerName = (userData && userData.name) ? userData.name : "Guest";
         this.gender = (userData && userData.gender) ? userData.gender.toLowerCase() : 'male';
-        
+
         this.bg = this.add.sprite(screenCenterX, screenCenterY, `default${this.gender}`).setScale(1.5);                // bg
 
         this.headerContainer = this.add.container(0, 10);                                                              // header
@@ -81,7 +90,7 @@ export default class Classroom extends Phaser.Scene {
         this.headerContainer.add([this.headerContainerStyle, CourseText, typeText]);
         this.headerContainer.setDepth(100);
 
-        this.nameContainer = this.add.container(230, 300);
+        this.nameContainer = this.add.container(230, 300);                                                      // name tag
             this.nameText = this.add.text(0, 0, playerName, {
                 fontFamily: '"Press Start 2P"',
                 fontSize: "10px",
@@ -100,7 +109,7 @@ export default class Classroom extends Phaser.Scene {
                 .strokeRoundedRect(-bgW / 2, -bgH / 2, bgW, bgH, 5);
         this.nameContainer.add([this.nameBg, this.nameText]);
         this.nameContainer.setDepth(100);
-
+        
         let existingAudio = this.sound.get('audiosample');                                                             // audio
         if (!existingAudio){
             this.gameAudio = this.sound.add('audiosample', { loop: true });
@@ -181,15 +190,14 @@ export default class Classroom extends Phaser.Scene {
                 align: "center",
                 wordWrap: { width: fixedWidth - (padding * 2) },
                 lineSpacing: 10,
-                resolution: 4
+                resolution: 2
             }).setOrigin(0.5, 0);
             
             const dynamicHeight = this.questionText.height + (padding * 2);
 
             this.questionContainerStyle = this.add.graphics()
-                .clear()
-                .fillStyle(0xA3B18A, 1)
-                .lineStyle(4, 0x344E41, 1)
+                .fillStyle(0x344E41, 1)
+                .lineStyle(2, 0xA3B18A, 1)
                 .fillRoundedRect(screenCenterX - fixedWidth / 2, boxY, fixedWidth, dynamicHeight, 10)
                 .strokeRoundedRect(screenCenterX - fixedWidth / 2, boxY, fixedWidth, dynamicHeight, 10);
         this.questionText.y = boxY + padding;
@@ -199,48 +207,67 @@ export default class Classroom extends Phaser.Scene {
 
     optionsUI(options) {
         if (this.optionsContainer) this.optionsContainer.destroy();
-
         const screenWidth = this.scale.width;
         const screenHeight = this.scale.height;
 
-        const buttonWidth = 350;
-        const buttonHeight = 40;
         const verticalGap = 10;
-        const horizontalStep = 30;
-        const paddingBottom = 60;
+        const paddingSide = 20;
+        const paddingTopBottom = 12;
+        const maxWidth = 400;
 
-        const startX = (screenWidth / 3) - (buttonWidth / 2) - (horizontalStep * 1.5);
-        const startY = screenHeight - paddingBottom;
-        this.optionsContainer = this.add.container(startX, startY);
+        this.optionsContainer = this.add.container(120, 0);
 
-        const option = [...options];
-        option.forEach((optionText, index) => {
-            const labels = ['A', 'B', 'C', 'D'];
-            const xPos = index * horizontalStep;
-            const totalOptions = options.length;
-            const yPos = -(totalOptions - index) * (buttonHeight + verticalGap);
+        let currentY = 0;
+        const labels = ['A', 'B', 'C', 'D'];
 
+        const startX = 200;
+        const offsetStep = 50;
+
+        options.forEach((optionText, index) => {
+            const currentX = startX - (index * offsetStep);
+
+            const tempText = this.add.text(0, 0, `${labels[index]}. ${optionText}`, {
+                fontFamily: '"Press Start 2P"',
+                fontSize: "10px"
+            });
+
+            const wrap = tempText.width > (maxWidth - (paddingSide * 2));
+            const finalWidth = wrap ? maxWidth : tempText.width + (paddingSide * 2);
+            tempText.destroy();
+
+            const optionsText = this.add.text(paddingSide, paddingTopBottom, `${labels[index]}. ${optionText}`, {
+                fontFamily: '"Press Start 2P"',
+                fontSize: "10px",
+                align: "center",
+                fill: "#ffffff",
+                wordWrap: wrap ? { width: maxWidth - (paddingSide * 2) } : null,
+                lineSpacing: 5,
+                resolution: 2
+            }).setOrigin(0, 0);
+
+            const finalHeight = optionsText.height + (paddingTopBottom * 2);
             const optionsStyleContainer = this.add.graphics()
                 .fillStyle(0x344E41, 1)
                 .lineStyle(2, 0xA3B18A, 1)
-                .fillRoundedRect(xPos, yPos, buttonWidth, buttonHeight, 8)
-                .strokeRoundedRect(xPos, yPos, buttonWidth, buttonHeight, 8);
+                .fillRoundedRect(0, 0, finalWidth, finalHeight, 8)
+                .strokeRoundedRect(0, 0, finalWidth, finalHeight, 8);
 
-            const optionsText = this.add.text(xPos + 20, yPos + (buttonHeight / 2), `${labels[index]}. ${optionText}`, {
-                fontFamily: '"Press Start 2P"',
-                fontSize: "10px",
-                fill: "#ffffff",
-                wordWrap: { width: buttonWidth - 40 }
-            }).setOrigin(0, 0.5);
-
-            const hitArea = new Phaser.Geom.Rectangle(xPos, yPos, buttonWidth, buttonHeight);      
+            const hitArea = new Phaser.Geom.Rectangle(0, 0, finalWidth, finalHeight);    
             optionsStyleContainer.setInteractive(hitArea, Phaser.Geom.Rectangle.Contains)
-                .on('pointerover', () => optionsStyleContainer.alpha(0.8))
-                .on('pointerout', () => optionsStyleContainer.alpha(1))
-                .on('pointerdown', () => this.handleAnswer(optionText));
+                .on('pointerover', () => { 
+                    if (!this.isSettingsOpen) optionsStyleContainer.setAlpha(0.8);
+                })
+                .on('pointerout', () => optionsStyleContainer.setAlpha(1))
+                .on('pointerdown', () => {
+                    if (this.isSettingsOpen) return; 
+                    this.handleAnswer(optionText);
+                });
 
-            this.optionsContainer.add([optionsStyleContainer, optionsText]);
+            const buttonContainer = this.add.container(currentX, currentY, [optionsStyleContainer, optionsText]);
+            this.optionsContainer.add(buttonContainer);
+            currentY += finalHeight + verticalGap;
         });
+        this.optionsContainer.y = screenHeight - currentY - 40;
         this.optionsContainer.setDepth(100);
     }
 
@@ -249,12 +276,12 @@ export default class Classroom extends Phaser.Scene {
         const screenCenterY = this.cameras.main.worldView.y + this.cameras.main.height / 2;
 
         this.questionUI("Thinking questions...");
-        this.optionsUI(['Option A', 'Option B', 'Option C', 'Option D']);
+        this.optionsUI(['...', '...', '...', '...']);
 
         const animKey = `thinking${this.gender}`;
-        if (this.anims.exists(animKey)) { this.bg.play(animKey); } else { this.bg.setTexture(animKey); };
+        if (this.anims.exists(animKey)) this.bg.play(animKey);
 
-        const isAssessment = ["PERSONALITY ASSESSMENT", "SKILL ASSESSMENT"].includes(this.selectedType);
+        const isAssessment = ["PERSONALITY ASSESSMENT", "SKILL ASSESSMENT"].includes(this.rawType);
         const endpoint = isAssessment ? '/api/generate-assessment' : '/api/generate-quiz';
 
         try {
@@ -271,30 +298,106 @@ export default class Classroom extends Phaser.Scene {
                 const errorData = await response.json().catch(() => ({ error: "Unknown Server Error" }));
                 throw new Error(errorData.error || `Server Error: ${response.status}`);
             }
-
             const data = await response.json();
+
             if (data.questions && data.questions.length > 0) {
-                courseQuestions = data.questions;
+                this.courseQuestions = data.questions;
+                this.currentQuestionIndex = 0;
 
-                /*
-                if ("MultipleChoice".includes(selectedType)) {
-                    courseQuestions = courseQuestions.map(q => ({
-                        question: q.question,
-                        options: q.options || [],
-                        answer: q.answer,
-                        explanation: q.explanation
-                    }));
-                }
-                */
+                const firstQ = this.courseQuestions[0];
+                this.questionUI(firstQ.question);
+                this.optionsUI(firstQ.options || []);
 
-                this.questionUI(firstQ.question, firstQ.options || []);
                 this.bg.play(`default${this.gender}`);
             } else { 
-                throw new Error("Empty questions list"); 
+                throw new Error("Error: Empty questions list"); 
             }
         } catch (err) {
-            this.loadUI("Error: Check your connection or API key.");
+            this.questionUI("Connection Failed: The AI is sleeping. Check your backend connection.");
         }
+    }
+
+    handleAnswer(selectedOption) {
+        if (this.optionsContainer) this.optionsContainer.setVisible(false);
+        const raiseHandAnim = `student2${this.gender}`;
+        if (this.anims.exists(raiseHandAnim)) this.bg.play(raiseHandAnim, true);
+
+        this.showAnswerBubble(selectedOption);
+
+        this.time.delayedCall(3000, () => {
+            this.isAnswering = false;
+            // this.sound.play('select_sfx', { volume: 0.5 });
+            this.currentQuestionIndex++;
+
+            if (this.answerContainer) {
+                this.answerContainer.destroy();
+                this.answerContainer = null;
+            }
+
+            if (this.currentQuestionIndex < this.courseQuestions.length) {
+                const nextQ = this.courseQuestions[this.currentQuestionIndex];
+
+                this.questionUI(nextQ.question);
+                this.optionsUI(nextQ.options || []);
+
+                this.bg.play(`thinking${this.gender}`, true);
+                this.time.delayedCall(800, () => { 
+                    this.bg.play(`default${this.gender}`, true); 
+                });
+            } else {
+                this.finishAssessment();
+            }
+        });
+    }
+
+    showAnswerBubble(text) {
+        if (this.answerContainer) this.answerContainer.destroy();
+
+        this.answerContainer = this.add.container(230, 300); 
+            const answerText = this.add.text(0, 0, `"${text}"`, {
+                fontFamily: '"Press Start 2P"',
+                fontSize: "10px",
+                fill: "#ffffff",
+                align: "center",
+                wordWrap: { width: 180 },
+                resolution: 2
+            }).setOrigin(0.5);
+
+            const padding = 10;
+            const bgW = Math.max(60, answerText.width + padding * 2);
+            const bgH = answerText.height + padding * 2;
+
+            const bubbleBg = this.add.graphics()
+                .fillStyle(0x344E41, 1)
+                .lineStyle(2, 0xA3B18A, 1)
+                .fillRoundedRect(-bgW / 2, -bgH / 2, bgW, bgH, 8)
+                .strokeRoundedRect(-bgW / 2, -bgH / 2, bgW, bgH, 8);
+
+            bubbleBg.fillTriangle(
+                -5, bgH / 2, 
+                5, bgH / 2, 
+                0, bgH / 2 + 10
+            );
+        this.answerContainer.add([bubbleBg, answerText]);
+        this.answerContainer.setDepth(101);
+
+        this.answerContainer.setScale(0);
+        this.tweens.add({
+            targets: this.answerContainer,
+            scale: 1,
+            duration: 200,
+            ease: 'Back.out'
+        });
+    }
+
+    finishAssessment() {
+        this.questionUI("Assessment Complete! Analyzing your career matches...");
+        this.bg.play(`default${this.gender}`);
+        this.optionsContainer.destroy();
+
+        this.time.delayedCall(2000, () => {
+            this.startPageTransition('Hallway');
+        });
     }
 
     update(){

@@ -108,22 +108,37 @@
             box-sizing: border-box;
 
             .imgContainer{
-                background-color: rgba(245, 245, 245, 0.3);
-                border-radius: 30px;
                 display: flex;
-                justify-content: center;
                 align-items: center;
+                justify-content: center;
+                position: relative;
+                border-radius: 30px;
                 height: 250px;
                 width: 60%;
+                overflow: hidden;
+                box-sizing: border-box;
+
+                &::before {
+                    content: "";
+                    position: absolute;
+                    top: 0; 
+                    left: 0; 
+                    right: 0; 
+                    bottom: 0;
+                    
+                    background-image: url("/assets/Background/AvatarBg.jpg");
+                    background-position: center;
+                    background-size: cover;
+                    background-repeat: no-repeat;
+                    
+                    filter: brightness(0.8) blur(2px) grayscale(20%); 
+                    z-index: 1;
+                }
 
                 img{
-                    width: auto;
                     height: 200px;
-                    
-                    -webkit-user-drag: none;
-                    -khtml-user-drag: none;
-                    -moz-user-drag: none;
-                    -o-user-drag: none;
+                    width: auto;
+                    z-index: 2;
                 }
             }
 
@@ -162,14 +177,14 @@
 
                 #maleButton:not(.active) {
                     color: rgb(255, 255, 255, 0.3);
-                    background-color: rgba(61, 166, 252, 0.5);
-                    border: 5px solid rgb(255, 255, 255, 0.5);
+                    background-color: rgba(61, 166, 252, 0.3);
+                    border: 5px solid rgb(255, 255, 255, 0.3);
                 }
 
                 #femaleButton:not(.active) {
                     color: rgb(255, 255, 255, 0.3);
-                    background-color: rgba(255, 134, 221, 0.5);
-                    border: 5px solid rgb(255, 255, 255, 0.5);
+                    background-color: rgba(255, 134, 221, 0.3);
+                    border: 5px solid rgb(255, 255, 255, 0.3);
                 }
             }
         }
