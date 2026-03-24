@@ -209,15 +209,16 @@ export default class Classroom extends Phaser.Scene {
         const horizontalStep = 30;
         const paddingBottom = 60;
 
-        const startX = (screenWidth / 3) - (buttonWidth / 2) + (horizontalStep * 1.5);
-        const startY = screenHeight + paddingBottom;
+        const startX = (screenWidth / 3) - (buttonWidth / 2) - (horizontalStep * 1.5);
+        const startY = screenHeight - paddingBottom;
         this.optionsContainer = this.add.container(startX, startY);
 
         const option = [...options];
         option.forEach((optionText, index) => {
             const labels = ['A', 'B', 'C', 'D'];
             const xPos = index * horizontalStep;
-            const yPos = -(index + 1) * (buttonHeight + verticalGap);
+            const totalOptions = options.length;
+            const yPos = -(totalOptions - index) * (buttonHeight + verticalGap);
 
             const optionsStyleContainer = this.add.graphics()
                 .fillStyle(0x344E41, 1)
