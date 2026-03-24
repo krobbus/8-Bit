@@ -1,0 +1,44 @@
+{
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "firebase": "^8.10.1",
+    "phaser": "^3.90.0",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4"
+  },
+  "devDependencies": {
+    "@types/node": "^25.3.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.4",
+    "gh-pages": "^6.3.0",
+    "nodemon": "^3.1.14",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.1"
+  },
+  "name": "8-bit",
+  "version": "1.0.0",
+  "homepage": "https://github.com/krobbus/8-Bit/",
+  "description": "This project is a unique educational technology platform that uses the nostalgic aesthetic of an 8-bit web game to guide students through the complex process of college program matching and career exploration. By integrating a modern AI recommendation engine with a fun, gamified user experience, we aim to make informed decision-making accessible, engaging, and personal.",
+  "type": "module",
+  "main": "index.html",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist -b testing",
+    "ship": "npm run build && npx gh-pages -d dist -b testing"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/krobbus/8-Bit.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/krobbus/8-Bit/issues"
+  }
+}
