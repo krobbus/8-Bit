@@ -1,0 +1,152 @@
+.statisticContainer{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin: 10px;
+
+    .selectedCourses, .nonselectedCourses{
+        display: flex;
+        flex-direction: column;
+        background-color: rgba(255, 255, 255, 0.1);
+        box-shadow: 10px 10px 7px rgba(0, 0, 0, 0.1);
+        border: 4px solid #a3b18a;
+        padding: 2rem;
+        width: 100%;
+        box-sizing: border-box;
+
+        .selectedCoursesHeader, .nonselectedCoursesHeader{
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+
+            .drawerArrow {
+                width: 30px;
+                height: auto;
+                filter: invert();
+                cursor: pointer;
+                transition: transform 0.3s ease;
+            }
+            .drawerArrow.open { transform: rotateX(180deg); }
+        }
+
+        .drawerContent {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out, opacity 0.3s ease, padding-top 0.3s ease;
+        }
+
+        .drawerContent.show {
+            max-height: 2000px;
+            opacity: 1;
+            padding-top: 1rem;
+        }
+
+        .drawerContent.hide {
+            max-height: 0;
+            opacity: 0;
+            padding-top: 0;
+        }
+    }
+
+    .skillsPersonalityContainer{
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        gap: 1rem;
+        width: 100%;
+        box-sizing: border-box;
+
+        .tagsContainer, .personalityContainer{
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 1rem;
+            
+            background-color: rgba(255, 255, 255, 0.1);
+            box-shadow: 10px 10px 7px rgba(0, 0, 0, 0.1);
+            border: 4px solid #a3b18a;
+            padding: 2rem;
+            height: stretch;
+            width: 100%;
+            box-sizing: border-box;
+
+            .personalityList, .skillList{
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                background-color: rgba(0, 0, 0, 0.2);
+                border-radius: 20px;
+
+                ul{
+                    display: flex;
+                    flex-direction: column;
+                    list-style: none;
+                    padding-left: 0;
+                    margin: 0;
+                }
+
+                li, p{
+                    padding: 20px;
+                    text-align: left;
+                    font-size: 14px;
+                }
+            }
+        }
+    }
+
+    .commentContainer{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 2rem;
+        
+        background-color: rgba(255, 255, 255, 0.1);
+        box-shadow: 10px 10px 7px rgba(0, 0, 0, 0.1);
+        border: 4px solid #a3b18a;
+        text-align: left;
+        padding: 2rem;
+        width: 100%;
+        box-sizing: border-box;
+
+        button{
+            font-family: "Jersey 10", cursive;
+            font-size: 22px;
+            color: #588157;
+            background-color: #fff;
+            border: 4px solid #a3b18a;
+            box-shadow: 10px 10px 7px rgba(0, 0, 0, 0.1);
+            
+            padding: 1rem;
+            width: 100%;
+            box-sizing: border-box;
+
+            &:hover{
+                color: #fff;
+                background-color: #a3b18a;
+                border: 4px solid #fff;
+            }
+        }
+
+        .aiCommentBox{
+            background-color: rgba(0, 0, 0, 0.4);
+            box-shadow: 10px 10px 7px rgba(0, 0, 0, 0.1);
+            border: 4px solid #a3b18a;
+            text-align: left;
+            font-size: 14px;
+            padding: 2rem;
+            width: 100%;
+            box-sizing: border-box;
+        }
+    }
+}

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>An AI-Driven 8-bit Web Game For Personalized College Program Matching and Career Exploration</title>
+    <link rel="icon" type="image/x-icon" href="public/Logo.png">
+    <link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+    <h1>An AI-Driven 8-bit Web Game For Personalized College Program Matching and Career Exploration</h1>
+    
+    <section class="loginContainer">
+        <section class="buttonLayout">
+            <button id="startButton">Play as a Guest</button>
+        </section>
+
+        <section class="lineDivider">
+            <span class="line"></span>
+            <span class="text">or login with existing account</span>
+            <span class="line"></span>
+        </section>
+
+        <section class="buttonLayout">
+            <section id="form">
+                <select id="roleSelect">
+                    <option value="player" selected>Player</option>
+                    <option value="admin">Admin</option>
+                </select>
+
+                <input id="inputId" placeholder="Enter your ID / Email" type="text" />
+
+                <section class="passWrapper">
+                    <input id="inputPassword" placeholder="Enter your password" type="password" />
+                    <button type="button" id="togglePass">
+                        <img src="public/assets/WebAssets/PadlockClosed.png" alt="Show/Hide PIN">
+                    </button>
+                </section>
+
+                <button id="loginButton">Log In</button>
+            </section>
+        </section>
+        <p id="loginMessage" style="font-size: 2rem;"></p>
+
+        <section class="linkWrapper">
+            <a id="forgotPass" onclick="forgotPassword()">Forgot Password?</a>
+            <a id="manual" onclick="manualDisplay()">How To Play?</a>
+        </section>
+
+        <section id="popupOverlay">
+            <section id="popupBox">
+                <h2 id="popupTitle">Loading...</h2>
+                <p id="popupContent">Loading...</p>
+
+                <button id="popupClose">Hide</button>
+            </section>
+        </section>
+
+        <!-- manual popup -->
+        <section id="popupOverlayManual">
+            <section id="popupBoxManual">
+                <h2 id="popupTitleManual"></h2>
+                <section id="popupEdgeManual">
+                    <p id="popupContentManual"></p>
+                </section>
+
+                <button id="popupCloseManual">Hide</button>
+            </section>
+        </section>
+
+        <section id="loadingScreen">
+            <section class="loadingBox">
+                <img src="public/assets/WebAssets/Hourglass.gif" alt="Loading..." />
+                <p>LOADING...</p>
+            </section>
+        </section>
+    </section>
+
+    <script type="module" src="index.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+    <script type="module" src="src/pages/utils/firebaseConfig.js"></script>
+    <script type="module" src="src/pages/utils/data.js"></script>
+</body>
+</html>
