@@ -1,7 +1,9 @@
 import { AssetLib } from '../data/assetLib.js';
 
 export default class LoadingScene extends Phaser.Scene {
-    constructor() { super('Loading'); }
+    constructor() { 
+        super('Loading'); 
+    }
 
     preload() {
         const screenCenterX = this.cameras.main.worldView.x + this.cameras.main.width / 2;
@@ -18,7 +20,6 @@ export default class LoadingScene extends Phaser.Scene {
 
         const isGitHub = window.location.href.includes('github.io');
         const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-
         this.load.setBaseURL(isGitHub || isLocal ? '/8-Bit/' : '/');
 
         this.load.image('logo', 'Logo.png');
@@ -26,6 +27,14 @@ export default class LoadingScene extends Phaser.Scene {
         this.load.spritesheet('hourglass', 'assets/GameAssets/SpriteHourglass.png', { 
             frameWidth: 200, frameHeight: 200 
         });
+
+        if (this.textures.exists('hourglass')) {
+            this.hourglassSprite = this.add.sprite(screenCenterX, screenCenterY - 60, 'hourglass', 0).setScale(0.8);
+        } else {
+            this.load.once('filecomplete-spritesheet-hourglass', () => {
+                this.hourglassSprite = this.add.sprite(screenCenterX, screenCenterY - 60, 'hourglass', 0).setScale(0.8);
+            });
+        }
 
         this.loadingText = this.add.text(screenCenterX, screenCenterY + 60, "Loading... 0%", { 
             fontFamily: '"Press Start 2P"', 
@@ -52,10 +61,12 @@ export default class LoadingScene extends Phaser.Scene {
                 repeat: -1
             });
         }
-
-        this.add.sprite(screenCenterX, screenCenterY - 60, 'hourglass')
-            .setScale(0.8)
-            .play('hourglassAnim');
+        
+        if (this.hourglassSprite) {
+            this.hourglassSprite.play('hourglassAnim');
+        } else {
+            this.hourglassSprite = this.add.sprite(screenCenterX, screenCenterY - 60, 'hourglass').setScale(0.8).play('hourglassAnim');
+        }
 
         this.loadingText.setText("Fetching Player Data...");
         
