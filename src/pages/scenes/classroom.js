@@ -11,6 +11,7 @@ export default class Classroom extends Phaser.Scene {
         super('Classroom');
         this.courseQuestions = [];
         this.currentQuestionIndex = 0;
+        this.isAnswering = false;
     }
 
     init(data) {
@@ -55,8 +56,6 @@ export default class Classroom extends Phaser.Scene {
         const playerName = (userData && userData.name) ? userData.name : "Guest";
         this.gender = (userData && userData.gender) ? userData.gender.toLowerCase() : 'male';
 
-        this.bg = this.add.sprite(screenCenterX, screenCenterY, `default${this.gender}`).setScale(1.5);                // bg
-
         this.headerContainer = this.add.container(0, 10);                                                              // header
             const CourseText = this.add.text(screenCenterX, 30, `${this.selectedCourse}`, {  
                 fontFamily: '"Press Start 2P"',
@@ -77,6 +76,10 @@ export default class Classroom extends Phaser.Scene {
             const totalTextHeight = CourseText.height + gap + typeText.height;
             const headerHeight = totalTextHeight + (padding * 2);
             const headerWidth = Math.max(CourseText.width, typeText.width) + 40;
+            const headerBottom = gap + headerHeight;
+
+            this.headerWidth = headerWidth;
+            this.headerBottom = headerBottom;
 
             CourseText.y = gap + padding;
             typeText.y = CourseText.y + CourseText.height + gap;
@@ -89,6 +92,8 @@ export default class Classroom extends Phaser.Scene {
                 .strokeRoundedRect(screenCenterX - headerWidth / 2, gap, headerWidth, headerHeight, 10);
         this.headerContainer.add([this.headerContainerStyle, CourseText, typeText]);
         this.headerContainer.setDepth(100);
+
+        this.bg = this.add.sprite(screenCenterX, screenCenterY, `default${this.gender}`).setScale(1.5);                // bg
 
         this.nameContainer = this.add.container(230, 300);                                                      // name tag
             this.nameText = this.add.text(0, 0, playerName, {
@@ -108,7 +113,7 @@ export default class Classroom extends Phaser.Scene {
                 .fillRoundedRect(-bgW / 2, -bgH / 2, bgW, bgH, 5)
                 .strokeRoundedRect(-bgW / 2, -bgH / 2, bgW, bgH, 5);
         this.nameContainer.add([this.nameBg, this.nameText]);
-        this.nameContainer.setDepth(100);
+        this.nameContainer.setDepth(110);
         
         let existingAudio = this.sound.get('audiosample');                                                             // audio
         if (!existingAudio){
@@ -130,7 +135,6 @@ export default class Classroom extends Phaser.Scene {
         this.settings.setDepth(3000);
         this.add.sprite(this.scale.width - 60, 80, 'settings')
             .setScale(0.1)
-            .setDepth(3001)
             .setOrigin(1, 0)
             .setInteractive({ useHandCursor: true })
             .on("pointerdown", () => this.settings.toggle());
@@ -177,18 +181,19 @@ export default class Classroom extends Phaser.Scene {
     questionUI(question){
         if (this.questionContainer) this.questionContainer.destroy();
 
-        this.questionContainer = this.add.container(270, 10);
-            const screenCenterX = this.cameras.main.worldView.x + this.cameras.main.width / 2;
-            const fixedWidth = 570; 
+        this.questionContainer = this.add.container(0, 20).setDepth(120);
+            const screenCenterX = this.cameras.main.worldView.x + this.cameras.main.width / 2; 
             const padding = 30;
-            const boxY = 150;
+            const verticalGap = 5;
+            const boxWidth = this.headerWidth;
+            const boxY = this.headerBottom + verticalGap;
                 
             this.questionText = this.add.text(screenCenterX, 0, question, {
                 fontFamily: '"Press Start 2P"',
                 fontSize: "12px",
                 fill: "#ffffff",
                 align: "center",
-                wordWrap: { width: fixedWidth - (padding * 2) },
+                wordWrap: { width: boxWidth - (padding * 2) },
                 lineSpacing: 10,
                 resolution: 2
             }).setOrigin(0.5, 0);
@@ -198,54 +203,155 @@ export default class Classroom extends Phaser.Scene {
             this.questionContainerStyle = this.add.graphics()
                 .fillStyle(0x344E41, 1)
                 .lineStyle(2, 0xA3B18A, 1)
-                .fillRoundedRect(screenCenterX - fixedWidth / 2, boxY, fixedWidth, dynamicHeight, 10)
-                .strokeRoundedRect(screenCenterX - fixedWidth / 2, boxY, fixedWidth, dynamicHeight, 10);
+                .fillRoundedRect(screenCenterX - boxWidth / 2, boxY, boxWidth, dynamicHeight, 10)
+                .strokeRoundedRect(screenCenterX - boxWidth / 2, boxY, boxWidth, dynamicHeight, 10);
         this.questionText.y = boxY + padding;
         this.questionContainer.add([this.questionContainerStyle, this.questionText]);
-        this.questionContainer.setDepth(100);
     }
 
     optionsUI(options) {
         if (this.optionsContainer) this.optionsContainer.destroy();
-        const screenWidth = this.scale.width;
         const screenHeight = this.scale.height;
+        const screenWidth = this.scale.width;
+        const isAssessment = ["PERSONALITY ASSESSMENT", "SKILL ASSESSMENT"].includes(this.rawType);
 
+        if (isAssessment) {
+            this.optionsContainer = this.add.container(screenWidth / 2, screenHeight - 140).setDepth(130);
+        
+            const paddingSide = 24;
+            const paddingTopBottom = 14;
+            const maxWidth = 300;
+
+            options.forEach((optionText) => {
+                let offsetX = 0;
+                let offsetY = 0;
+
+                const textCheck = optionText.toUpperCase().trim();
+                if (textCheck.includes("STRONGLY AGREE")) { offsetX = -150; offsetY = -60; }
+                else if (textCheck.includes("STRONGLY DISAGREE")) { offsetX = 150; offsetY = 60; }
+                else if (textCheck.includes("DISAGREE")) { offsetX = -150; offsetY = 60; }
+                else if (textCheck.includes("AGREE")) { offsetX = 150; offsetY = -60; }
+                else { offsetX = 0; offsetY = 0; }
+
+                const optionsText = this.add.text(0, 0, optionText, {
+                    fontFamily: '"Press Start 2P"',
+                    fontSize: "10px",
+                    align: "center",
+                    fill: "#ffffff",
+                    wordWrap: { width: maxWidth - (paddingSide * 2) },
+                    lineSpacing: 6,
+                    resolution: 2
+                }).setOrigin(0.5);
+
+                const finalWidth = optionsText.width + (paddingSide * 2);
+                const finalHeight = optionsText.height + (paddingTopBottom * 2);
+
+                const optionsStyleContainer = this.add.graphics()
+                    .fillStyle(0x344E41, 1)
+                    .lineStyle(2, 0xA3B18A, 1)
+                    .fillRoundedRect(-finalWidth / 2, -finalHeight / 2, finalWidth, finalHeight, 8)
+                    .strokeRoundedRect(-finalWidth / 2, -finalHeight / 2, finalWidth, finalHeight, 8);
+
+                const hitArea = new Phaser.Geom.Rectangle(-finalWidth / 2, -finalHeight / 2, finalWidth, finalHeight);    
+                optionsStyleContainer.setInteractive(hitArea, Phaser.Geom.Rectangle.Contains)
+                    .on('pointerover', () => {
+                        if (!this.isSettingsOpen) optionsStyleContainer.setAlpha(0.8);
+                    })
+                    .on('pointerout', () => optionsStyleContainer.setAlpha(1))
+                    .on('pointerdown', () => {
+                        if (this.isSettingsOpen) return;
+                        this.handleAnswer(optionText);
+                    });
+
+                const buttonContainer = this.add.container(offsetX, offsetY, [optionsStyleContainer, optionsText]);
+                this.optionsContainer.add(buttonContainer);
+            });
+        } else {          
+            this.optionsContainer = this.add.container(120, 0).setDepth(130);
+            let currentY = 0;
+            
+            const verticalGap = 10;
+            const paddingSide = 24;
+            const paddingTopBottom = 14;
+            const maxWidth = 500;
+            
+            const alphabet = ['A', 'B', 'C'];
+            const startX = 200;
+            const offsetStep = 50;
+
+            options.forEach((optionText, index) => {
+                const currentX = startX - (index * offsetStep);
+                const label = alphabet[index] || (index + 1);
+
+                const optionsText = this.add.text(0, 0, `${label}. ${optionText}`, {
+                    fontFamily: '"Press Start 2P"',
+                    fontSize: "10px",
+                    align: "center",
+                    fill: "#ffffff",
+                    wordWrap: { width: maxWidth - (paddingSide * 2) },
+                    lineSpacing: 6,
+                    resolution: 2
+                }).setOrigin(0.5);
+
+                const finalWidth = optionsText.width + (paddingSide * 2);
+                const finalHeight = optionsText.height + (paddingTopBottom * 2);
+
+                optionsText.setPosition(finalWidth / 2, finalHeight / 2);
+
+                const optionsStyleContainer = this.add.graphics()
+                    .fillStyle(0x344E41, 1)
+                    .lineStyle(2, 0xA3B18A, 1)
+                    .fillRoundedRect(0, 0, finalWidth, finalHeight, 8)
+                    .strokeRoundedRect(0, 0, finalWidth, finalHeight, 8);
+
+                const hitArea = new Phaser.Geom.Rectangle(0, 0, finalWidth, finalHeight);    
+                optionsStyleContainer.setInteractive(hitArea, Phaser.Geom.Rectangle.Contains)
+                    .on('pointerover', () => {
+                        if (!this.isSettingsOpen) optionsStyleContainer.setAlpha(0.8);
+                    })
+                    .on('pointerout', () => optionsStyleContainer.setAlpha(1))
+                    .on('pointerdown', () => {
+                        if (this.isSettingsOpen) return;
+                        this.handleAnswer(optionText);
+                    });
+
+                const buttonContainer = this.add.container(currentX, currentY, [optionsStyleContainer, optionsText]);
+                this.optionsContainer.add(buttonContainer);
+                currentY += finalHeight + verticalGap;
+            });
+            
+            this.optionsContainer.y = screenHeight - currentY - 40;
+        }
+        /*
         const verticalGap = 10;
-        const paddingSide = 20;
-        const paddingTopBottom = 12;
-        const maxWidth = 400;
+        const paddingSide = 24;
+        const paddingTopBottom = 14;
+        const maxWidth = 500;
 
-        this.optionsContainer = this.add.container(120, 0);
-
-        let currentY = 0;
-        const labels = ['A', 'B', 'C', 'D'];
-
-        const startX = 200;
-        const offsetStep = 50;
+        this.optionsContainer = this.add.container(120, 0).setDepth(130);
+            let currentY = 0;
+            const options = ['A', 'B', 'C', 'D', 'E'];
+            const label = alphabet[index] || (index + 1)
+            const startX = 200;
+            const offsetStep = 50;
 
         options.forEach((optionText, index) => {
             const currentX = startX - (index * offsetStep);
 
-            const tempText = this.add.text(0, 0, `${labels[index]}. ${optionText}`, {
-                fontFamily: '"Press Start 2P"',
-                fontSize: "10px"
-            });
-
-            const wrap = tempText.width > (maxWidth - (paddingSide * 2));
-            const finalWidth = wrap ? maxWidth : tempText.width + (paddingSide * 2);
-            tempText.destroy();
-
-            const optionsText = this.add.text(paddingSide, paddingTopBottom, `${labels[index]}. ${optionText}`, {
+            const optionsText = this.add.text(0, 0, `${labels[index]}. ${optionText}`, {
                 fontFamily: '"Press Start 2P"',
                 fontSize: "10px",
                 align: "center",
                 fill: "#ffffff",
-                wordWrap: wrap ? { width: maxWidth - (paddingSide * 2) } : null,
-                lineSpacing: 5,
+                wordWrap: { width: maxWidth - (paddingSide * 2) },
+                lineSpacing: 6,
                 resolution: 2
-            }).setOrigin(0, 0);
+            }).setOrigin(0.5);
 
+            const finalWidth = optionsText.width + (paddingSide * 2);
             const finalHeight = optionsText.height + (paddingTopBottom * 2);
+            optionsText.setPosition(finalWidth / 2, finalHeight / 2);
+
             const optionsStyleContainer = this.add.graphics()
                 .fillStyle(0x344E41, 1)
                 .lineStyle(2, 0xA3B18A, 1)
@@ -254,32 +360,54 @@ export default class Classroom extends Phaser.Scene {
 
             const hitArea = new Phaser.Geom.Rectangle(0, 0, finalWidth, finalHeight);    
             optionsStyleContainer.setInteractive(hitArea, Phaser.Geom.Rectangle.Contains)
-                .on('pointerover', () => { 
+                .on('pointerover', () => {
                     if (!this.isSettingsOpen) optionsStyleContainer.setAlpha(0.8);
                 })
                 .on('pointerout', () => optionsStyleContainer.setAlpha(1))
                 .on('pointerdown', () => {
-                    if (this.isSettingsOpen) return; 
+                    if (this.isSettingsOpen) return;
                     this.handleAnswer(optionText);
                 });
-
             const buttonContainer = this.add.container(currentX, currentY, [optionsStyleContainer, optionsText]);
             this.optionsContainer.add(buttonContainer);
             currentY += finalHeight + verticalGap;
         });
         this.optionsContainer.y = screenHeight - currentY - 40;
-        this.optionsContainer.setDepth(100);
+        */
     }
+
+    getTextWidth(text, size) {
+        const tempText = this.add.text(0, 0, text, { 
+            fontFamily: '"Press Start 2P"', 
+            fontSize: `${size}px` 
+        }).setVisible(false);
+        const width = tempText.width;
+        tempText.destroy();
+        return width;
+    }
+
+    startThinkingAnimation() {
+        let dotCount = 0;
+        this.thinkingTimer = this.time.addEvent({
+            delay: 500,
+            callback: () => {
+                dotCount = (dotCount + 1) % 4;
+                const dots = ".".repeat(dotCount);
+                
+                this.questionUI(`Thinking questions${dots}`);
+                this.optionsUI([dots, dots, dots, dots]);
+            },
+            loop: true
+        });
+    }
+    stopThinkingAnimation() { if (this.thinkingTimer) this.thinkingTimer.remove(); }
 
     async loadQuestions(){
         const screenCenterX = this.cameras.main.worldView.x + this.cameras.main.width / 2;
         const screenCenterY = this.cameras.main.worldView.y + this.cameras.main.height / 2;
 
-        this.questionUI("Thinking questions...");
-        this.optionsUI(['...', '...', '...', '...']);
-
-        const animKey = `thinking${this.gender}`;
-        if (this.anims.exists(animKey)) this.bg.play(animKey);
+        this.bg.play(`thinking${this.gender}`);
+        this.startThinkingAnimation();
 
         const isAssessment = ["PERSONALITY ASSESSMENT", "SKILL ASSESSMENT"].includes(this.rawType);
         const endpoint = isAssessment ? '/api/generate-assessment' : '/api/generate-quiz';
@@ -301,6 +429,8 @@ export default class Classroom extends Phaser.Scene {
             const data = await response.json();
 
             if (data.questions && data.questions.length > 0) {
+                this.stopThinkingAnimation();
+
                 this.courseQuestions = data.questions;
                 this.currentQuestionIndex = 0;
 
@@ -313,80 +443,183 @@ export default class Classroom extends Phaser.Scene {
                 throw new Error("Error: Empty questions list"); 
             }
         } catch (err) {
-            this.questionUI("Connection Failed: The AI is sleeping. Check your backend connection.");
+            this.stopThinkingAnimation();
+            this.questionUI("Oops... The AI is sleeping.");
+            this.optionsUI(["Error", "Error", "Error"]);
         }
     }
 
+    getStudentPos(id) {
+        const positions = {
+            1: { x: 130, y: 410 }, 2: { x: 230, y: 310 }, 
+            3: { x: 330, y: 410 }, 4: { x: 430, y: 310 },
+            5: { x: 860, y: 410 }, 6: { x: 960, y: 310 }, 
+            7: { x: 1060, y: 410 }, 8: { x: 1160, y: 310 }
+        };
+        return positions[id];
+    }
+
     handleAnswer(selectedOption) {
+        if (this.isAnswering) return;
+        this.isAnswering = true;
         if (this.optionsContainer) this.optionsContainer.setVisible(false);
-        const raiseHandAnim = `student2${this.gender}`;
-        if (this.anims.exists(raiseHandAnim)) this.bg.play(raiseHandAnim, true);
 
-        this.showAnswerBubble(selectedOption);
+        const currentQ = this.courseQuestions[this.currentQuestionIndex];
+        if (isAssessment) {
+            currentQ.userResponse = selectedOption; 
+        
+            this.time.delayedCall(500, () => {
+                this.isAnswering = false;
+                this.currentQuestionIndex++;
+                
+                if (this.currentQuestionIndex < this.courseQuestions.length) {
+                    const nextQ = this.courseQuestions[this.currentQuestionIndex];
+                    this.questionUI(nextQ.question);
+                    this.optionsUI(nextQ.options || []);
+                    if (this.optionsContainer) this.optionsContainer.setVisible(true);
+                } else {
+                    this.finishAssessment();
+                }
+            });
+            return;
+        }
 
-        this.time.delayedCall(3000, () => {
+        const correctAnswer = currentQ.answer || currentQ.correctAnswer; 
+        const otherOptions = currentQ.options.filter(opt => opt !== selectedOption);
+        
+        const shuffledNPCs = [1, 3, 4, 5, 6, 7, 8].sort(() => 0.5 - Math.random()).slice(0, 3);
+        const sequence = [
+            { id: 2, option: selectedOption, isPlayer: true },
+            { id: shuffledNPCs[0], option: otherOptions[0] || "...", isPlayer: false },
+            { id: shuffledNPCs[1], option: otherOptions[1] || "...", isPlayer: false },
+            { id: shuffledNPCs[2], option: otherOptions[2] || "...", isPlayer: false }
+        ];
+
+        let delayTimer = 0;
+        sequence.forEach((turn) => {
+            this.time.delayedCall(delayTimer, () => {
+                this.bg.play(`student${turn.id}${this.gender}`, true);
+                
+                const pos = this.getStudentPos(turn.id);
+                const bubbleDepth = turn.isPlayer ? 150 : 140;
+                this.showAnswerBubble(turn.option, pos.x, pos.y, "pending", turn.isPlayer, bubbleDepth, turn.count);
+            });
+
+            delayTimer += 800;
+            this.time.delayedCall(delayTimer, () => {
+                this.bg.play(`default${this.gender}`, true);
+            });
+
+            delayTimer += 200;
+        });
+
+        this.time.delayedCall(delayTimer + 1500, () => {
+            this.questionUI(`The correct answer is:\n${correctAnswer}`);
+            this.children.list.filter(c => c.name === 'answerBubble').forEach(b => {
+                this.highlightBubble(b, b.getData('text') === correctAnswer);
+            });
+        });
+
+        this.time.delayedCall(delayTimer + 3500, () => {
+            this.questionUI(`Explanation:\n${currentQ.explanation}`);
+        });
+
+        this.time.delayedCall(delayTimer + 6500, () => {
             this.isAnswering = false;
-            // this.sound.play('select_sfx', { volume: 0.5 });
             this.currentQuestionIndex++;
-
-            if (this.answerContainer) {
-                this.answerContainer.destroy();
-                this.answerContainer = null;
-            }
+            this.children.list.filter(c => c.name === 'answerBubble').forEach(c => c.destroy());
 
             if (this.currentQuestionIndex < this.courseQuestions.length) {
                 const nextQ = this.courseQuestions[this.currentQuestionIndex];
-
                 this.questionUI(nextQ.question);
                 this.optionsUI(nextQ.options || []);
-
-                this.bg.play(`thinking${this.gender}`, true);
-                this.time.delayedCall(800, () => { 
-                    this.bg.play(`default${this.gender}`, true); 
-                });
             } else {
                 this.finishAssessment();
             }
         });
     }
 
-    showAnswerBubble(text) {
-        if (this.answerContainer) this.answerContainer.destroy();
+    showAnswerBubble(text, x, y, status, isPlayer, depth, count) {
+        const container = this.add.container(x, y);
+        container.setName('answerBubble');
+        container.setData('count', count);
+        container.setData('text', text);
+            let bgColor = 0x344E41;
+            if (status === "correct") bgColor = 0x588157;
+            if (status === "wrong") bgColor = 0xBC4749;
 
-        this.answerContainer = this.add.container(230, 300); 
             const answerText = this.add.text(0, 0, `"${text}"`, {
                 fontFamily: '"Press Start 2P"',
                 fontSize: "10px",
                 fill: "#ffffff",
                 align: "center",
-                wordWrap: { width: 180 },
+                wordWrap: { width: 160 },
                 resolution: 2
             }).setOrigin(0.5);
 
             const padding = 10;
             const bgW = Math.max(60, answerText.width + padding * 2);
             const bgH = answerText.height + padding * 2;
+            const bubbleColor = isPlayer ? 0x588157 : 0x344E41;
 
             const bubbleBg = this.add.graphics()
-                .fillStyle(0x344E41, 1)
+                .setName('bg')
+                .fillStyle(bubbleColor, 1)
                 .lineStyle(2, 0xA3B18A, 1)
-                .fillRoundedRect(-bgW / 2, -bgH / 2, bgW, bgH, 8)
-                .strokeRoundedRect(-bgW / 2, -bgH / 2, bgW, bgH, 8);
-
+                .fillRoundedRect(-bgW / 2, -bgH / 2, bgW, bgH, 10)
+                .strokeRoundedRect(-bgW / 2, -bgH / 2, bgW, bgH, 10);
+            
             bubbleBg.fillTriangle(
-                -5, bgH / 2, 
-                5, bgH / 2, 
-                0, bgH / 2 + 10
+                triangleX - 6, bgH / 2, 
+                triangleX + 6, bgH / 2, 
+                triangleX, bgH / 2 + 12
             );
-        this.answerContainer.add([bubbleBg, answerText]);
-        this.answerContainer.setDepth(101);
+        container.add([bubbleBg, answerText]);
+        container.setDepth(depth);
+        container.setScale(0);
 
-        this.answerContainer.setScale(0);
         this.tweens.add({
-            targets: this.answerContainer,
+            targets: container,
             scale: 1,
-            duration: 200,
+            duration: 300,
+            delay: isPlayer ? 0 : Phaser.Math.Between(100, 500),
             ease: 'Back.out'
+        });
+    }
+
+    highlightBubble(container, isCorrect) {
+        const bg = container.getByName('bg');
+        bg.clear();
+
+        const color = isCorrect ? 0x588157 : 0xBC4749;
+        const text = container.list.find(child => child instanceof Phaser.GameObjects.Text);
+        const bgW = Math.max(60, text.width + 16);
+        const bgH = text.height + 16;
+
+        bg.fillStyle(color, 1)
+            .lineStyle(2, 0xffffff, 1)
+            .fillRoundedRect(-bgW / 2, -bgH / 2, bgW, bgH, 8)
+            .strokeRoundedRect(-bgW / 2, -bgH / 2, bgW, bgH, 8);
+        bg.fillTriangle(-5, bgH / 2, 5, bgH / 2, 0, bgH / 2 + 10);
+        
+        this.tweens.add({
+            targets: container,
+            y: container.y - 10,
+            duration: 100,
+            yoyo: true,
+            ease: 'Power1'
+        });
+    }
+
+    loadNextQuestion() {
+        const nextQ = this.courseQuestions[this.currentQuestionIndex];
+        this.questionUI(nextQ.question);
+        this.optionsUI(nextQ.options || []);
+
+        this.bg.play(`thinking${this.gender}`, true);
+        
+        this.time.delayedCall(800, () => { 
+            this.bg.play(`default${this.gender}`, true); 
         });
     }
 
