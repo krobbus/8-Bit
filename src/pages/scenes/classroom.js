@@ -12,6 +12,7 @@ export default class Classroom extends Phaser.Scene {
         this.courseQuestions = [];
         this.currentQuestionIndex = 0;
         this.isAnswering = false;
+        this.assessmentResults = [];
     }
 
     init(data) {
@@ -223,11 +224,11 @@ export default class Classroom extends Phaser.Scene {
     questionUI(question){
         if (this.questionContainer) this.questionContainer.destroy();
 
-        this.questionContainer = this.add.container(0, 90).setDepth(120);
+        this.questionContainer = this.add.container(0, 85).setDepth(120);
             const screenCenterX = this.cameras.main.worldView.x + this.cameras.main.width / 2; 
             const padding = 30;
             const verticalGap = 5;
-            const boxWidth = this.headerWidth;
+            const boxWidth = this.headerWidth + 160;
             const boxY = this.headerBottom + verticalGap;
                 
             this.questionText = this.add.text(screenCenterX, 0, question, {
@@ -243,7 +244,7 @@ export default class Classroom extends Phaser.Scene {
             const dynamicHeight = this.questionText.height + (padding * 2);
 
             this.questionContainerStyle = this.add.graphics()
-                .fillStyle(0x344E41, 1)
+                .fillStyle(0x486947, 1)
                 .lineStyle(2, 0xA3B18A, 1)
                 .fillRoundedRect(screenCenterX - boxWidth / 2, boxY, boxWidth, dynamicHeight, 10)
                 .strokeRoundedRect(screenCenterX - boxWidth / 2, boxY, boxWidth, dynamicHeight, 10);
@@ -259,7 +260,7 @@ export default class Classroom extends Phaser.Scene {
         const isAssessment = this.rawType === 'Skill' || this.rawType === 'Personality';
 
         if (isAssessment) {
-            this.optionsContainer = this.add.container(screenWidth / 2, screenHeight - 140).setDepth(130);
+            this.optionsContainer = this.add.container(screenWidth / 2, screenHeight - 180).setDepth(130);
         
             const paddingSide = 24;
             const paddingTopBottom = 14;
@@ -270,26 +271,26 @@ export default class Classroom extends Phaser.Scene {
                 let offsetY = 0;
 
                 const textCheck = optionText.toUpperCase().trim();
-                if (textCheck.includes("STRONGLY AGREE")) { offsetX = -100; offsetY = -50; }
-                else if (textCheck.includes("STRONGLY DISAGREE")) { offsetX = 100; offsetY = 50; }
-                else if (textCheck.includes("DISAGREE")) { offsetX = -100; offsetY = 50; }
-                else if (textCheck.includes("AGREE")) { offsetX = 100; offsetY = -50; }
+                if (textCheck.includes("STRONGLY AGREE")) { offsetX = -80; offsetY = -50; }
+                else if (textCheck.includes("STRONGLY DISAGREE")) { offsetX = 80; offsetY = 50; }
+                else if (textCheck.includes("DISAGREE")) { offsetX = -80; offsetY = 50; }
+                else if (textCheck.includes("AGREE")) { offsetX = 80; offsetY = -50; }
                 else { offsetX = 0; offsetY = 0; }
 
                 const optionsText = this.add.text(0, 0, optionText, {
                     fontFamily: '"Press Start 2P"',
-                    fontSize: "6px",
+                    fontSize: "8px",
                     align: "center",
                     fill: "#ffffff",
                     wordWrap: { width: maxWidth - (paddingSide * 2) },
                     resolution: 2
                 }).setOrigin(0.5);
 
-                const finalWidth = optionsText.width + (paddingSide * 2);
+                const finalWidth = 200;
                 const finalHeight = optionsText.height + (paddingTopBottom * 2);
 
                 const optionsStyleContainer = this.add.graphics()
-                    .fillStyle(0x344E41, 1)
+                    .fillStyle(0x486947, 1)
                     .lineStyle(2, 0xA3B18A, 1)
                     .fillRoundedRect(-finalWidth / 2, -finalHeight / 2, finalWidth, finalHeight, 8)
                     .strokeRoundedRect(-finalWidth / 2, -finalHeight / 2, finalWidth, finalHeight, 8);
@@ -397,15 +398,14 @@ export default class Classroom extends Phaser.Scene {
         if (this.optionsContainer) this.optionsContainer.setVisible(false);
 
         const currentQ = this.courseQuestions[this.currentQuestionIndex];
-        if (isAssessment) currentQ.userResponse = selectedOption;
         
         const npcCount = isAssessment ? 4 : 3;
-
-        const otherOptions = isAssessment
-            ? [...currentQ.options].sort(() => 0.5 - Math.random())
-            : currentQ.options.filter(opt => opt !== selectedOption).sort(() => 0.5 - Math.random());
-
         const shuffledNPCs = [1, 3, 4, 5, 6, 7, 8].sort(() => 0.5 - Math.random()).slice(0, npcCount);
+
+        const assessmentPool = ["Strongly Agree", "Agree", "Neutral"];
+        const otherOptions = isAssessment
+            ? shuffledNPCs.map(() => assessmentPool[Math.floor(Math.random() * assessmentPool.length)])
+            : currentQ.options.filter(opt => opt !== selectedOption).sort(() => 0.5 - Math.random());
 
         const sequence = [
             { id: 2, option: selectedOption, isPlayer: true },
@@ -423,7 +423,7 @@ export default class Classroom extends Phaser.Scene {
                 this.bg.play(`student${turn.id}${this.gender}`, true);
                 
                 const pos = this.getStudentPos(turn.id);
-                this.showAnswerBubble(turn.option, pos.x, pos.y, "pending", turn.isPlayer, turn.isPlayer ? 150 : 140);
+                this.showAnswerBubble(turn.option, pos.x, pos.y, "pending", turn.isPlayer);
             });
             delayTimer += 800;
             this.time.delayedCall(delayTimer, () => { this.bg.play(`default${this.gender}`, true); });
@@ -431,9 +431,27 @@ export default class Classroom extends Phaser.Scene {
         });
 
         if (isAssessment) {
+            currentQ.userResponse = selectedOption;
+
+            this.assessmentResults.push({
+                question: currentQ.question,
+                answer: selectedOption
+            });
+
             this.time.delayedCall(delayTimer + 1200, () => { this.cleanupAndNext(); });
         } else {
             const correctAnswer = currentQ.answer || currentQ.correctAnswer;
+            const isCorrect = selectedOption === correctAnswer;
+
+            this.assessmentResults.push({
+                question: currentQ.question,
+                options: currentQ.options,
+                answer: correctAnswer,
+                selected: selectedOption,
+                unanswered: currentQ.options.filter(opt => opt !== selectedOption),
+                explanation: currentQ.explanation || "",
+                correct: isCorrect
+            });
 
             this.time.delayedCall(delayTimer + 1500, () => {
                 this.questionUI(`The correct answer is:\n${correctAnswer}`);
@@ -469,7 +487,7 @@ export default class Classroom extends Phaser.Scene {
         }
     }
 
-    showAnswerBubble(text, x, y, status, isPlayer, depth) {
+    showAnswerBubble(text, x, y, status, isPlayer) {
         const container = this.add.container(x, y);
         container.setName('answerBubble');
         container.setData('text', text);
@@ -489,7 +507,7 @@ export default class Classroom extends Phaser.Scene {
             const padding = 10;
             const bgW = Math.max(60, answerText.width + padding * 2);
             const bgH = answerText.height + padding * 2;
-            const bubbleColor = isPlayer ? 0x588157 : 0x344E41;
+            const bubbleColor = isPlayer ? 0x588157 : 0x486947;
 
             const bubbleBg = this.add.graphics()
                 .setName('bg')
@@ -504,7 +522,7 @@ export default class Classroom extends Phaser.Scene {
                 0, bgH / 2 + 12
             );
         container.add([bubbleBg, answerText]);
-        container.setDepth(depth);
+        container.setDepth(150);
         container.setScale(0);
 
         this.tweens.add({
@@ -544,9 +562,169 @@ export default class Classroom extends Phaser.Scene {
         this.questionUI("Assessment Complete! Analyzing your career matches...");
         this.bg.play(`default${this.gender}`);
         if (this.optionsContainer) this.optionsContainer.destroy();
+
+        this.saveAssessmentResults();
+        this.showResultsModal();
+
         this.time.delayedCall(2000, () => {
             this.startPageTransition('Hallway');
         });
+    }
+
+    async saveAssessmentResults(){
+        try {
+            const playerID = localStorage.getItem("playerID");
+            if (!playerID) return;
+
+            const key = `${this.courseCode}_${this.rawType}`; 
+            const score = this.rawType === 'CourseRelated'
+                ? {
+                    correct: this.assessmentResults.filter(r => r.correct).length
+                }
+                : null;
+
+            const resultsIndexed = {};
+            this.assessmentResults.forEach((item, i) => {
+                resultsIndexed[i] = [item];
+            });
+
+            const payload = {
+                course: this.courseCode,
+                type: this.rawType,
+                completedAt: Date.now(),
+                ...(score && { score }),
+                results: resultsIndexed
+            };
+
+            await db.ref(`webGame/${playerID}/assessments/${key}`).set(payload);
+        } catch (err) {
+            console.error("Failed to save assessment results:", err);
+        }
+    }
+
+    showResultsModal() {
+        const width = this.scale.width;
+        const height = this.scale.height;
+        const isAssessment = this.rawType === 'Skill' || this.rawType === 'Personality';
+
+        const overlay = this.add.rectangle(width / 2, height / 2, width, height, 0x000000, 0.85)
+            .setDepth(500).setScrollFactor(0);
+
+        const modalW = width - 80;
+        const modalH = height - 80;
+        const modalX = 40;
+        const modalY = 40;
+
+        const modalBg = this.add.graphics().setDepth(501)
+            .fillStyle(0x344E41, 1)
+            .lineStyle(3, 0xA3B18A, 1)
+            .fillRoundedRect(modalX, modalY, modalW, modalH, 12)
+            .strokeRoundedRect(modalX, modalY, modalW, modalH, 12);
+
+        const titleText = isAssessment ? 
+            "Assessment Complete!" 
+            : `Score: ${this.assessmentResults.filter(r => r.correct).length} / ${this.assessmentResults.length}`;
+        
+            this.add.text(width / 2, modalY + 24, titleText, {
+                fontFamily: '"Press Start 2P"',
+                fontSize: "12px",
+                fill: "#A3B18A",
+                align: "center"
+            }).setOrigin(0.5, 0).setDepth(502);
+
+        const contentStartY = modalY + 60;
+        const contentPadX = modalX + 24;
+        const contentW = modalW - 48;
+
+        let entries = [];
+
+        this.assessmentResults.forEach((r, i) => {
+            entries.push({ type: 'question', index: i, text: `Q${i + 1}: ${r.question}` });
+
+            if (isAssessment) {
+                entries.push({ type: 'answer', text: `Your Answer: ${r.answer}` });
+            } else {
+                entries.push({ type: r.correct ? 'correct' : 'wrong', text: `Your Answer: ${r.selected}` });
+                entries.push({ type: 'correct', text: `Correct Answer: ${r.answer}` });
+                entries.push({ type: 'explanation', text: `Explanation: ${r.explanation}` });
+                entries.push({ type: 'divider' });
+            }
+        });
+
+        const scrollContainer = this.add.container(0, 0).setDepth(502);
+        let curY = contentStartY + 10;
+        const lineSpacing = 8;
+
+        entries.forEach(entry => {
+            if (entry.type === 'divider') {
+                const line = this.add.graphics().setDepth(502);
+                line.lineStyle(1, 0xA3B18A, 0.4);
+                line.lineBetween(contentPadX, curY + 6, contentPadX + contentW, curY + 6);
+                scrollContainer.add(line);
+                curY += 18;
+                return;
+            }
+
+            const colorMap = {
+                question:    "#ffffff",
+                answer:      "#A3B18A",
+                correct:     "#76c442",
+                wrong:       "#BC4749",
+                explanation: "#aaaaaa"
+            };
+
+            const t = this.add.text(contentPadX, curY, entry.text, {
+                fontFamily: '"Press Start 2P"',
+                fontSize: "7px",
+                fill: colorMap[entry.type] || "#ffffff",
+                wordWrap: { width: contentW },
+                lineSpacing: 5,
+                resolution: 2
+            });
+            scrollContainer.add(t);
+            curY += t.height + lineSpacing;
+        });
+
+        const totalContentH = curY - contentStartY;
+        const visibleH = modalH - 80;
+
+        const maskShape = this.make.graphics();
+        maskShape.fillRect(modalX, contentStartY, modalW, visibleH);
+        const mask = maskShape.createGeometryMask();
+        scrollContainer.setMask(mask);
+
+        let scrollY = 0;
+        const maxScroll = Math.max(0, totalContentH - visibleH + 20);
+
+        this.input.on('wheel', (pointer, gameObjects, deltaX, deltaY) => {
+            scrollY = Phaser.Math.Clamp(scrollY + deltaY * 0.5, 0, maxScroll);
+            scrollContainer.y = -scrollY;
+        });
+
+        const hint = this.add.text(width / 2, modalY + modalH - 24, "[ Press SPACE or Click to Continue ]", {
+            fontFamily: '"Press Start 2P"',
+            fontSize: "7px",
+            fill: "#588157",
+            align: "center"
+        }).setOrigin(0.5, 1).setDepth(503);
+
+        this.tweens.add({
+            targets: hint,
+            alpha: 0.3,
+            duration: 700,
+            yoyo: true,
+            repeat: -1
+        });
+
+        const proceed = () => {
+            this.input.off('wheel');
+            this.input.keyboard.off('keydown-SPACE', proceed);
+            this.input.off('pointerdown', proceed);
+            this.startPageTransition('Hallway');
+        };
+
+        this.input.keyboard.once('keydown-SPACE', proceed);
+        this.input.once('pointerdown', proceed);
     }
 
     update(){ if (!this.mobileControls) return; }

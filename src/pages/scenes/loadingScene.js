@@ -42,7 +42,13 @@ export default class LoadingScene extends Phaser.Scene {
             fill: "#ffffff" 
         }).setOrigin(0.5);
 
-        AssetLib.spritesheets.forEach(asset => { this.load.spritesheet(asset.key, asset.path, { frameWidth: asset.width, frameHeight: asset.height }) });
+        AssetLib.spritesheets.forEach(asset => { 
+            this.load.spritesheet(asset.key, asset.path, {
+                frameWidth: asset.width, 
+                frameHeight: asset.height,
+                ...(asset.end !== undefined && { endFrame: asset.end })
+            });
+        });
         AssetLib.images.forEach(asset => this.load.image(asset.key, asset.path));
         AssetLib.audio.forEach(asset => this.load.audio(asset.key, asset.path));
 

@@ -11,13 +11,13 @@ export const AssetLib = {
         { key: 'backfemale', path: 'assets/Character/BackFemale.png', width: 50, height: 50 },
 
         // NPC
-        { key: 'female1', path: 'assets/Character/NPC/Female1.png', width: 50, height: 50 },
-        { key: 'female2', path: 'assets/Character/NPC/Female2.png', width: 50, height: 50 },
-        { key: 'female3', path: 'assets/Character/NPC/Female3.png', width: 50, height: 50 },
-        { key: 'male1', path: 'assets/Character/NPC/Male1.png', width: 50, height: 50 },
-        { key: 'male2', path: 'assets/Character/NPC/Male2.png', width: 50, height: 50 },
-        { key: 'musicmale', path: 'assets/Character/NPC/MusicMale.png', width: 50, height: 50 },
-        { key: 'group', path: 'assets/Character/NPC/Group.png', width: 50, height: 50 },
+        { key: 'female1', path: 'assets/Character/NPC/Female1.png', width: 50, height: 50, end: 4 },
+        { key: 'female2', path: 'assets/Character/NPC/Female2.png', width: 50, height: 50, end: 3 },
+        { key: 'female3', path: 'assets/Character/NPC/Female3.png', width: 50, height: 50, end: 3 },
+        { key: 'male1', path: 'assets/Character/NPC/Male1.png', width: 50, height: 50, end: 2 },
+        { key: 'male2', path: 'assets/Character/NPC/Male2.png', width: 50, height: 50, end: 3 },
+        { key: 'musicmale', path: 'assets/Character/NPC/MusicMale.png', width: 50, height: 50, end: 3 },
+        { key: 'group', path: 'assets/Character/NPC/Group.png', width: 50, height: 50, end: 5 },
 
         // background
             // male
