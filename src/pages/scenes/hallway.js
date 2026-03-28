@@ -63,20 +63,16 @@ export default class Hallway extends Phaser.Scene {
         this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
 
         let existingAudio = this.sound.get('audiosample');                                                          // audio
-        if (!existingAudio){
-            this.gameAudio = this.sound.add('audiosample', { loop: true });
-            this.gameAudio.play();
-        } else{
-            this.gameAudio = existingAudio;
+        if (!existingAudio) { this.gameAudio = this.sound.add('audiosample', { loop: true });
+        } else { this.gameAudio = existingAudio; }
 
-            if (!this.gameAudio.isPlaying) {
-                this.gameAudio.play();
-            }
-        }
+        const startAudio = () => {
+            if (this.sound.context.state === 'suspended') { this.sound.context.resume(); }
+            if (!this.gameAudio.isPlaying) { this.gameAudio.play(); }
+        };
+        startAudio();
 
-        if (this.sound.context.state === 'suspended'){
-            this.sound.context.resume();
-        }
+        this.input.once('pointerdown', () => { startAudio(); });
 
         this.settings = new Settings(this);                                                                         // settings
         this.settings.setDepth(3000);

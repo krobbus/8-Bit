@@ -56,17 +56,17 @@ export default class Classroom extends Phaser.Scene {
         const playerName = (userData && userData.name) ? userData.name : "Guest";
         this.gender = (userData && userData.gender) ? userData.gender.toLowerCase() : 'male';
 
-        this.headerContainer = this.add.container(0, 10);                                                              // header
+        this.headerContainer = this.add.container(0, 80);                                                              // header
             const CourseText = this.add.text(screenCenterX, 30, `${this.selectedCourse}`, {  
                 fontFamily: '"Press Start 2P"',
-                fontSize: "14px",
+                fontSize: "10px",
                 color: "#344E41",
                 align: "center"
             }).setOrigin(0.5, 0);
 
             const typeText = this.add.text(screenCenterX, 60, `${this.selectedType}`, {
                 fontFamily: '"Press Start 2P"',
-                fontSize: "12px",
+                fontSize: "8px",
                 color: "#588157",
                 align: "center"
             }).setOrigin(0.5, 0);
@@ -75,7 +75,7 @@ export default class Classroom extends Phaser.Scene {
             const padding = 20;
             const totalTextHeight = CourseText.height + gap + typeText.height;
             const headerHeight = totalTextHeight + (padding * 2);
-            const headerWidth = Math.max(CourseText.width, typeText.width) + 40;
+            const headerWidth = Math.max(CourseText.width, typeText.width) + 140;
             const headerBottom = gap + headerHeight;
 
             this.headerWidth = headerWidth;
@@ -115,21 +115,17 @@ export default class Classroom extends Phaser.Scene {
         this.nameContainer.add([this.nameBg, this.nameText]);
         this.nameContainer.setDepth(110);
         
-        let existingAudio = this.sound.get('audiosample');                                                             // audio
-        if (!existingAudio){
-            this.gameAudio = this.sound.add('audiosample', { loop: true });
-            this.gameAudio.play();
-        } else{
-            this.gameAudio = existingAudio;
+        let existingAudio = this.sound.get('audiosample');                                                          // audio
+        if (!existingAudio) { this.gameAudio = this.sound.add('audiosample', { loop: true });
+        } else { this.gameAudio = existingAudio; }
 
-            if (!this.gameAudio.isPlaying) {
-                this.gameAudio.play();
-            }
-        }
+        const startAudio = () => {
+            if (this.sound.context.state === 'suspended') { this.sound.context.resume(); }
+            if (!this.gameAudio.isPlaying) { this.gameAudio.play(); }
+        };
+        startAudio();
 
-        if (this.sound.context.state === 'suspended'){
-            this.sound.context.resume();
-        }
+        this.input.once('pointerdown', () => { startAudio(); });
 
         this.settings = new Settings(this);                                                                           // settings
         this.settings.setDepth(3000);
@@ -140,7 +136,6 @@ export default class Classroom extends Phaser.Scene {
             .on("pointerdown", () => this.settings.toggle());
         
         this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-        let debugGraphics = this.add.graphics().lineStyle(2, 0x00ff00, 1);
         this.activeZone = null;
 
         const savedMode = localStorage.getItem('mobileMode');
@@ -178,230 +173,6 @@ export default class Classroom extends Phaser.Scene {
         });
     }
 
-    questionUI(question){
-        if (this.questionContainer) this.questionContainer.destroy();
-
-        this.questionContainer = this.add.container(0, 20).setDepth(120);
-            const screenCenterX = this.cameras.main.worldView.x + this.cameras.main.width / 2; 
-            const padding = 30;
-            const verticalGap = 5;
-            const boxWidth = this.headerWidth;
-            const boxY = this.headerBottom + verticalGap;
-                
-            this.questionText = this.add.text(screenCenterX, 0, question, {
-                fontFamily: '"Press Start 2P"',
-                fontSize: "12px",
-                fill: "#ffffff",
-                align: "center",
-                wordWrap: { width: boxWidth - (padding * 2) },
-                lineSpacing: 10,
-                resolution: 2
-            }).setOrigin(0.5, 0);
-            
-            const dynamicHeight = this.questionText.height + (padding * 2);
-
-            this.questionContainerStyle = this.add.graphics()
-                .fillStyle(0x344E41, 1)
-                .lineStyle(2, 0xA3B18A, 1)
-                .fillRoundedRect(screenCenterX - boxWidth / 2, boxY, boxWidth, dynamicHeight, 10)
-                .strokeRoundedRect(screenCenterX - boxWidth / 2, boxY, boxWidth, dynamicHeight, 10);
-        this.questionText.y = boxY + padding;
-        this.questionContainer.add([this.questionContainerStyle, this.questionText]);
-    }
-
-    optionsUI(options) {
-        if (this.optionsContainer) this.optionsContainer.destroy();
-        const screenHeight = this.scale.height;
-        const screenWidth = this.scale.width;
-        const isAssessment = ["PERSONALITY ASSESSMENT", "SKILL ASSESSMENT"].includes(this.rawType);
-
-        if (isAssessment) {
-            this.optionsContainer = this.add.container(screenWidth / 2, screenHeight - 140).setDepth(130);
-        
-            const paddingSide = 24;
-            const paddingTopBottom = 14;
-            const maxWidth = 300;
-
-            options.forEach((optionText) => {
-                let offsetX = 0;
-                let offsetY = 0;
-
-                const textCheck = optionText.toUpperCase().trim();
-                if (textCheck.includes("STRONGLY AGREE")) { offsetX = -150; offsetY = -60; }
-                else if (textCheck.includes("STRONGLY DISAGREE")) { offsetX = 150; offsetY = 60; }
-                else if (textCheck.includes("DISAGREE")) { offsetX = -150; offsetY = 60; }
-                else if (textCheck.includes("AGREE")) { offsetX = 150; offsetY = -60; }
-                else { offsetX = 0; offsetY = 0; }
-
-                const optionsText = this.add.text(0, 0, optionText, {
-                    fontFamily: '"Press Start 2P"',
-                    fontSize: "10px",
-                    align: "center",
-                    fill: "#ffffff",
-                    wordWrap: { width: maxWidth - (paddingSide * 2) },
-                    lineSpacing: 6,
-                    resolution: 2
-                }).setOrigin(0.5);
-
-                const finalWidth = optionsText.width + (paddingSide * 2);
-                const finalHeight = optionsText.height + (paddingTopBottom * 2);
-
-                const optionsStyleContainer = this.add.graphics()
-                    .fillStyle(0x344E41, 1)
-                    .lineStyle(2, 0xA3B18A, 1)
-                    .fillRoundedRect(-finalWidth / 2, -finalHeight / 2, finalWidth, finalHeight, 8)
-                    .strokeRoundedRect(-finalWidth / 2, -finalHeight / 2, finalWidth, finalHeight, 8);
-
-                const hitArea = new Phaser.Geom.Rectangle(-finalWidth / 2, -finalHeight / 2, finalWidth, finalHeight);    
-                optionsStyleContainer.setInteractive(hitArea, Phaser.Geom.Rectangle.Contains)
-                    .on('pointerover', () => {
-                        if (!this.isSettingsOpen) optionsStyleContainer.setAlpha(0.8);
-                    })
-                    .on('pointerout', () => optionsStyleContainer.setAlpha(1))
-                    .on('pointerdown', () => {
-                        if (this.isSettingsOpen) return;
-                        this.handleAnswer(optionText);
-                    });
-
-                const buttonContainer = this.add.container(offsetX, offsetY, [optionsStyleContainer, optionsText]);
-                this.optionsContainer.add(buttonContainer);
-            });
-        } else {          
-            this.optionsContainer = this.add.container(120, 0).setDepth(130);
-            let currentY = 0;
-            
-            const verticalGap = 10;
-            const paddingSide = 24;
-            const paddingTopBottom = 14;
-            const maxWidth = 500;
-            
-            const alphabet = ['A', 'B', 'C'];
-            const startX = 200;
-            const offsetStep = 50;
-
-            options.forEach((optionText, index) => {
-                const currentX = startX - (index * offsetStep);
-                const label = alphabet[index] || (index + 1);
-
-                const optionsText = this.add.text(0, 0, `${label}. ${optionText}`, {
-                    fontFamily: '"Press Start 2P"',
-                    fontSize: "10px",
-                    align: "center",
-                    fill: "#ffffff",
-                    wordWrap: { width: maxWidth - (paddingSide * 2) },
-                    lineSpacing: 6,
-                    resolution: 2
-                }).setOrigin(0.5);
-
-                const finalWidth = optionsText.width + (paddingSide * 2);
-                const finalHeight = optionsText.height + (paddingTopBottom * 2);
-
-                optionsText.setPosition(finalWidth / 2, finalHeight / 2);
-
-                const optionsStyleContainer = this.add.graphics()
-                    .fillStyle(0x344E41, 1)
-                    .lineStyle(2, 0xA3B18A, 1)
-                    .fillRoundedRect(0, 0, finalWidth, finalHeight, 8)
-                    .strokeRoundedRect(0, 0, finalWidth, finalHeight, 8);
-
-                const hitArea = new Phaser.Geom.Rectangle(0, 0, finalWidth, finalHeight);    
-                optionsStyleContainer.setInteractive(hitArea, Phaser.Geom.Rectangle.Contains)
-                    .on('pointerover', () => {
-                        if (!this.isSettingsOpen) optionsStyleContainer.setAlpha(0.8);
-                    })
-                    .on('pointerout', () => optionsStyleContainer.setAlpha(1))
-                    .on('pointerdown', () => {
-                        if (this.isSettingsOpen) return;
-                        this.handleAnswer(optionText);
-                    });
-
-                const buttonContainer = this.add.container(currentX, currentY, [optionsStyleContainer, optionsText]);
-                this.optionsContainer.add(buttonContainer);
-                currentY += finalHeight + verticalGap;
-            });
-            
-            this.optionsContainer.y = screenHeight - currentY - 40;
-        }
-        /*
-        const verticalGap = 10;
-        const paddingSide = 24;
-        const paddingTopBottom = 14;
-        const maxWidth = 500;
-
-        this.optionsContainer = this.add.container(120, 0).setDepth(130);
-            let currentY = 0;
-            const options = ['A', 'B', 'C', 'D', 'E'];
-            const label = alphabet[index] || (index + 1)
-            const startX = 200;
-            const offsetStep = 50;
-
-        options.forEach((optionText, index) => {
-            const currentX = startX - (index * offsetStep);
-
-            const optionsText = this.add.text(0, 0, `${labels[index]}. ${optionText}`, {
-                fontFamily: '"Press Start 2P"',
-                fontSize: "10px",
-                align: "center",
-                fill: "#ffffff",
-                wordWrap: { width: maxWidth - (paddingSide * 2) },
-                lineSpacing: 6,
-                resolution: 2
-            }).setOrigin(0.5);
-
-            const finalWidth = optionsText.width + (paddingSide * 2);
-            const finalHeight = optionsText.height + (paddingTopBottom * 2);
-            optionsText.setPosition(finalWidth / 2, finalHeight / 2);
-
-            const optionsStyleContainer = this.add.graphics()
-                .fillStyle(0x344E41, 1)
-                .lineStyle(2, 0xA3B18A, 1)
-                .fillRoundedRect(0, 0, finalWidth, finalHeight, 8)
-                .strokeRoundedRect(0, 0, finalWidth, finalHeight, 8);
-
-            const hitArea = new Phaser.Geom.Rectangle(0, 0, finalWidth, finalHeight);    
-            optionsStyleContainer.setInteractive(hitArea, Phaser.Geom.Rectangle.Contains)
-                .on('pointerover', () => {
-                    if (!this.isSettingsOpen) optionsStyleContainer.setAlpha(0.8);
-                })
-                .on('pointerout', () => optionsStyleContainer.setAlpha(1))
-                .on('pointerdown', () => {
-                    if (this.isSettingsOpen) return;
-                    this.handleAnswer(optionText);
-                });
-            const buttonContainer = this.add.container(currentX, currentY, [optionsStyleContainer, optionsText]);
-            this.optionsContainer.add(buttonContainer);
-            currentY += finalHeight + verticalGap;
-        });
-        this.optionsContainer.y = screenHeight - currentY - 40;
-        */
-    }
-
-    getTextWidth(text, size) {
-        const tempText = this.add.text(0, 0, text, { 
-            fontFamily: '"Press Start 2P"', 
-            fontSize: `${size}px` 
-        }).setVisible(false);
-        const width = tempText.width;
-        tempText.destroy();
-        return width;
-    }
-
-    startThinkingAnimation() {
-        let dotCount = 0;
-        this.thinkingTimer = this.time.addEvent({
-            delay: 500,
-            callback: () => {
-                dotCount = (dotCount + 1) % 4;
-                const dots = ".".repeat(dotCount);
-                
-                this.questionUI(`Thinking questions${dots}`);
-                this.optionsUI([dots, dots, dots, dots]);
-            },
-            loop: true
-        });
-    }
-    stopThinkingAnimation() { if (this.thinkingTimer) this.thinkingTimer.remove(); }
-
     async loadQuestions(){
         const screenCenterX = this.cameras.main.worldView.x + this.cameras.main.width / 2;
         const screenCenterY = this.cameras.main.worldView.y + this.cameras.main.height / 2;
@@ -409,7 +180,7 @@ export default class Classroom extends Phaser.Scene {
         this.bg.play(`thinking${this.gender}`);
         this.startThinkingAnimation();
 
-        const isAssessment = ["PERSONALITY ASSESSMENT", "SKILL ASSESSMENT"].includes(this.rawType);
+        const isAssessment = this.rawType === 'Skill' || this.rawType === 'Personality';
         const endpoint = isAssessment ? '/api/generate-assessment' : '/api/generate-quiz';
 
         try {
@@ -445,9 +216,168 @@ export default class Classroom extends Phaser.Scene {
         } catch (err) {
             this.stopThinkingAnimation();
             this.questionUI("Oops... The AI is sleeping.");
-            this.optionsUI(["Error", "Error", "Error"]);
+            this.optionsUI(["Error", "Error", "Error", "Error"]);
         }
     }
+
+    questionUI(question){
+        if (this.questionContainer) this.questionContainer.destroy();
+
+        this.questionContainer = this.add.container(0, 90).setDepth(120);
+            const screenCenterX = this.cameras.main.worldView.x + this.cameras.main.width / 2; 
+            const padding = 30;
+            const verticalGap = 5;
+            const boxWidth = this.headerWidth;
+            const boxY = this.headerBottom + verticalGap;
+                
+            this.questionText = this.add.text(screenCenterX, 0, question, {
+                fontFamily: '"Press Start 2P"',
+                fontSize: "10px",
+                fill: "#ffffff",
+                align: "center",
+                wordWrap: { width: boxWidth - (padding * 2) },
+                lineSpacing: 10,
+                resolution: 2
+            }).setOrigin(0.5, 0);
+            
+            const dynamicHeight = this.questionText.height + (padding * 2);
+
+            this.questionContainerStyle = this.add.graphics()
+                .fillStyle(0x344E41, 1)
+                .lineStyle(2, 0xA3B18A, 1)
+                .fillRoundedRect(screenCenterX - boxWidth / 2, boxY, boxWidth, dynamicHeight, 10)
+                .strokeRoundedRect(screenCenterX - boxWidth / 2, boxY, boxWidth, dynamicHeight, 10);
+        this.questionText.y = boxY + padding;
+        this.questionContainer.add([this.questionContainerStyle, this.questionText]);
+    }
+
+    optionsUI(options) {
+        if (this.optionsContainer) this.optionsContainer.destroy();
+
+        const screenHeight = this.scale.height;
+        const screenWidth = this.scale.width;
+        const isAssessment = this.rawType === 'Skill' || this.rawType === 'Personality';
+
+        if (isAssessment) {
+            this.optionsContainer = this.add.container(screenWidth / 2, screenHeight - 140).setDepth(130);
+        
+            const paddingSide = 24;
+            const paddingTopBottom = 14;
+            const maxWidth = 300;
+
+            options.forEach((optionText) => {
+                let offsetX = 0;
+                let offsetY = 0;
+
+                const textCheck = optionText.toUpperCase().trim();
+                if (textCheck.includes("STRONGLY AGREE")) { offsetX = -100; offsetY = -50; }
+                else if (textCheck.includes("STRONGLY DISAGREE")) { offsetX = 100; offsetY = 50; }
+                else if (textCheck.includes("DISAGREE")) { offsetX = -100; offsetY = 50; }
+                else if (textCheck.includes("AGREE")) { offsetX = 100; offsetY = -50; }
+                else { offsetX = 0; offsetY = 0; }
+
+                const optionsText = this.add.text(0, 0, optionText, {
+                    fontFamily: '"Press Start 2P"',
+                    fontSize: "6px",
+                    align: "center",
+                    fill: "#ffffff",
+                    wordWrap: { width: maxWidth - (paddingSide * 2) },
+                    resolution: 2
+                }).setOrigin(0.5);
+
+                const finalWidth = optionsText.width + (paddingSide * 2);
+                const finalHeight = optionsText.height + (paddingTopBottom * 2);
+
+                const optionsStyleContainer = this.add.graphics()
+                    .fillStyle(0x344E41, 1)
+                    .lineStyle(2, 0xA3B18A, 1)
+                    .fillRoundedRect(-finalWidth / 2, -finalHeight / 2, finalWidth, finalHeight, 8)
+                    .strokeRoundedRect(-finalWidth / 2, -finalHeight / 2, finalWidth, finalHeight, 8);
+
+                const hitArea = new Phaser.Geom.Rectangle(-finalWidth / 2, -finalHeight / 2, finalWidth, finalHeight);    
+                optionsStyleContainer.setInteractive(hitArea, Phaser.Geom.Rectangle.Contains)
+                    .on('pointerover', () => {
+                        if (!this.isSettingsOpen) optionsStyleContainer.setAlpha(0.8);
+                    })
+                    .on('pointerout', () => optionsStyleContainer.setAlpha(1))
+                    .on('pointerdown', () => {
+                        if (this.isSettingsOpen) return;
+                        this.handleAnswer(optionText);
+                    });
+
+                const buttonContainer = this.add.container(offsetX, offsetY, [optionsStyleContainer, optionsText]);
+                this.optionsContainer.add(buttonContainer);
+            });
+        } else {          
+            this.optionsContainer = this.add.container(120, 0).setDepth(130);
+
+            let currentY = 0;
+            const verticalGap = 10;
+            const paddingSide = 24;
+            const paddingTopBottom = 14;
+            const maxWidth = 700;
+            const startX = 250;
+            const offsetStep = 50;
+
+            options.forEach((optionText, index) => {
+                const label    = String.fromCharCode(65 + index);
+                const currentX = startX - (index * offsetStep);
+
+                const optionsText = this.add.text(0, 0, `${label}. ${optionText}`, {
+                    fontFamily: '"Press Start 2P"',
+                    fontSize: "8px",
+                    align: "center",
+                    fill: "#ffffff",
+                    wordWrap: { width: maxWidth - (paddingSide * 2) },
+                    lineSpacing: 6,
+                    resolution: 2
+                }).setOrigin(0.5);
+
+                const finalWidth = optionsText.width + (paddingSide * 2);
+                const finalHeight = optionsText.height + (paddingTopBottom * 2);
+
+                optionsText.setPosition(finalWidth / 2, finalHeight / 2);
+
+                const optionsStyleContainer = this.add.graphics()
+                    .fillStyle(0x344E41, 1)
+                    .lineStyle(2, 0xA3B18A, 1)
+                    .fillRoundedRect(0, 0, finalWidth, finalHeight, 8)
+                    .strokeRoundedRect(0, 0, finalWidth, finalHeight, 8);
+
+                const hitArea = new Phaser.Geom.Rectangle(0, 0, finalWidth, finalHeight);    
+                optionsStyleContainer.setInteractive(hitArea, Phaser.Geom.Rectangle.Contains)
+                    .on('pointerover', () => {
+                        if (!this.isSettingsOpen) optionsStyleContainer.setAlpha(0.8);
+                    })
+                    .on('pointerout', () => optionsStyleContainer.setAlpha(1))
+                    .on('pointerdown', () => {
+                        if (this.isSettingsOpen) return;
+                        this.handleAnswer(optionText);
+                    });
+
+                const buttonContainer = this.add.container(currentX, currentY, [optionsStyleContainer, optionsText]);
+                this.optionsContainer.add(buttonContainer);
+                currentY += finalHeight + verticalGap;
+            });
+            this.optionsContainer.y = screenHeight - currentY - 80;
+        }
+    }
+
+    startThinkingAnimation() {
+        let dotCount = 0;
+        this.thinkingTimer = this.time.addEvent({
+            delay: 500,
+            callback: () => {
+                dotCount = (dotCount + 1) % 4;
+                const dots = ".".repeat(dotCount);
+                
+                this.questionUI(`Thinking questions${dots}`);
+                this.optionsUI([dots, dots, dots, dots]);
+            },
+            loop: true
+        });
+    }
+    stopThinkingAnimation() { if (this.thinkingTimer) this.thinkingTimer.remove(); }
 
     getStudentPos(id) {
         const positions = {
@@ -462,37 +392,29 @@ export default class Classroom extends Phaser.Scene {
     handleAnswer(selectedOption) {
         if (this.isAnswering) return;
         this.isAnswering = true;
+
+        const isAssessment = this.rawType === 'Skill' || this.rawType === 'Personality';
         if (this.optionsContainer) this.optionsContainer.setVisible(false);
 
         const currentQ = this.courseQuestions[this.currentQuestionIndex];
-        if (isAssessment) {
-            currentQ.userResponse = selectedOption; 
+        if (isAssessment) currentQ.userResponse = selectedOption;
         
-            this.time.delayedCall(500, () => {
-                this.isAnswering = false;
-                this.currentQuestionIndex++;
-                
-                if (this.currentQuestionIndex < this.courseQuestions.length) {
-                    const nextQ = this.courseQuestions[this.currentQuestionIndex];
-                    this.questionUI(nextQ.question);
-                    this.optionsUI(nextQ.options || []);
-                    if (this.optionsContainer) this.optionsContainer.setVisible(true);
-                } else {
-                    this.finishAssessment();
-                }
-            });
-            return;
-        }
+        const npcCount = isAssessment ? 4 : 3;
 
-        const correctAnswer = currentQ.answer || currentQ.correctAnswer; 
-        const otherOptions = currentQ.options.filter(opt => opt !== selectedOption);
-        
-        const shuffledNPCs = [1, 3, 4, 5, 6, 7, 8].sort(() => 0.5 - Math.random()).slice(0, 3);
+        const otherOptions = isAssessment
+            ? [...currentQ.options].sort(() => 0.5 - Math.random())
+            : currentQ.options.filter(opt => opt !== selectedOption).sort(() => 0.5 - Math.random());
+
+        const shuffledNPCs = [1, 3, 4, 5, 6, 7, 8].sort(() => 0.5 - Math.random()).slice(0, npcCount);
+
         const sequence = [
             { id: 2, option: selectedOption, isPlayer: true },
-            { id: shuffledNPCs[0], option: otherOptions[0] || "...", isPlayer: false },
-            { id: shuffledNPCs[1], option: otherOptions[1] || "...", isPlayer: false },
-            { id: shuffledNPCs[2], option: otherOptions[2] || "...", isPlayer: false }
+            ...shuffledNPCs
+                .map((npcId, i) => ({ 
+                    id: npcId, 
+                    option: otherOptions[i] || "...", 
+                    isPlayer: false 
+                }))
         ];
 
         let delayTimer = 0;
@@ -501,48 +423,55 @@ export default class Classroom extends Phaser.Scene {
                 this.bg.play(`student${turn.id}${this.gender}`, true);
                 
                 const pos = this.getStudentPos(turn.id);
-                const bubbleDepth = turn.isPlayer ? 150 : 140;
-                this.showAnswerBubble(turn.option, pos.x, pos.y, "pending", turn.isPlayer, bubbleDepth, turn.count);
+                this.showAnswerBubble(turn.option, pos.x, pos.y, "pending", turn.isPlayer, turn.isPlayer ? 150 : 140);
             });
-
             delayTimer += 800;
-            this.time.delayedCall(delayTimer, () => {
-                this.bg.play(`default${this.gender}`, true);
-            });
-
+            this.time.delayedCall(delayTimer, () => { this.bg.play(`default${this.gender}`, true); });
             delayTimer += 200;
         });
 
-        this.time.delayedCall(delayTimer + 1500, () => {
-            this.questionUI(`The correct answer is:\n${correctAnswer}`);
-            this.children.list.filter(c => c.name === 'answerBubble').forEach(b => {
-                this.highlightBubble(b, b.getData('text') === correctAnswer);
+        if (isAssessment) {
+            this.time.delayedCall(delayTimer + 1200, () => { this.cleanupAndNext(); });
+        } else {
+            const correctAnswer = currentQ.answer || currentQ.correctAnswer;
+
+            this.time.delayedCall(delayTimer + 1500, () => {
+                this.questionUI(`The correct answer is:\n${correctAnswer}`);
+                this.children.list
+                    .filter(c => c.name === 'answerBubble')
+                    .forEach(b => this.highlightBubble(b, b.getData('text') === correctAnswer));
             });
-        });
-
-        this.time.delayedCall(delayTimer + 3500, () => {
-            this.questionUI(`Explanation:\n${currentQ.explanation}`);
-        });
-
-        this.time.delayedCall(delayTimer + 6500, () => {
-            this.isAnswering = false;
-            this.currentQuestionIndex++;
-            this.children.list.filter(c => c.name === 'answerBubble').forEach(c => c.destroy());
-
-            if (this.currentQuestionIndex < this.courseQuestions.length) {
-                const nextQ = this.courseQuestions[this.currentQuestionIndex];
-                this.questionUI(nextQ.question);
-                this.optionsUI(nextQ.options || []);
-            } else {
-                this.finishAssessment();
-            }
-        });
+            this.time.delayedCall(delayTimer + 5500, () => { 
+                this.children.list
+                    .filter(c => c.name === 'answerBubble')
+                    .forEach(c => c.destroy());
+                this.questionUI(currentQ.explanation);
+            });
+            this.time.delayedCall(delayTimer + 10500, () => { this.cleanupAndNext(); });
+        }
     }
 
-    showAnswerBubble(text, x, y, status, isPlayer, depth, count) {
+    cleanupAndNext() {
+        this.isAnswering = false;
+        this.currentQuestionIndex++;
+
+        this.children.list
+            .filter(c => c.name === 'answerBubble')
+            .forEach(c => c.destroy());
+
+        if (this.currentQuestionIndex < this.courseQuestions.length) {
+            const nextQ = this.courseQuestions[this.currentQuestionIndex];
+            this.questionUI(nextQ.question);
+            this.optionsUI(nextQ.options || []);
+            if (this.optionsContainer) this.optionsContainer.setVisible(true);
+        } else {
+            this.finishAssessment();
+        }
+    }
+
+    showAnswerBubble(text, x, y, status, isPlayer, depth) {
         const container = this.add.container(x, y);
         container.setName('answerBubble');
-        container.setData('count', count);
         container.setData('text', text);
             let bgColor = 0x344E41;
             if (status === "correct") bgColor = 0x588157;
@@ -570,9 +499,9 @@ export default class Classroom extends Phaser.Scene {
                 .strokeRoundedRect(-bgW / 2, -bgH / 2, bgW, bgH, 10);
             
             bubbleBg.fillTriangle(
-                triangleX - 6, bgH / 2, 
-                triangleX + 6, bgH / 2, 
-                triangleX, bgH / 2 + 12
+                -6, bgH / 2, 
+                6, bgH / 2, 
+                0, bgH / 2 + 12
             );
         container.add([bubbleBg, answerText]);
         container.setDepth(depth);
@@ -589,10 +518,10 @@ export default class Classroom extends Phaser.Scene {
 
     highlightBubble(container, isCorrect) {
         const bg = container.getByName('bg');
+        const text = container.list.find(child => child instanceof Phaser.GameObjects.Text);
         bg.clear();
 
         const color = isCorrect ? 0x588157 : 0xBC4749;
-        const text = container.list.find(child => child instanceof Phaser.GameObjects.Text);
         const bgW = Math.max(60, text.width + 16);
         const bgH = text.height + 16;
 
@@ -611,32 +540,16 @@ export default class Classroom extends Phaser.Scene {
         });
     }
 
-    loadNextQuestion() {
-        const nextQ = this.courseQuestions[this.currentQuestionIndex];
-        this.questionUI(nextQ.question);
-        this.optionsUI(nextQ.options || []);
-
-        this.bg.play(`thinking${this.gender}`, true);
-        
-        this.time.delayedCall(800, () => { 
-            this.bg.play(`default${this.gender}`, true); 
-        });
-    }
-
     finishAssessment() {
         this.questionUI("Assessment Complete! Analyzing your career matches...");
         this.bg.play(`default${this.gender}`);
-        this.optionsContainer.destroy();
-
+        if (this.optionsContainer) this.optionsContainer.destroy();
         this.time.delayedCall(2000, () => {
             this.startPageTransition('Hallway');
         });
     }
 
-    update(){
-        if (!this.mobileControls) return;
-    }
-
+    update(){ if (!this.mobileControls) return; }
     updateMobileUI() { this.mobileControls.setVisible(this.isMobileMode); }
     toggleSettings() { this.settingsPanel.setVisible(!this.settingsPanel.visible); }
 
