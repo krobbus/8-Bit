@@ -13,6 +13,7 @@ export default class Classroom extends Phaser.Scene {
         this.currentQuestionIndex = 0;
         this.isAnswering = false;
         this.assessmentResults = [];
+        this.isSettingsOpen = false;
     }
 
     init(data) {
@@ -254,11 +255,11 @@ export default class Classroom extends Phaser.Scene {
                 fontFamily: '"Press Start 2P"', 
                 fontSize: "10px"
             });
-            const headerWidth = Math.max(tempCourseText.width, tempTypeText.width) + 180;
+            const headerWidth = Math.max(tempCourseText.width, tempTypeText.width) + 160;
             this.headerWidth = headerWidth;
                 tempCourseText.destroy();
                 tempTypeText.destroy();
-            const boxWidth = this.headerWidth + 180;
+            const boxWidth = this.headerWidth + 160;
 
             const headerLineHeight = 18;
             const headerGap = 8;
@@ -323,7 +324,7 @@ export default class Classroom extends Phaser.Scene {
                 );
 
             this.questionContainerStyle = this.add.graphics()
-                .fillStyle(0x486947, 0.9)
+                .fillStyle(0x486947, 1)
                 .lineStyle(2, 0xA3B18A, 1)
                 .fillRoundedRect(screenCenterX - boxWidth / 2, boxY, boxWidth, totalHeight, 10)
                 .strokeRoundedRect(screenCenterX - boxWidth / 2, boxY, boxWidth, totalHeight, 10);
@@ -652,10 +653,6 @@ export default class Classroom extends Phaser.Scene {
 
         this.saveAssessmentResults();
         this.showResultsModal();
-
-        this.time.delayedCall(2000, () => {
-            this.startPageTransition('Hallway');
-        });
     }
 
     async saveAssessmentResults(){
@@ -665,15 +662,10 @@ export default class Classroom extends Phaser.Scene {
 
             const key = `${this.courseCode}_${this.rawType}`; 
             const score = this.rawType === 'CourseRelated'
-                ? {
-                    correct: this.assessmentResults.filter(r => r.correct).length
-                }
-                : null;
+                ? { correct: this.assessmentResults.filter(r => r.correct).length } : null;
 
             const resultsIndexed = {};
-            this.assessmentResults.forEach((item, i) => {
-                resultsIndexed[i] = [item];
-            });
+            this.assessmentResults.forEach((item, i) => { resultsIndexed[i] = [item]; });
 
             const payload = {
                 course: this.courseCode,
@@ -693,9 +685,11 @@ export default class Classroom extends Phaser.Scene {
         const width = this.scale.width;
         const height = this.scale.height;
         const isAssessment = this.rawType === 'Skill' || this.rawType === 'Personality';
+        this.input.keyboard.enabled = false;
 
         const overlay = this.add.rectangle(width / 2, height / 2, width, height, 0x000000, 0.85)
-            .setDepth(500).setScrollFactor(0);
+            .setDepth(500)
+            .setScrollFactor(0);
 
         const modalW = width - 80;
         const modalH = height - 80;
@@ -708,20 +702,24 @@ export default class Classroom extends Phaser.Scene {
             .fillRoundedRect(modalX, modalY, modalW, modalH, 12)
             .strokeRoundedRect(modalX, modalY, modalW, modalH, 12);
 
-        const titleText = isAssessment ? 
-            "Assessment Complete!" 
-            : `Score: ${this.assessmentResults.filter(r => r.correct).length} / ${this.assessmentResults.length}`;
+        const titleText = isAssessment ? "Assessment Complete!" : `Score: ${this.assessmentResults.filter(r => r.correct).length} / ${this.assessmentResults.length}`;
         
-            this.add.text(width / 2, modalY + 24, titleText, {
-                fontFamily: '"Press Start 2P"',
-                fontSize: "12px",
-                fill: "#A3B18A",
-                align: "center"
-            }).setOrigin(0.5, 0).setDepth(502);
+        this.add.text(width / 2, modalY + 24, titleText, {
+            fontFamily: '"Press Start 2P"',
+            fontSize: "12px",
+            fill: "#A3B18A",
+            align: "center"
+        }).setOrigin(0.5, 0).setDepth(502);
 
         const contentStartY = modalY + 60;
         const contentPadX = modalX + 24;
         const contentW = modalW - 48;
+
+        const scrollbarW    = 8;
+        const scrollbarX    = modalX + modalW - 16;
+        const scrollbarMinY = contentStartY + 4;
+        const visibleH      = modalH - 80;
+        const scrollbarMaxH = visibleH - 8;
 
         let entries = [];
 
@@ -765,7 +763,7 @@ export default class Classroom extends Phaser.Scene {
                 fontFamily: '"Press Start 2P"',
                 fontSize: "7px",
                 fill: colorMap[entry.type] || "#ffffff",
-                wordWrap: { width: contentW },
+                wordWrap: { width: contentW - scrollbarW - 8},
                 lineSpacing: 5,
                 resolution: 2
             });
@@ -774,20 +772,63 @@ export default class Classroom extends Phaser.Scene {
         });
 
         const totalContentH = curY - contentStartY;
-        const visibleH = modalH - 80;
-
+        const maxScroll     = Math.max(0, totalContentH - visibleH + 20);
+ 
         const maskShape = this.make.graphics();
-        maskShape.fillRect(modalX, contentStartY, modalW, visibleH);
+        maskShape.fillRect(modalX, contentStartY, modalW - 20, visibleH);
         const mask = maskShape.createGeometryMask();
         scrollContainer.setMask(mask);
 
-        let scrollY = 0;
-        const maxScroll = Math.max(0, totalContentH - visibleH + 20);
-
-        this.input.on('wheel', (pointer, gameObjects, deltaX, deltaY) => {
-            scrollY = Phaser.Math.Clamp(scrollY + deltaY * 0.5, 0, maxScroll);
+        const trackBg = this.add.graphics().setDepth(503)
+            .fillStyle(0x1a2e1f, 0.8)
+            .fillRoundedRect(scrollbarX, scrollbarMinY, scrollbarW, scrollbarMaxH, 4);
+ 
+        const thumbH    = maxScroll > 0
+            ? Math.max(24, (visibleH / (totalContentH + 20)) * scrollbarMaxH)
+            : scrollbarMaxH;
+        const thumbGfx  = this.add.graphics().setDepth(504);
+        let   scrollY   = 0;
+ 
+        const redrawThumb = () => {
+            thumbGfx.clear();
+            const thumbY = maxScroll > 0
+                ? scrollbarMinY + (scrollY / maxScroll) * (scrollbarMaxH - thumbH)
+                : scrollbarMinY;
+            thumbGfx
+                .fillStyle(0xA3B18A, 0.9)
+                .fillRoundedRect(scrollbarX, thumbY, scrollbarW, thumbH, 4);
+        };
+        redrawThumb();
+ 
+        const applyScroll = (newY) => {
+            scrollY = Phaser.Math.Clamp(newY, 0, maxScroll);
             scrollContainer.y = -scrollY;
+            redrawThumb();
+        };
+
+        let isDragging   = false;
+        let dragStartY   = 0;
+        let dragScrollY0 = 0;
+
+        const scrollbarZone = this.add.zone(
+            scrollbarX, scrollbarMinY,
+            scrollbarW + 10, scrollbarMaxH
+        ).setOrigin(0, 0).setDepth(505).setInteractive();
+ 
+        scrollbarZone.on('pointerdown', (ptr) => {
+            isDragging    = true;
+            dragStartY    = ptr.y;
+            dragScrollY0  = scrollY;
         });
+ 
+        this.input.on('pointermove', (ptr) => {
+            if (!isDragging) return;
+            const delta    = ptr.y - dragStartY;
+            const scrollPx = (delta / (scrollbarMaxH - thumbH)) * maxScroll;
+            applyScroll(dragScrollY0 + scrollPx);
+        });
+ 
+        this.input.on('pointerup', () => { isDragging = false; });
 
         const hint = this.add.text(width / 2, modalY + modalH - 24, "[ Press any key to continue ]", {
             fontFamily: '"Press Start 2P"',
@@ -804,18 +845,19 @@ export default class Classroom extends Phaser.Scene {
             repeat: -1
         });
 
-        this.finishingHandler = () => this.removeResults();
-        this.time.delayedCall(300, () => {
+        this.time.delayedCall(400, () => {
+            this.input.keyboard.enabled = true;
+ 
+            this.finishingHandler = () => {
+                this.input.off('wheel');
+                this.input.off('pointermove');
+                this.input.off('pointerup');
+                this.input.keyboard.off('keydown', this.finishingHandler);
+                this.startPageTransition('Hallway');
+            };
+ 
             this.input.keyboard.once('keydown', this.finishingHandler);
-            //this.input.once('pointerdown', this.finishingHandler);
         });
-    }
-
-    removeResults(){
-        this.input.off('wheel');
-        this.input.keyboard.off('keydown', this.finishingHandler);
-        this.input.off('pointerdown', this.finishingHandler);
-        this.startPageTransition('Hallway');
     }
 
     update(){ if (!this.mobileControls) return; }
