@@ -57,43 +57,6 @@ export default class Classroom extends Phaser.Scene {
         const playerName = (userData && userData.name) ? userData.name : "Guest";
         this.gender = (userData && userData.gender) ? userData.gender.toLowerCase() : 'male';
 
-        this.headerContainer = this.add.container(0, 80);                                                              // header
-            const CourseText = this.add.text(screenCenterX, 30, `${this.selectedCourse}`, {  
-                fontFamily: '"Press Start 2P"',
-                fontSize: "10px",
-                color: "#344E41",
-                align: "center"
-            }).setOrigin(0.5, 0);
-
-            const typeText = this.add.text(screenCenterX, 60, `${this.selectedType}`, {
-                fontFamily: '"Press Start 2P"',
-                fontSize: "8px",
-                color: "#588157",
-                align: "center"
-            }).setOrigin(0.5, 0);
-
-            const gap = 10;
-            const padding = 20;
-            const totalTextHeight = CourseText.height + gap + typeText.height;
-            const headerHeight = totalTextHeight + (padding * 2);
-            const headerWidth = Math.max(CourseText.width, typeText.width) + 140;
-            const headerBottom = gap + headerHeight;
-
-            this.headerWidth = headerWidth;
-            this.headerBottom = headerBottom;
-
-            CourseText.y = gap + padding;
-            typeText.y = CourseText.y + CourseText.height + gap;
-            
-            this.headerContainerStyle = this.add.graphics()
-                .clear()
-                .fillStyle(0xA3B18A, 1)
-                .lineStyle(4, 0x344E41, 1)
-                .fillRoundedRect(screenCenterX - headerWidth / 2, gap, headerWidth, headerHeight, 10)
-                .strokeRoundedRect(screenCenterX - headerWidth / 2, gap, headerWidth, headerHeight, 10);
-        this.headerContainer.add([this.headerContainerStyle, CourseText, typeText]);
-        this.headerContainer.setDepth(100);
-
         this.bg = this.add.sprite(screenCenterX, screenCenterY, `default${this.gender}`).setScale(1.5);                // bg
 
         this.nameContainer = this.add.container(230, 300);                                                      // name tag
@@ -148,7 +111,7 @@ export default class Classroom extends Phaser.Scene {
         this.mobileControls = createMobileControls(this);
         this.updateMobileUI();
         this.classroomAnims();
-        this.loadQuestions();
+        this.showStartScreen();
     }
 
     classroomAnims() {
@@ -172,6 +135,46 @@ export default class Classroom extends Phaser.Scene {
                 });
             }
         });
+    }
+
+    showStartScreen() {
+        const screenCenterX = this.cameras.main.worldView.x + this.cameras.main.width / 2;
+        const screenCenterY = this.cameras.main.worldView.y + this.cameras.main.height / 2;
+ 
+        this.bg.play(`default${this.gender}`);
+        this.questionUI(null);
+ 
+        this.startPromptText = this.add.text(screenCenterX, screenCenterY + 140, "PRESS ANY KEY TO START", {
+            fontFamily: '"Press Start 2P"',
+            fontSize: "10px",
+            fill: "#344E41",
+            align: "center"
+        }).setOrigin(0.5).setDepth(130);
+ 
+        this.tweens.add({
+            targets: this.startPromptText,
+            alpha: 0.2,
+            duration: 600,
+            yoyo: true,
+            repeat: -1
+        });
+ 
+        this.startHandler = () => this.beginAssessment();
+        this.time.delayedCall(300, () => {
+            this.input.keyboard.once('keydown', this.startHandler);
+            this.input.once('pointerdown', this.startHandler);
+        });
+    }
+
+    beginAssessment() {
+        this.input.keyboard.off('keydown', this.startHandler);
+        this.input.off('pointerdown', this.startHandler);
+ 
+        if (this.startPromptText) {
+            this.startPromptText.destroy();
+            this.startPromptText = null;
+        }
+        this.loadQuestions();
     }
 
     async loadQuestions(){
@@ -221,19 +224,68 @@ export default class Classroom extends Phaser.Scene {
         }
     }
 
-    questionUI(question){
+    questionUI(question, isStartScreen = false){
         if (this.questionContainer) this.questionContainer.destroy();
 
-        this.questionContainer = this.add.container(0, 85).setDepth(120);
+        this.questionContainer = this.add.container(0, 75).setDepth(120);
             const screenCenterX = this.cameras.main.worldView.x + this.cameras.main.width / 2; 
-            const padding = 30;
+
+            const padding = 20;
             const verticalGap = 5;
+
+            const tempCourseText = this.add.text(-9999, -9999, this.selectedCourse, {
+                fontFamily: '"Press Start 2P"', 
+                fontSize: "12px"
+            });
+
+            const tempTypeText = this.add.text(-9999, -9999, this.selectedType, {
+                fontFamily: '"Press Start 2P"', 
+                fontSize: "10px"
+            });
+            const headerWidth = Math.max(tempCourseText.width, tempTypeText.width) + 160;
+            tempCourseText.destroy();
+            tempTypeText.destroy();
+
+            this.headerWidth = headerWidth;
             const boxWidth = this.headerWidth + 160;
-            const boxY = this.headerBottom + verticalGap;
-                
-            this.questionText = this.add.text(screenCenterX, 0, question, {
+
+            const headerLineHeight = 18;
+            const headerGap = 8;
+            const headerTotalHeight = headerLineHeight + headerGap + 10 + padding; 
+            const boxY = verticalGap;
+
+            const CourseText = this.add.text(screenCenterX, boxY + padding, `${this.selectedCourse}`, {
+                fontFamily: '"Press Start 2P"',
+                fontSize: "12px",
+                color: "#ffffff",
+                align: "center",
+                resolution: 2
+            }).setOrigin(0.5, 0);
+
+            const typeText = this.add.text(screenCenterX, CourseText.y + CourseText.height + headerGap, `${this.selectedType}`, {
                 fontFamily: '"Press Start 2P"',
                 fontSize: "10px",
+                color: "#588157",
+                align: "center",
+                resolution: 2
+            }).setOrigin(0.5, 0);
+
+            const dividerY = typeText.y + typeText.height + padding / 2;
+
+            const isRealQuestion = question !== null && question !== undefined
+            && this.courseQuestions.length > 0
+            && this.currentQuestionIndex < this.courseQuestions.length
+            && question === this.courseQuestions[this.currentQuestionIndex]?.question;
+ 
+            const displayText = question === null || question === undefined
+                ? ""
+                : isRealQuestion
+                    ? `Q${this.currentQuestionIndex + 1}: ${question}`
+                    : question;
+                
+            this.questionText = this.add.text(screenCenterX, dividerY + padding / 2, displayText, {
+                fontFamily: '"Press Start 2P"',
+                fontSize: "12px",
                 fill: "#ffffff",
                 align: "center",
                 wordWrap: { width: boxWidth - (padding * 2) },
@@ -241,15 +293,43 @@ export default class Classroom extends Phaser.Scene {
                 resolution: 2
             }).setOrigin(0.5, 0);
             
-            const dynamicHeight = this.questionText.height + (padding * 2);
+            const bodyExtra = (question !== null && question !== undefined) 
+                ? this.questionText.height + padding 
+                : padding / 2;
+            const totalHeight = (dividerY - boxY) + bodyExtra + padding / 2;
+            this.headerBottom = boxY + totalHeight + verticalGap;
 
             this.questionContainerStyle = this.add.graphics()
                 .fillStyle(0x486947, 1)
                 .lineStyle(2, 0xA3B18A, 1)
-                .fillRoundedRect(screenCenterX - boxWidth / 2, boxY, boxWidth, dynamicHeight, 10)
-                .strokeRoundedRect(screenCenterX - boxWidth / 2, boxY, boxWidth, dynamicHeight, 10);
-        this.questionText.y = boxY + padding;
-        this.questionContainer.add([this.questionContainerStyle, this.questionText]);
+                .fillRoundedRect(screenCenterX - boxWidth / 2, boxY, boxWidth, totalHeight, 10)
+                .strokeRoundedRect(screenCenterX - boxWidth / 2, boxY, boxWidth, totalHeight, 10);
+            
+            const dividerLine = this.add.graphics()
+                .lineBetween(
+                    screenCenterX - boxWidth / 2 + padding,
+                    dividerY,
+                    screenCenterX + boxWidth / 2 - padding,
+                    dividerY
+                );
+ 
+            const headerBg = this.add.graphics()
+                .fillStyle(0x344E41, 1)
+                .fillRoundedRect(screenCenterX - boxWidth / 2, boxY, boxWidth, dividerY - boxY, 10);
+ 
+            const headerBgOverlap = this.add.graphics()
+                .fillStyle(0x344E41, 1)
+                .fillRect(screenCenterX - boxWidth / 2, dividerY - 10, boxWidth, 10);
+
+        this.questionContainer.add([
+            this.questionContainerStyle,
+            headerBg,
+            headerBgOverlap,
+            dividerLine,
+            CourseText,
+            typeText,
+            this.questionText
+        ]);
     }
 
     optionsUI(options) {
@@ -469,24 +549,6 @@ export default class Classroom extends Phaser.Scene {
         }
     }
 
-    cleanupAndNext() {
-        this.isAnswering = false;
-        this.currentQuestionIndex++;
-
-        this.children.list
-            .filter(c => c.name === 'answerBubble')
-            .forEach(c => c.destroy());
-
-        if (this.currentQuestionIndex < this.courseQuestions.length) {
-            const nextQ = this.courseQuestions[this.currentQuestionIndex];
-            this.questionUI(nextQ.question);
-            this.optionsUI(nextQ.options || []);
-            if (this.optionsContainer) this.optionsContainer.setVisible(true);
-        } else {
-            this.finishAssessment();
-        }
-    }
-
     showAnswerBubble(text, x, y, status, isPlayer) {
         const container = this.add.container(x, y);
         container.setName('answerBubble');
@@ -556,6 +618,24 @@ export default class Classroom extends Phaser.Scene {
             yoyo: true,
             ease: 'Power1'
         });
+    }
+
+    cleanupAndNext() {
+        this.isAnswering = false;
+        this.currentQuestionIndex++;
+
+        this.children.list
+            .filter(c => c.name === 'answerBubble')
+            .forEach(c => c.destroy());
+
+        if (this.currentQuestionIndex < this.courseQuestions.length) {
+            const nextQ = this.courseQuestions[this.currentQuestionIndex];
+            this.questionUI(nextQ.question);
+            this.optionsUI(nextQ.options || []);
+            if (this.optionsContainer) this.optionsContainer.setVisible(true);
+        } else {
+            this.finishAssessment();
+        }
     }
 
     finishAssessment() {
@@ -657,9 +737,10 @@ export default class Classroom extends Phaser.Scene {
 
         entries.forEach(entry => {
             if (entry.type === 'divider') {
-                const line = this.add.graphics().setDepth(502);
-                line.lineStyle(1, 0xA3B18A, 0.4);
-                line.lineBetween(contentPadX, curY + 6, contentPadX + contentW, curY + 6);
+                const line = this.add.graphics()
+                    .setDepth(502)
+                    .lineStyle(1, 0xA3B18A, 0.4)
+                    .lineBetween(contentPadX, curY + 6, contentPadX + contentW, curY + 6);
                 scrollContainer.add(line);
                 curY += 18;
                 return;
@@ -723,8 +804,10 @@ export default class Classroom extends Phaser.Scene {
             this.startPageTransition('Hallway');
         };
 
-        this.input.keyboard.once('keydown-SPACE', proceed);
-        this.input.once('pointerdown', proceed);
+        this.time.delayedCall(300, () => {
+            this.input.keyboard.once('keydown-SPACE', proceed);
+            this.input.once('pointerdown', proceed);
+        });
     }
 
     update(){ if (!this.mobileControls) return; }
