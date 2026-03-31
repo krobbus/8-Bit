@@ -143,18 +143,30 @@ export default class Classroom extends Phaser.Scene {
  
         this.bg.play(`default${this.gender}`);
         this.questionUI(null);
- 
-        this.startPromptText = this.add.text(screenCenterX, screenCenterY + 140, "PRESS ANY KEY TO START", {
-            fontFamily: '"Press Start 2P"',
-            fontSize: "10px",
-            fill: "#344E41",
-            align: "center"
-        }).setOrigin(0.5).setDepth(130);
+
+        this.promptContainer = this.add.container(screenCenterX, screenCenterY + 140).setDepth(130);
+            this.promptText = this.add.text(0, 0, "PRESS ANY KEY TO START", {
+                fontFamily: '"Press Start 2P"',
+                fontSize: "10px",
+                fill: "#ffffff",
+                align: "center",
+                resolution: 2
+            }).setOrigin(0.5);
+
+            const paddingX = 40;
+            const paddingY = 25;
+            const bgW = this.promptText.width + paddingX;
+            const bgH = this.promptText.height + paddingY;
+
+            this.promptContainerStyle = this.add.graphics()
+                .fillStyle(0x486947, 1)
+                .fillRoundedRect(-bgW / 2, -bgH / 2, bgW, bgH, 10);
+        this.promptContainer.add([this.promptContainerStyle, this.promptText]);
  
         this.tweens.add({
-            targets: this.startPromptText,
+            targets: this.promptContainer,
             alpha: 0.2,
-            duration: 600,
+            duration: 800,
             yoyo: true,
             repeat: -1
         });
@@ -170,9 +182,9 @@ export default class Classroom extends Phaser.Scene {
         this.input.keyboard.off('keydown', this.startHandler);
         this.input.off('pointerdown', this.startHandler);
  
-        if (this.startPromptText) {
-            this.startPromptText.destroy();
-            this.startPromptText = null;
+        if (this.promptContainer) {
+            this.promptContainer.destroy();
+            this.promptContainer = null;
         }
         this.loadQuestions();
     }
@@ -230,7 +242,7 @@ export default class Classroom extends Phaser.Scene {
         this.questionContainer = this.add.container(0, 75).setDepth(120);
             const screenCenterX = this.cameras.main.worldView.x + this.cameras.main.width / 2; 
 
-            const padding = 20;
+            const padding = 30;
             const verticalGap = 5;
 
             const tempCourseText = this.add.text(-9999, -9999, this.selectedCourse, {
@@ -242,12 +254,11 @@ export default class Classroom extends Phaser.Scene {
                 fontFamily: '"Press Start 2P"', 
                 fontSize: "10px"
             });
-            const headerWidth = Math.max(tempCourseText.width, tempTypeText.width) + 160;
-            tempCourseText.destroy();
-            tempTypeText.destroy();
-
+            const headerWidth = Math.max(tempCourseText.width, tempTypeText.width) + 180;
             this.headerWidth = headerWidth;
-            const boxWidth = this.headerWidth + 160;
+                tempCourseText.destroy();
+                tempTypeText.destroy();
+            const boxWidth = this.headerWidth + 180;
 
             const headerLineHeight = 18;
             const headerGap = 8;
@@ -265,7 +276,7 @@ export default class Classroom extends Phaser.Scene {
             const typeText = this.add.text(screenCenterX, CourseText.y + CourseText.height + headerGap, `${this.selectedType}`, {
                 fontFamily: '"Press Start 2P"',
                 fontSize: "10px",
-                color: "#588157",
+                color: "#679b66",
                 align: "center",
                 resolution: 2
             }).setOrigin(0.5, 0);
@@ -273,9 +284,9 @@ export default class Classroom extends Phaser.Scene {
             const dividerY = typeText.y + typeText.height + padding / 2;
 
             const isRealQuestion = question !== null && question !== undefined
-            && this.courseQuestions.length > 0
-            && this.currentQuestionIndex < this.courseQuestions.length
-            && question === this.courseQuestions[this.currentQuestionIndex]?.question;
+                && this.courseQuestions.length > 0
+                && this.currentQuestionIndex < this.courseQuestions.length
+                && question === this.courseQuestions[this.currentQuestionIndex]?.question;
  
             const displayText = question === null || question === undefined
                 ? ""
@@ -283,7 +294,7 @@ export default class Classroom extends Phaser.Scene {
                     ? `Q${this.currentQuestionIndex + 1}: ${question}`
                     : question;
                 
-            this.questionText = this.add.text(screenCenterX, dividerY + padding / 2, displayText, {
+            this.questionText = this.add.text(screenCenterX, dividerY + 10 + padding / 2, displayText, {
                 fontFamily: '"Press Start 2P"',
                 fontSize: "12px",
                 fill: "#ffffff",
@@ -293,26 +304,10 @@ export default class Classroom extends Phaser.Scene {
                 resolution: 2
             }).setOrigin(0.5, 0);
             
-            const bodyExtra = (question !== null && question !== undefined) 
-                ? this.questionText.height + padding 
-                : padding / 2;
-            const totalHeight = (dividerY - boxY) + bodyExtra + padding / 2;
+            const bodyExtra = (question !== null && question !== undefined) ? this.questionText.height + padding : padding / 2;
+            const totalHeight = (dividerY - boxY) + bodyExtra + (padding / 2) + 10;
             this.headerBottom = boxY + totalHeight + verticalGap;
 
-            this.questionContainerStyle = this.add.graphics()
-                .fillStyle(0x486947, 1)
-                .lineStyle(2, 0xA3B18A, 1)
-                .fillRoundedRect(screenCenterX - boxWidth / 2, boxY, boxWidth, totalHeight, 10)
-                .strokeRoundedRect(screenCenterX - boxWidth / 2, boxY, boxWidth, totalHeight, 10);
-            
-            const dividerLine = this.add.graphics()
-                .lineBetween(
-                    screenCenterX - boxWidth / 2 + padding,
-                    dividerY,
-                    screenCenterX + boxWidth / 2 - padding,
-                    dividerY
-                );
- 
             const headerBg = this.add.graphics()
                 .fillStyle(0x344E41, 1)
                 .fillRoundedRect(screenCenterX - boxWidth / 2, boxY, boxWidth, dividerY - boxY, 10);
@@ -320,6 +315,18 @@ export default class Classroom extends Phaser.Scene {
             const headerBgOverlap = this.add.graphics()
                 .fillStyle(0x344E41, 1)
                 .fillRect(screenCenterX - boxWidth / 2, dividerY - 10, boxWidth, 10);
+            
+            const dividerLine = this.add.graphics()
+                .lineBetween(
+                    screenCenterX - boxWidth / 2 + padding, dividerY,
+                    screenCenterX + boxWidth / 2 - padding, dividerY
+                );
+
+            this.questionContainerStyle = this.add.graphics()
+                .fillStyle(0x486947, 0.9)
+                .lineStyle(2, 0xA3B18A, 1)
+                .fillRoundedRect(screenCenterX - boxWidth / 2, boxY, boxWidth, totalHeight, 10)
+                .strokeRoundedRect(screenCenterX - boxWidth / 2, boxY, boxWidth, totalHeight, 10);
 
         this.questionContainer.add([
             this.questionContainerStyle,
@@ -782,10 +789,10 @@ export default class Classroom extends Phaser.Scene {
             scrollContainer.y = -scrollY;
         });
 
-        const hint = this.add.text(width / 2, modalY + modalH - 24, "[ Press SPACE or Click to Continue ]", {
+        const hint = this.add.text(width / 2, modalY + modalH - 24, "[ Press any key to continue ]", {
             fontFamily: '"Press Start 2P"',
             fontSize: "7px",
-            fill: "#588157",
+            fill: "#ffffff",
             align: "center"
         }).setOrigin(0.5, 1).setDepth(503);
 
@@ -797,17 +804,18 @@ export default class Classroom extends Phaser.Scene {
             repeat: -1
         });
 
-        const proceed = () => {
-            this.input.off('wheel');
-            this.input.keyboard.off('keydown-SPACE', proceed);
-            this.input.off('pointerdown', proceed);
-            this.startPageTransition('Hallway');
-        };
-
+        this.finishingHandler = () => this.removeResults();
         this.time.delayedCall(300, () => {
-            this.input.keyboard.once('keydown-SPACE', proceed);
-            this.input.once('pointerdown', proceed);
+            this.input.keyboard.once('keydown', this.finishingHandler);
+            //this.input.once('pointerdown', this.finishingHandler);
         });
+    }
+
+    removeResults(){
+        this.input.off('wheel');
+        this.input.keyboard.off('keydown', this.finishingHandler);
+        this.input.off('pointerdown', this.finishingHandler);
+        this.startPageTransition('Hallway');
     }
 
     update(){ if (!this.mobileControls) return; }
