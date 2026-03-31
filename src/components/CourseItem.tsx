@@ -24,22 +24,27 @@ const courseDescription: Record<string, string> = {
     IPPG: "Public Policy and Governance program focused on leadership and civic management."
 };
 
-const CourseItem: React.FC<CourseItemProps> = ({ courseCode, coursePercent, scores }) => {
-    const safeScores = scores || {};
-    const hasMC = safeScores.multipleChoice !== undefined;
-    const mcScore = safeScores.multipleChoice || 0;
-    const hasID = safeScores.identification !== undefined;
-    const idScore = safeScores.identification || 0;
-    const totalQuizScore = mcScore + idScore;
-
-    const hasSkill = safeScores.skill !== undefined;
-    const hasPers = safeScores.personality !== undefined;
+const CourseItem: React.FC<CourseItemProps> = ({ courseCode, scores }) => {
+    const assessments = scores || {};
 
     const getCode = (str: string) => {
         const match = str.match(/\(([^)]+)\)/);
         return match ? match[1] : str;
     };
     const fixedCode = getCode(courseCode);
+
+    const courseRelatedData = assessments[`${fixedCode}_CourseRelated`];
+    const skillData = assessments[`${fixedCode}_Skill`];
+    const personalityData = assessments[`${fixedCode}_Personality`];
+
+    const hasQuiz = !!courseRelatedData?.lastTakeAt;
+    const hasSkill = !!skillData?.lastTakeAt;
+    const hasPers = !!personalityData?.lastTakeAt;
+
+    const finishedCount = [hasQuiz, hasSkill, hasPers].filter(Boolean).length;
+    const calculatedPercent = Math.round((finishedCount / 3) * 100);
+
+    const quizScore = courseRelatedData?.latestScore?.correct || 0;
 
     return (
         <div className="courseStatCard">
@@ -51,48 +56,39 @@ const CourseItem: React.FC<CourseItemProps> = ({ courseCode, coursePercent, scor
             <div className="courseContent">
                 <div className="taskGrid">
                     <div className="taskItem">
-                        <span>Multiple Choice:</span>
-                        <span className={hasMC ? "statusDone" : "statusPending"}>
-                            {hasMC ? `${mcScore}/5 (Complete)` : "Pending"}
+                        <span>Course-Related Assessment:</span>
+                        <span className={hasQuiz ? "statusDone" : "statusPending"}>
+                            {hasQuiz ? `${quizScore}/5 (Complete)` : "Pending"}
                         </span>
                     </div>
+
                     <div className="taskItem">
-                        <span>Identification:</span>
-                        <span className={hasID ? "statusDone" : "statusPending"}>
-                            {hasID ? `${idScore}/5 (Complete)` : "Pending"}
-                        </span>
-                    </div>
-                    <div className="taskItem">
-                        <span>Skill Test:</span>
-                        <span className={hasSkill ? "statusDone" : "statusPending"}>
-                            {hasSkill ? "Complete" : "Not Complete"}
-                        </span>
-                    </div>
-                    <div className="taskItem">
-                        <span>Personality Test:</span>
+                        <span>Personality Assessment:</span>
                         <span className={hasPers ? "statusDone" : "statusPending"}>
                             {hasPers ? "Complete" : "Not Complete"}
                         </span>
                     </div>
-                </div>
 
-                <div className="courseProgressContainer">
-                    <div className="progressBarContainer">
-                        <div className="progressBar" style={{ width: `${coursePercent}%` }}></div>
+                    <div className="taskItem">
+                        <span>Skill Assessment:</span>
+                        <span className={hasSkill ? "statusDone" : "statusPending"}>
+                            {hasSkill ? "Complete" : "Not Complete"}
+                        </span>
                     </div>
-                    <span className="progressPercentage">{coursePercent}%</span>
                 </div>
             </div>
 
             <div className="courseStatus">
-                <div className="overallScoreRow">
-                    <strong>Overall Quiz Score:</strong>
-                    <span>{totalQuizScore}/10</span>
+                <div className="courseProgressContainer">
+                    <div className="progressBarContainer">
+                        <div className="progressBar" style={{ width: `${calculatedPercent}%` }}></div>
+                    </div>
+                    <span className="progressPercentage">{calculatedPercent}%</span>
                 </div>
 
                 <div className="statusRow">
                     <strong>AI Analysis Status:</strong>
-                    <span>{(coursePercent === 100) ? "Ready for evaluation" : "Data Insufficient"}</span>
+                    <span>{(calculatedPercent === 100) ? "Ready for evaluation" : "Data Insufficient"}</span>
                 </div>
             </div>
         </div>

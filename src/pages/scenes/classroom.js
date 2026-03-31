@@ -143,7 +143,7 @@ export default class Classroom extends Phaser.Scene {
         const screenCenterY = this.cameras.main.worldView.y + this.cameras.main.height / 2;
  
         this.bg.play(`default${this.gender}`);
-        this.questionUI(null);
+        this.questionUI('idle');
 
         this.promptContainer = this.add.container(screenCenterX, screenCenterY + 140).setDepth(130);
             this.promptText = this.add.text(0, 0, "PRESS ANY KEY TO START", {
@@ -240,6 +240,8 @@ export default class Classroom extends Phaser.Scene {
     questionUI(question, isStartScreen = false){
         if (this.questionContainer) this.questionContainer.destroy();
 
+        const isIdle = question === 'idle';
+
         this.questionContainer = this.add.container(0, 75).setDepth(120);
             const screenCenterX = this.cameras.main.worldView.x + this.cameras.main.width / 2; 
 
@@ -277,36 +279,36 @@ export default class Classroom extends Phaser.Scene {
             const typeText = this.add.text(screenCenterX, CourseText.y + CourseText.height + headerGap, `${this.selectedType}`, {
                 fontFamily: '"Press Start 2P"',
                 fontSize: "10px",
-                color: "#679b66",
+                color: "#83c782",
                 align: "center",
                 resolution: 2
             }).setOrigin(0.5, 0);
 
             const dividerY = typeText.y + typeText.height + padding / 2;
 
-            const isRealQuestion = question !== null && question !== undefined
+            const isRealQuestion = !isIdle 
+                && question !== null && question !== undefined
                 && this.courseQuestions.length > 0
                 && this.currentQuestionIndex < this.courseQuestions.length
                 && question === this.courseQuestions[this.currentQuestionIndex]?.question;
  
-            const displayText = question === null || question === undefined
-                ? ""
-                : isRealQuestion
-                    ? `Q${this.currentQuestionIndex + 1}: ${question}`
-                    : question;
-                
+            let displayText;
+            if (isIdle) { displayText = "Your questions will appear here.\nPress any key to begin the assessment."; } 
+            else if (question === null || question === undefined) { displayText = ""; }
+            else if (isRealQuestion) {displayText = `Q${this.currentQuestionIndex + 1}: ${question}`; }
+            else { displayText = question; } 
+                   
             this.questionText = this.add.text(screenCenterX, dividerY + 10 + padding / 2, displayText, {
                 fontFamily: '"Press Start 2P"',
                 fontSize: "12px",
                 fill: "#ffffff",
                 align: "center",
                 wordWrap: { width: boxWidth - (padding * 2) },
-                lineSpacing: 10,
+                lineSpacing: "10",
                 resolution: 2
             }).setOrigin(0.5, 0);
-            
-            const bodyExtra = (question !== null && question !== undefined) ? this.questionText.height + padding : padding / 2;
-            const totalHeight = (dividerY - boxY) + bodyExtra + (padding / 2) + 10;
+
+            const totalHeight = (dividerY - boxY) + 10 + this.questionText.height + (padding / 2);
             this.headerBottom = boxY + totalHeight + verticalGap;
 
             const headerBg = this.add.graphics()
@@ -348,7 +350,7 @@ export default class Classroom extends Phaser.Scene {
         const isAssessment = this.rawType === 'Skill' || this.rawType === 'Personality';
 
         if (isAssessment) {
-            this.optionsContainer = this.add.container(screenWidth / 2, screenHeight - 180).setDepth(130);
+            this.optionsContainer = this.add.container(screenWidth / 2, screenHeight - 190).setDepth(130);
         
             const paddingSide = 24;
             const paddingTopBottom = 14;
@@ -409,7 +411,7 @@ export default class Classroom extends Phaser.Scene {
             const offsetStep = 50;
 
             options.forEach((optionText, index) => {
-                const label    = String.fromCharCode(65 + index);
+                const label = String.fromCharCode(65 + index);
                 const currentX = startX - (index * offsetStep);
 
                 const optionsText = this.add.text(0, 0, `${label}. ${optionText}`, {
@@ -526,7 +528,20 @@ export default class Classroom extends Phaser.Scene {
                 answer: selectedOption
             });
 
-            this.time.delayedCall(delayTimer + 1200, () => { this.cleanupAndNext(); });
+            let dotCount = 0;
+            this.timer = this.time.addEvent({
+                delay: 500,
+                callback: () => {
+                    dotCount = (dotCount + 1) % 4;
+                    this.dots = ".".repeat(dotCount);     
+                },
+                loop: true
+            });
+            this.questionUI(`Next Question${this.dots}`);
+
+            this.time.delayedCall(delayTimer + 1200, () => {
+                this.cleanupAndNext(); 
+            });
         } else {
             const correctAnswer = currentQ.answer || currentQ.correctAnswer;
             const isCorrect = selectedOption === correctAnswer;
@@ -538,22 +553,27 @@ export default class Classroom extends Phaser.Scene {
                 selected: selectedOption,
                 unanswered: currentQ.options.filter(opt => opt !== selectedOption),
                 explanation: currentQ.explanation || "",
+                source: currentQ.source || "",
+                url: currentQ.url || "",
                 correct: isCorrect
             });
 
-            this.time.delayedCall(delayTimer + 1500, () => {
+            this.time.delayedCall(delayTimer + 2000, () => {
                 this.questionUI(`The correct answer is:\n${correctAnswer}`);
                 this.children.list
                     .filter(c => c.name === 'answerBubble')
                     .forEach(b => this.highlightBubble(b, b.getData('text') === correctAnswer));
             });
-            this.time.delayedCall(delayTimer + 5500, () => { 
+            this.time.delayedCall(delayTimer + 8000, () => { 
                 this.children.list
                     .filter(c => c.name === 'answerBubble')
                     .forEach(c => c.destroy());
-                this.questionUI(currentQ.explanation);
+                const expParts = [currentQ.explanation || ""];
+                if (currentQ.source) expParts.push(`Source: ${currentQ.source}`);
+                if (currentQ.url)    expParts.push(`${currentQ.url}`);
+                this.questionUI(expParts.join("\n\n"));
             });
-            this.time.delayedCall(delayTimer + 10500, () => { this.cleanupAndNext(); });
+            this.time.delayedCall(delayTimer + 15000, () => { this.cleanupAndNext(); });
         }
     }
 
@@ -629,6 +649,7 @@ export default class Classroom extends Phaser.Scene {
     }
 
     cleanupAndNext() {
+        if (this.timer) this.timer.remove();
         this.isAnswering = false;
         this.currentQuestionIndex++;
 
@@ -641,9 +662,7 @@ export default class Classroom extends Phaser.Scene {
             this.questionUI(nextQ.question);
             this.optionsUI(nextQ.options || []);
             if (this.optionsContainer) this.optionsContainer.setVisible(true);
-        } else {
-            this.finishAssessment();
-        }
+        } else { this.finishAssessment(); }
     }
 
     finishAssessment() {
@@ -652,30 +671,54 @@ export default class Classroom extends Phaser.Scene {
         if (this.optionsContainer) this.optionsContainer.destroy();
 
         this.saveAssessmentResults();
-        this.showResultsModal();
+
+        const isAssessment = this.rawType === 'Skill' || this.rawType === 'Personality';
+        this.time.delayedCall(1200, () => {
+            if (isAssessment){
+                this.startPageTransition('Hallway');
+            } else{
+                this.showResultsModal();   
+            }
+        });
     }
 
     async saveAssessmentResults(){
         try {
             const playerID = localStorage.getItem("playerID");
             if (!playerID) return;
-
-            const key = `${this.courseCode}_${this.rawType}`; 
+ 
+            const key     = `${this.courseCode}_${this.rawType}`;
+            const baseRef = db.ref(`webGame/${playerID}/assessments/${key}`);
+ 
+            const snapshot        = await baseRef.once('value');
+            const existing        = snapshot.val();
+            const existingResults = (existing && existing.results) ? existing.results : {};
+            const nextTakeIndex   = Object.keys(existingResults).length;
+ 
+            const questionsMap = {};
+            this.assessmentResults.forEach((item, i) => {
+                questionsMap[i] = item;
+            });
+ 
             const score = this.rawType === 'CourseRelated'
-                ? { correct: this.assessmentResults.filter(r => r.correct).length } : null;
-
-            const resultsIndexed = {};
-            this.assessmentResults.forEach((item, i) => { resultsIndexed[i] = [item]; });
-
-            const payload = {
+                ? { correct: this.assessmentResults.filter(r => r.correct).length }
+                : null;
+ 
+            const meta = {
                 course: this.courseCode,
                 type: this.rawType,
+                lastTakeAt: Date.now(),
+                totalTakes: nextTakeIndex + 1,
+                ...(score && { latestScore: score })
+            };
+            await baseRef.update(meta);
+ 
+            await baseRef.child(`results/${nextTakeIndex}`).set({
                 completedAt: Date.now(),
                 ...(score && { score }),
-                results: resultsIndexed
-            };
-
-            await db.ref(`webGame/${playerID}/assessments/${key}`).set(payload);
+                questions:   questionsMap
+            });
+ 
         } catch (err) {
             console.error("Failed to save assessment results:", err);
         }
@@ -722,16 +765,16 @@ export default class Classroom extends Phaser.Scene {
         const scrollbarMaxH = visibleH - 8;
 
         let entries = [];
-
         this.assessmentResults.forEach((r, i) => {
             entries.push({ type: 'question', index: i, text: `Q${i + 1}: ${r.question}` });
-
             if (isAssessment) {
                 entries.push({ type: 'answer', text: `Your Answer: ${r.answer}` });
             } else {
                 entries.push({ type: r.correct ? 'correct' : 'wrong', text: `Your Answer: ${r.selected}` });
-                entries.push({ type: 'correct', text: `Correct Answer: ${r.answer}` });
+                entries.push({ type: 'correct',     text: `Correct Answer: ${r.answer}` });
                 entries.push({ type: 'explanation', text: `Explanation: ${r.explanation}` });
+                if (r.source) entries.push({ type: 'source', text: `Source: ${r.source}` });
+                if (r.url)    entries.push({ type: 'url',    text: `${r.url}` });
                 entries.push({ type: 'divider' });
             }
         });
@@ -756,7 +799,9 @@ export default class Classroom extends Phaser.Scene {
                 answer:      "#A3B18A",
                 correct:     "#76c442",
                 wrong:       "#BC4749",
-                explanation: "#aaaaaa"
+                explanation: "#aaaaaa",
+                source:      "#7ec8e3",
+                url:         "#5a9fd4"
             };
 
             const t = this.add.text(contentPadX, curY, entry.text, {

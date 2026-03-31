@@ -41,7 +41,7 @@
         }
 
         .drawerContent.show {
-            max-height: 2000px;
+            height: 100%;
             opacity: 1;
             padding-top: 1rem;
         }

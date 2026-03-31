@@ -6,9 +6,7 @@ import CourseItem from './CourseItem';
 const StatisticsLoad: React.FC<StatisticsProps> = ({ stats, userData, isGeneratingAI, onGenerateAI }) => {
     const [isSelectedOpen, setIsSelectedOpen] = useState(true);
     const [isNonselectedOpen, setIsNonselectedOpen] = useState(false);
-
-    const userScores = userData?.scores || {};
-    const courseProgress = stats.courseProgress || {};
+    const assessments = userData?.assessments || {};
 
     if (!stats) return null;
     return (
@@ -30,8 +28,7 @@ const StatisticsLoad: React.FC<StatisticsProps> = ({ stats, userData, isGenerati
                         <CourseItem 
                             key={courseCode}
                             courseCode={courseCode}
-                            coursePercent={courseProgress[courseCode] || 0}
-                            scores={userScores[courseCode]}
+                            scores={assessments}
                         />
                     ))}
                 </div>
@@ -52,8 +49,7 @@ const StatisticsLoad: React.FC<StatisticsProps> = ({ stats, userData, isGenerati
                         <CourseItem 
                             key={courseCode}
                             courseCode={courseCode}
-                            coursePercent={0}
-                            scores={null}
+                            scores={assessments}
                         />
                     ))}
                 </div>

@@ -19,6 +19,5 @@ export interface StatisticsProps {
 
 export interface CourseItemProps {
   courseCode: string;
-  coursePercent: number;
   scores: any;
 }
