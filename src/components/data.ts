@@ -14,7 +14,6 @@ export interface PlayerData {
     lastActive: number;
     savedAt: number;
     joinedAt: number;
-    progress: number;
     courses: any[]; 
     scores: Record<string, number>;
     comment: string;

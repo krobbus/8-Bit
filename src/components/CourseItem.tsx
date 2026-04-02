@@ -24,8 +24,8 @@ const courseDescription: Record<string, string> = {
     IPPG: "Public Policy and Governance program focused on leadership and civic management."
 };
 
-const CourseItem: React.FC<CourseItemProps> = ({ courseCode, scores }) => {
-    const assessments = scores || {};
+const CourseItem: React.FC<CourseItemProps> = ({ courseCode, assessments }) => {
+    const assessment = assessments || {};
 
     const getCode = (str: string) => {
         const match = str.match(/\(([^)]+)\)/);
@@ -33,9 +33,9 @@ const CourseItem: React.FC<CourseItemProps> = ({ courseCode, scores }) => {
     };
     const fixedCode = getCode(courseCode);
 
-    const courseRelatedData = assessments[`${fixedCode}_CourseRelated`];
-    const skillData = assessments[`${fixedCode}_Skill`];
-    const personalityData = assessments[`${fixedCode}_Personality`];
+    const courseRelatedData = assessment[`${fixedCode}_CourseRelated`];
+    const skillData = assessment[`${fixedCode}_Skill`];
+    const personalityData = assessment[`${fixedCode}_Personality`];
 
     const hasQuiz = !!courseRelatedData?.lastTakeAt;
     const hasSkill = !!skillData?.lastTakeAt;
@@ -70,7 +70,7 @@ const CourseItem: React.FC<CourseItemProps> = ({ courseCode, scores }) => {
                     <div className="taskItem">
                         <span>Course-Related Assessment:</span>
                         <span className={hasQuiz ? "statusDone" : "statusPending"}>
-                            {hasQuiz ? `${quizScore}/5 (Complete)` : "Pending"}
+                            {hasQuiz ? "Complete" : "Not Complete"}
                         </span>
                     </div>
 
@@ -87,6 +87,14 @@ const CourseItem: React.FC<CourseItemProps> = ({ courseCode, scores }) => {
                             {hasSkill ? "Complete" : "Not Complete"}
                         </span>
                     </div>
+
+                    <div className="taskItem">
+                        <span>Course-Related Score:</span>
+                        <span className={hasQuiz ? "statusDone" : "statusPending"}>
+                            {hasQuiz ? `(${quizScore}/5 points)` : "Pending"}
+                        </span>
+                    </div>
+
                 </div>
             </div>
 

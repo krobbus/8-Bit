@@ -5,8 +5,8 @@ export interface ModalProps {
 
 export interface StatisticsProps {
   stats: {
-    progress: number;
-    courseProgress: Record<string, number>;
+    assessments: any;
+    hasOneCompleteCourse: boolean,
     selectedCourses: string[];
     nonselectedCourses: string[];
     skills: any[];
@@ -19,5 +19,5 @@ export interface StatisticsProps {
 
 export interface CourseItemProps {
   courseCode: string;
-  scores: any;
+  assessments: any;
 }

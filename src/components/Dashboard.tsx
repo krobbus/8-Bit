@@ -53,8 +53,8 @@ const Dashboard: React.FC<ModalProps> = ({onClose , isOpen}) => {
 
     const stats = useMemo(() => {
         if (!userData) return { 
-            progress: 0, 
-            courseProgress: {},
+            assessments: {},
+            hasOneCompleteCourse: false,
             selectedCourses: [],
             nonselectedCourses: [],
             skills: [], 
@@ -63,7 +63,7 @@ const Dashboard: React.FC<ModalProps> = ({onClose , isOpen}) => {
 
         const tags = userData.tags || [];
         const selectedCourses = userData.courses || [];
-        const scores = userData.scores || {};
+        const assessments = userData.assessments || {};
 
         const allCourseNames = Object.keys(courseNames);
         const notselectedCourses = allCourseNames.filter(code => {
@@ -73,31 +73,21 @@ const Dashboard: React.FC<ModalProps> = ({onClose , isOpen}) => {
 
             return !isAlreadySelected;
         });
-        const courseProgressMap: Record<string, number> = {};
 
-        let totalTasksCompleted = 0;
+        const hasOneCompleteCourse = selectedCourses.some((courseCode: string) => {
+            const match = courseCode.match(/\(([^)]+)\)/);
+            const code = match ? match[1] : courseCode;
 
-        selectedCourses.forEach((course: string) => {
-            const courseScores = scores[course] || {};
-            let completedTasks = 0;
+            const hasCourseRelated = assessments[`${code}_CourseRelated`] !== undefined;
+            const hasSkill = assessments[`${code}_Skill`] !== undefined;
+            const hasPers = assessments[`${code}_Personality`] !== undefined;
 
-            if (courseScores.multipleChoice != null) completedTasks++;
-            if (courseScores.identification != null) completedTasks++;
-            if (courseScores.skill != null) completedTasks++;
-            if (courseScores.personality != null) completedTasks++;
-
-            courseProgressMap[course] = Math.round((completedTasks / 4) * 100);
-            totalTasksCompleted += completedTasks;
+            return hasCourseRelated && hasSkill && hasPers;
         });
 
-        const totalTasksPossible = selectedCourses.length * 4;
-        const overallProgress = totalTasksPossible > 0 
-            ? Math.round((totalTasksCompleted/ totalTasksPossible) * 100) 
-            : 0;
-
         return {
-            progress: overallProgress,
-            courseProgress: courseProgressMap,
+            assessments: assessments,
+            hasOneCompleteCourse: hasOneCompleteCourse,
             selectedCourses: selectedCourses,
             nonselectedCourses: notselectedCourses,
             skills: tags.filter((t: any) => t.type === "skill" && t.status === "valid").slice(0, 5),
@@ -118,7 +108,7 @@ const Dashboard: React.FC<ModalProps> = ({onClose , isOpen}) => {
     };
 
     const handleGenerateAI = async () => {
-        if (stats.progress < 100 || isGeneratingAI) return;
+        if (isGeneratingAI) return;
         setIsGeneratingAI(true);
 
         try {
@@ -128,6 +118,7 @@ const Dashboard: React.FC<ModalProps> = ({onClose , isOpen}) => {
                 body: JSON.stringify({
                     playerEmail: userData.email,
                     playerName: userData.name,
+                    assessments: stats.assessments,
                     coursesTaken: userData.courses,
                     scores: userData.scores,
                     tags: userData.tags,

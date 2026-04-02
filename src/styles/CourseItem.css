@@ -47,6 +47,13 @@
                 align-items: center;
 
                 span{ font-size: 14px; }
+
+                &:last-child {
+                    margin-top: 1rem;
+                    border-top: 4px dashed #a3b18a;
+                    padding: 0 2rem;
+                    padding-top: 1rem;
+                }
             }
         }
     }
@@ -107,11 +114,9 @@
             a{
                 color: #fff;
                 cursor: pointer;
-
-                &:hover{
-                    transform: scale(1.02);
-                }
             }
+
+            a:hover{ transform: scale(1.02); }
         }
     }
 }

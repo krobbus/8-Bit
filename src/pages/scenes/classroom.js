@@ -551,11 +551,12 @@ export default class Classroom extends Phaser.Scene {
                 delay: 500,
                 callback: () => {
                     dotCount = (dotCount + 1) % 4;
-                    this.dots = ".".repeat(dotCount);     
+                    const dots = ".".repeat(dotCount);    
+                    
+                    this.questionUI(`Next Question${dots}`);
                 },
                 loop: true
             });
-            this.questionUI(`Next Question${this.dots}`);
 
             this.time.delayedCall(delayTimer + 1200, () => {
                 this.cleanupAndNext(); 

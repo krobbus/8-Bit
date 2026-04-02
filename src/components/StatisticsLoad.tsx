@@ -6,9 +6,11 @@ import CourseItem from './CourseItem';
 const StatisticsLoad: React.FC<StatisticsProps> = ({ stats, userData, isGeneratingAI, onGenerateAI }) => {
     const [isSelectedOpen, setIsSelectedOpen] = useState(true);
     const [isNonselectedOpen, setIsNonselectedOpen] = useState(false);
-    const assessments = userData?.assessments || {};
 
     if (!stats) return null;
+    const { assessments, hasOneCompleteCourse } = stats;
+    const hasExistingComment = !!userData?.comment;
+
     return (
         <div id="statisticContainer" className="statisticContainer">
             <label className="mainHeader">STATISTICS</label>
@@ -28,7 +30,7 @@ const StatisticsLoad: React.FC<StatisticsProps> = ({ stats, userData, isGenerati
                         <CourseItem 
                             key={courseCode}
                             courseCode={courseCode}
-                            scores={assessments}
+                            assessments={assessments}
                         />
                     ))}
                 </div>
@@ -49,7 +51,7 @@ const StatisticsLoad: React.FC<StatisticsProps> = ({ stats, userData, isGenerati
                         <CourseItem 
                             key={courseCode}
                             courseCode={courseCode}
-                            scores={assessments}
+                            assessments={assessments}
                         />
                     ))}
                 </div>
@@ -90,9 +92,12 @@ const StatisticsLoad: React.FC<StatisticsProps> = ({ stats, userData, isGenerati
 
                 <button 
                     onClick={onGenerateAI} 
-                    disabled={stats.progress < 100 || isGeneratingAI}
+                    disabled={isGeneratingAI || !hasOneCompleteCourse}
                 >
-                    {isGeneratingAI ? "ANALYZING..." : "GENERATE AI ANALYSIS"}
+                    {isGeneratingAI 
+                        ? "ANALYZING..." : 
+                        hasExistingComment ? "RE-GENERATE AI ANALYSIS" : "GENERATE AI ANALYSIS"
+                    }
                 </button>
 
                 <div className="aiCommentBox">
