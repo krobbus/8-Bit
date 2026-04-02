@@ -49,9 +49,8 @@
                 span{ font-size: 14px; }
 
                 &:last-child {
-                    margin-top: 1rem;
                     border-top: 4px dashed #a3b18a;
-                    padding: 0 2rem;
+                    margin-top: 1rem;
                     padding-top: 1rem;
                 }
             }

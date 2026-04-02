@@ -108,32 +108,42 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        gap: 2rem;
+        gap: 1rem;
+        padding: 2rem;
         
         background-color: rgba(255, 255, 255, 0.1);
         box-shadow: 10px 10px 7px rgba(0, 0, 0, 0.1);
         border: 4px solid #a3b18a;
-        text-align: left;
-        padding: 2rem;
         width: 100%;
         box-sizing: border-box;
 
-        button{
-            font-family: "Jersey 10", cursive;
-            font-size: 22px;
-            color: #588157;
-            background-color: #fff;
-            border: 4px solid #a3b18a;
-            box-shadow: 10px 10px 7px rgba(0, 0, 0, 0.1);
-            
-            padding: 1rem;
+        .commentButtons{
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
             width: 100%;
             box-sizing: border-box;
 
-            &:hover{
-                color: #fff;
-                background-color: #a3b18a;
-                border: 4px solid #fff;
+            button{
+                font-family: "Jersey 10", cursive;
+                font-size: 22px;
+                box-shadow: 10px 10px 7px rgba(0, 0, 0, 0.1);
+                padding: 1rem;
+                margin: 0;
+                color: #588157;
+                background-color: #fff;
+                border: 4px solid #a3b18a;
+                cursor: pointer;
+                width: 100%;
+                box-sizing: border-box;
+
+                &:hover{
+                    color: #fff;
+                    background-color: #a3b18a;
+                    border: 4px solid #fff;
+                }
             }
         }
 
@@ -141,7 +151,7 @@
             background-color: rgba(0, 0, 0, 0.4);
             box-shadow: 10px 10px 7px rgba(0, 0, 0, 0.1);
             border: 4px solid #a3b18a;
-            text-align: justify;
+            text-align: left;
             font-size: 14px;
             padding: 2rem;
             width: 100%;

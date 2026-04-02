@@ -91,7 +91,7 @@ const CourseItem: React.FC<CourseItemProps> = ({ courseCode, assessments }) => {
                     <div className="taskItem">
                         <span>Course-Related Score:</span>
                         <span className={hasQuiz ? "statusDone" : "statusPending"}>
-                            {hasQuiz ? `(${quizScore}/5 points)` : "Pending"}
+                            {hasQuiz ? `${quizScore}/5 points` : "Pending"}
                         </span>
                     </div>
 

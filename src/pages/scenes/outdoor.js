@@ -134,7 +134,7 @@ export default class Outdoor extends Phaser.Scene {
         this.physics.add.collider(this.player, this.npc);
 
         this.stairZones = [                                                                             // stairs
-            new Phaser.Geom.Rectangle(730, 250, 380, 70),
+            new Phaser.Geom.Rectangle(730, 230, 380, 70),
             new Phaser.Geom.Rectangle(600, 350, 520, 70)
         ];
         this.stairDebug = this.add.graphics()

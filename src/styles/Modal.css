@@ -47,7 +47,6 @@
     text-align: center;
 }
 
-
 h1{
     font-size: 30px;
     margin: 0;
@@ -82,4 +81,10 @@ h1{
     white-space: pre-line;
     width: 100%;
     box-sizing: border-box;
+}
+
+@media (max-width: 700px){
+    .modalContainer, .modalContent{
+        transform: translate(0.7);
+    }
 }
