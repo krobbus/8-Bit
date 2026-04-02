@@ -46,6 +46,18 @@ const CourseItem: React.FC<CourseItemProps> = ({ courseCode, scores }) => {
 
     const quizScore = courseRelatedData?.latestScore?.correct || 0;
 
+    const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+        e.preventDefault();
+        const element = document.getElementById(id);
+        
+        if (element) {
+            element.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+        }
+    };
+
     return (
         <div className="courseStatCard">
             <div className="courseInfo">
@@ -88,7 +100,7 @@ const CourseItem: React.FC<CourseItemProps> = ({ courseCode, scores }) => {
 
                 <div className="statusRow">
                     <strong>AI Analysis Status:</strong>
-                    <span>{(calculatedPercent === 100) ? "Ready for evaluation" : "Data Insufficient"}</span>
+                    <span>{(calculatedPercent === 100) ? <a href="#commentContainer" onClick={(e) => handleNavClick(e, 'commentContainer')}>Ready for evaluation</a> : "Data Insufficient"}</span>
                 </div>
             </div>
         </div>

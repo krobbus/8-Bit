@@ -198,7 +198,8 @@ export default class Classroom extends Phaser.Scene {
         this.startThinkingAnimation();
 
         const isAssessment = this.rawType === 'Skill' || this.rawType === 'Personality';
-        const endpoint = isAssessment ? '/api/generate-assessment' : '/api/generate-quiz';
+        const errorOptionsCount = isAssessment ? 5 : 4;
+        const endpoint = isAssessment ? '/api/generate-skill-pers' : '/api/generate-course-related';
 
         try {
             const response = await fetch(`${API_BASE_URL}${endpoint}`, {
@@ -233,19 +234,22 @@ export default class Classroom extends Phaser.Scene {
         } catch (err) {
             this.stopThinkingAnimation();
             this.questionUI("Oops... The AI is sleeping.");
-            this.optionsUI(["Error", "Error", "Error", "Error"]);
+            this.optionsUI(["Retry"]);
         }
     }
 
-    questionUI(question, isStartScreen = false){
+    questionUI(question){
         if (this.questionContainer) this.questionContainer.destroy();
-
         const isIdle = question === 'idle';
 
         this.questionContainer = this.add.container(0, 75).setDepth(120);
             const screenCenterX = this.cameras.main.worldView.x + this.cameras.main.width / 2; 
 
             const padding = 30;
+            const bottomPad = 24;
+            const headerGap = 8;
+            const dividerGap = padding / 2;
+            const bodyTop = 10; 
             const verticalGap = 5;
 
             const tempCourseText = this.add.text(-9999, -9999, this.selectedCourse, {
@@ -257,15 +261,14 @@ export default class Classroom extends Phaser.Scene {
                 fontFamily: '"Press Start 2P"', 
                 fontSize: "10px"
             });
+
             const headerWidth = Math.max(tempCourseText.width, tempTypeText.width) + 160;
+
             this.headerWidth = headerWidth;
                 tempCourseText.destroy();
                 tempTypeText.destroy();
+            
             const boxWidth = this.headerWidth + 160;
-
-            const headerLineHeight = 18;
-            const headerGap = 8;
-            const headerTotalHeight = headerLineHeight + headerGap + 10 + padding; 
             const boxY = verticalGap;
 
             const CourseText = this.add.text(screenCenterX, boxY + padding, `${this.selectedCourse}`, {
@@ -284,7 +287,7 @@ export default class Classroom extends Phaser.Scene {
                 resolution: 2
             }).setOrigin(0.5, 0);
 
-            const dividerY = typeText.y + typeText.height + padding / 2;
+            const dividerY = typeText.y + typeText.height + dividerGap;
 
             const isRealQuestion = !isIdle 
                 && question !== null && question !== undefined
@@ -298,17 +301,17 @@ export default class Classroom extends Phaser.Scene {
             else if (isRealQuestion) {displayText = `Q${this.currentQuestionIndex + 1}: ${question}`; }
             else { displayText = question; } 
                    
-            this.questionText = this.add.text(screenCenterX, dividerY + 10 + padding / 2, displayText, {
+            this.questionText = this.add.text(screenCenterX, dividerY + bodyTop + padding / 2, displayText, {
                 fontFamily: '"Press Start 2P"',
                 fontSize: "12px",
                 fill: "#ffffff",
                 align: "center",
                 wordWrap: { width: boxWidth - (padding * 2) },
-                lineSpacing: "10",
+                lineSpacing: 10,
                 resolution: 2
             }).setOrigin(0.5, 0);
 
-            const totalHeight = (dividerY - boxY) + 10 + this.questionText.height + (padding / 2);
+            const totalHeight = (dividerY - boxY) + bodyTop + padding / 2 + this.questionText.height + bottomPad;
             this.headerBottom = boxY + totalHeight + verticalGap;
 
             const headerBg = this.add.graphics()
@@ -361,10 +364,10 @@ export default class Classroom extends Phaser.Scene {
                 let offsetY = 0;
 
                 const textCheck = optionText.toUpperCase().trim();
-                if (textCheck.includes("STRONGLY AGREE")) { offsetX = -80; offsetY = -50; }
-                else if (textCheck.includes("STRONGLY DISAGREE")) { offsetX = 80; offsetY = 50; }
-                else if (textCheck.includes("DISAGREE")) { offsetX = -80; offsetY = 50; }
-                else if (textCheck.includes("AGREE")) { offsetX = 80; offsetY = -50; }
+                if (textCheck.includes("STRONGLY AGREE")) { offsetX = -100; offsetY = -50; }
+                else if (textCheck.includes("STRONGLY DISAGREE")) { offsetX = 100; offsetY = 50; }
+                else if (textCheck.includes("DISAGREE")) { offsetX = -100; offsetY = 50; }
+                else if (textCheck.includes("AGREE")) { offsetX = 100; offsetY = -50; }
                 else { offsetX = 0; offsetY = 0; }
 
                 const optionsText = this.add.text(0, 0, optionText, {
@@ -393,7 +396,12 @@ export default class Classroom extends Phaser.Scene {
                     .on('pointerout', () => optionsStyleContainer.setAlpha(1))
                     .on('pointerdown', () => {
                         if (this.isSettingsOpen) return;
-                        this.handleAnswer(optionText);
+
+                        if (optionText === "Retry") {
+                            this.loadQuestions();
+                        } else {
+                            this.handleAnswer(optionText);
+                        }
                     });
 
                 const buttonContainer = this.add.container(offsetX, offsetY, [optionsStyleContainer, optionsText]);
@@ -414,7 +422,9 @@ export default class Classroom extends Phaser.Scene {
                 const label = String.fromCharCode(65 + index);
                 const currentX = startX - (index * offsetStep);
 
-                const optionsText = this.add.text(0, 0, `${label}. ${optionText}`, {
+                const displayText = optionText === "Retry" ? optionText : `${label}. ${optionText}`;
+
+                const optionsText = this.add.text(0, 0, displayText, {
                     fontFamily: '"Press Start 2P"',
                     fontSize: "8px",
                     align: "center",
@@ -443,7 +453,12 @@ export default class Classroom extends Phaser.Scene {
                     .on('pointerout', () => optionsStyleContainer.setAlpha(1))
                     .on('pointerdown', () => {
                         if (this.isSettingsOpen) return;
-                        this.handleAnswer(optionText);
+
+                        if (optionText === "Retry") {
+                            this.loadQuestions();
+                        } else {
+                            this.handleAnswer(optionText);
+                        }
                     });
 
                 const buttonContainer = this.add.container(currentX, currentY, [optionsStyleContainer, optionsText]);
@@ -456,6 +471,9 @@ export default class Classroom extends Phaser.Scene {
 
     startThinkingAnimation() {
         let dotCount = 0;
+        const isAssessment = this.rawType === 'Skill' || this.rawType === 'Personality';
+        const placeholderCount = isAssessment ? 5 : 4;
+
         this.thinkingTimer = this.time.addEvent({
             delay: 500,
             callback: () => {
@@ -463,7 +481,7 @@ export default class Classroom extends Phaser.Scene {
                 const dots = ".".repeat(dotCount);
                 
                 this.questionUI(`Thinking questions${dots}`);
-                this.optionsUI([dots, dots, dots, dots]);
+                this.optionsUI(Array(placeholderCount).fill(dots));
             },
             loop: true
         });
