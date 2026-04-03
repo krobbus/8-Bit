@@ -1,6 +1,7 @@
 import { db } from '../../components/firebaseConfig';
 import Player from '/src/pages/prefabs/player.js';
 import NPC from '/src/pages/prefabs/npc.js';
+import DialogueBubble from '/src/pages/prefabs/dialoguebubble.js';
 import { createMobileControls } from '/src/pages/utils/controls.js';
 import Settings from '/src/pages/prefabs/settings.js';
 
@@ -9,7 +10,7 @@ export default class Outdoor extends Phaser.Scene {
         super('Outdoor');
     }
 
-    async create() {
+    async create(targetSceneName) {
         const screenCenterX = this.cameras.main.worldView.x + this.cameras.main.width / 2;
         const screenCenterY = this.cameras.main.worldView.y + this.cameras.main.height / 2;
 
@@ -48,6 +49,29 @@ export default class Outdoor extends Phaser.Scene {
             .setScale(1.8);
 
         this.npc = new NPC(this, 500, 420, 'female1').setScale(1.8);
+        this.npcDialogue = new DialogueBubble(
+            this,
+            this.npc,
+            [
+                "Hello there, welcome\nto the campus!",
+                "Your journey starts\nwith a single step.",
+                "Talk to me if you\nneed directions."
+            ],
+            {
+                offsetX: -20,
+                offsetY: -100,
+                maxWidth: 220,
+                typeDelay: 45,
+                linePause: 2000,
+                loop: false,
+                depth: 200,
+                onComplete: () => {
+                    this.input.keyboard.resetKeys();
+                    window.dispatchEvent(new CustomEvent('openDashboardModal'));
+                    this.npcDialogue.resetToIdle();
+                }
+            }
+        );
 
         let existingAudio = this.sound.get('audiosample');                                                          // audio
         if (!existingAudio) { this.gameAudio = this.sound.add('audiosample', { loop: true });
@@ -184,6 +208,8 @@ export default class Outdoor extends Phaser.Scene {
         );
         if (onStairs) { this.applyStairPhysics() } else { this.player.body.setAllowGravity(true) }; 
         this.checkProximity();
+
+        if (this.npcDialogue) this.npcDialogue.update();
     }
 
     checkProximity() {
@@ -200,7 +226,11 @@ export default class Outdoor extends Phaser.Scene {
 
             if (spaceJustDown || mobileInteractDown) {
                 const returnPos = this.activeZone.spawnInNextScene || null;
-                this.startPageTransition(this.activeZone.target, returnPos);
+                if (this.activeZone.target === 'OPEN_DASHBOARD_MODAL') {
+                    this.npcDialogue.play();
+                } else {
+                    this.startPageTransition(this.activeZone.target, returnPos);
+                }
             }
 
             this.hintBubble
@@ -243,12 +273,6 @@ export default class Outdoor extends Phaser.Scene {
     toggleSettings() { this.settingsPanel.setVisible(!this.settingsPanel.visible); }
 
     startPageTransition(targetSceneName, lastPosition) {
-        if (targetSceneName === 'OPEN_DASHBOARD_MODAL') {
-            this.input.keyboard.resetKeys();
-            window.dispatchEvent(new CustomEvent('openDashboardModal'));
-            return;
-        }
-
         const width = this.scale.width;
         const height = this.scale.height;
 

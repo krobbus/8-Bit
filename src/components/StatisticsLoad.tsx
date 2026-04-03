@@ -114,7 +114,7 @@ const StatisticsLoad: React.FC<StatisticsProps> = ({ stats, userData, isGenerati
             let lineText = line.trim();
             
             if (!lineText) {
-                currentY += 5;
+                currentY += 4;
                 return;
             }
 
@@ -152,9 +152,9 @@ const StatisticsLoad: React.FC<StatisticsProps> = ({ stats, userData, isGenerati
                     }
                 }
                 doc.text(singleLine, margin, currentY);
-                currentY += 4;                                                                             // line spacing
+                currentY += 6;                                                                             // line spacing
             });
-            currentY += 3;                                                                                 // blocks/paragraph spacing
+            currentY += 2;                                                                                 // blocks/paragraph spacing
         });
 
         doc.save(`${userData.name || "Player"}_Career_Report.pdf`);
