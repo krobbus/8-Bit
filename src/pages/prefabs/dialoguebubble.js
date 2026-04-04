@@ -92,7 +92,7 @@ export default class DialogueBubble {
     typeCurrentLine() {
         if (this.destroyed) return;
 
-        const fullText = this.lines[this.lineIndex] ?? "•••";
+        const fullText = this.lines[this.lineIndex] ?? "";
         this.textObj.setText("");
         let charIndex = 0;
 
@@ -143,7 +143,6 @@ export default class DialogueBubble {
         
         this.textObj.setText("•••");
         this.redrawBg(this.textObj.width, this.textObj.height);
-        this.reposition();
     }
 
     destroy() {

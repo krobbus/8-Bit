@@ -59,15 +59,14 @@ export default class Outdoor extends Phaser.Scene {
             ],
             {
                 offsetX: -20,
-                offsetY: -100,
+                offsetY: -90,
                 maxWidth: 220,
                 typeDelay: 45,
                 linePause: 2000,
                 loop: false,
                 depth: 200,
                 onComplete: () => {
-                    this.input.keyboard.resetKeys();
-                    window.dispatchEvent(new CustomEvent('openDashboardModal'));
+                    window.dispatchEvent(new CustomEvent('openManualModal'));
                     this.npcDialogue.resetToIdle();
                 }
             }
@@ -123,7 +122,7 @@ export default class Outdoor extends Phaser.Scene {
                 x: 470, y: 430, w: 60, h: 30,
                 hintText1: "COMMUNICATE ?",
                 hintHeight: 30, hintWidth: 170, gapY: 0,
-                target: 'OPEN_DASHBOARD_MODAL'
+                target: 'OPEN_MANUAL_MODAL'
             }
         ];
         this.zones.forEach(z => { debugGraphics.strokeRect(z.x, z.y, z.w, z.h); });
@@ -226,7 +225,7 @@ export default class Outdoor extends Phaser.Scene {
 
             if (spaceJustDown || mobileInteractDown) {
                 const returnPos = this.activeZone.spawnInNextScene || null;
-                if (this.activeZone.target === 'OPEN_DASHBOARD_MODAL') {
+                if (this.activeZone.target === 'OPEN_MANUAL_MODAL') {
                     this.npcDialogue.play();
                 } else {
                     this.startPageTransition(this.activeZone.target, returnPos);

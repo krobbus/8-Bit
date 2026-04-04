@@ -5,15 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>An AI-Driven 8-bit Web Game For Personalized College Program Matching and Career Exploration</title>
     <link rel="icon" type="image/x-icon" href="/8-Bit/assets/Logo-DV6CUCl2.png">
-  <script type="module" crossorigin src="/8-Bit/assets/main-B-xUPBse.js"></script>
+  <script type="module" crossorigin src="/8-Bit/assets/main-CWxeU9Jg.js"></script>
   <link rel="modulepreload" crossorigin href="/8-Bit/assets/modulepreload-polyfill-B5Qt9EMX.js">
-  <link rel="stylesheet" crossorigin href="/8-Bit/assets/main-DxiZ6EYj.css">
+  <link rel="modulepreload" crossorigin href="/8-Bit/assets/Manual-BSUxv_Kl.js">
+  <link rel="modulepreload" crossorigin href="/8-Bit/assets/loginOverlay-DSXFi6r6.js">
+  <link rel="stylesheet" crossorigin href="/8-Bit/assets/Manual-B-ZBuqJP.css">
+  <link rel="stylesheet" crossorigin href="/8-Bit/assets/main-BeWqB58c.css">
 </head>
 
 <body>
     <h1>An AI-Driven 8-bit Web Game For Personalized College Program Matching and Career Exploration</h1>
     
-    <section class="loginContainer">
+    <section id="loginContainer">
         <section class="buttonLayout">
             <button id="startButton">Play as a Guest</button>
         </section>
@@ -43,32 +46,12 @@
                 <button id="loginButton">Log In</button>
             </section>
         </section>
-        <p id="loginMessage" style="font-size: 2rem;"></p>
 
-        <section class="linkWrapper">
-            <a id="forgotPass" onclick="forgotPassword()">Forgot Password?</a>
-            <a id="manual" onclick="manualDisplay()">How To Play?</a>
-        </section>
+        <p id="loginMessage"></p>
 
-        <section id="popupOverlay">
-            <section id="popupBox">
-                <h2 id="popupTitle">Loading...</h2>
-                <p id="popupContent">Loading...</p>
-
-                <button id="popupClose">Hide</button>
-            </section>
-        </section>
-
-        <!-- manual popup -->
-        <section id="popupOverlayManual">
-            <section id="popupBoxManual">
-                <h2 id="popupTitleManual"></h2>
-                <section id="popupEdgeManual">
-                    <p id="popupContentManual"></p>
-                </section>
-
-                <button id="popupCloseManual">Hide</button>
-            </section>
+        <section id="loginLinkWrapper">
+            <a id="forgotPass" onclick="passwordRecovery()">Forgot Password?</a>
+            <a id="manual" onclick="manual()">How To Play?</a>
         </section>
 
         <section id="loadingScreen">
@@ -78,10 +61,12 @@
             </section>
         </section>
     </section>
+
+    <div id="loginModalRoot"></div>
 
 
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-
+
 </body>
 </html>

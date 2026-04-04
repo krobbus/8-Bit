@@ -9,8 +9,10 @@ import Hallway from './pages/scenes/hallway.js';
 import Classroom from './pages/scenes/classroom.js';
 import RightWing from './pages/scenes/rightWing.js';
 
-import AccountManagement from './components/AccountManagement.js';
-import Dashboard from './components/Dashboard.js';
+import PasswordRecovery from './components/PasswordRecovery';
+import Manual from './components/Manual';
+import AccountManagement from './components/AccountManagement';
+import Dashboard from './components/Dashboard';
 
 declare global {
   interface Window {
@@ -46,7 +48,9 @@ const config: Phaser.Types.Core.GameConfig = {
 };
 
 const UIOverlay = () => {
-  const [isAccountOpen, setIsAccountOpen] = useState(false);
+  const [isPasswordRecoveryOpen, setIsPasswordRecoveryOpen] = useState(false);
+  const [isManualOpen, setIsManualOpen] = useState(false);
+  const [isAccountManagementOpen, setIsAccountManagementOpen] = useState(false);
   const [isDashboardOpen, setIsDashboardOpen] = useState(false);
 
   useEffect(() => {
@@ -66,26 +70,43 @@ const UIOverlay = () => {
     };
     window.addEventListener('updateGameTitle', handleUpdateTitle);
 
-    const handleOpenAccountModal = () => setIsAccountOpen(true);
+    const handleOpenPasswordRecoveryModal = () => setIsPasswordRecoveryOpen(true);
+    const handleOpenManualModal = () => setIsManualOpen(true);
+    const handleOpenAccountManagementModal = () => setIsAccountManagementOpen(true);
     const handleOpenDashboardModal = () => setIsDashboardOpen(true);
 
-    window.addEventListener('openAccountModal', handleOpenAccountModal);
+    window.addEventListener('openPasswordRecoveryModal', handleOpenPasswordRecoveryModal);
+    window.addEventListener('openManualModal', handleOpenManualModal);
+    window.addEventListener('openAccountManagementModal', handleOpenAccountManagementModal);
     window.addEventListener('openDashboardModal', handleOpenDashboardModal);
 
     return () => {
       game.destroy(true);
       if (titleInterval) clearInterval(titleInterval);
+
       window.removeEventListener('updateGameTitle', handleUpdateTitle);
-      window.removeEventListener('openAccountModal', handleOpenAccountModal);
+      window.removeEventListener('openPasswordRecoveryModal', handleOpenPasswordRecoveryModal);
+      window.removeEventListener('openManualModal', handleOpenManualModal);
+      window.removeEventListener('openAccountManagementModal', handleOpenAccountManagementModal);
       window.removeEventListener('openDashboardModal', handleOpenDashboardModal);
     };
   }, []);
 
   return (
     <>
+      <PasswordRecovery
+        isOpen={isPasswordRecoveryOpen} 
+        onClose={() => setIsPasswordRecoveryOpen(false)} 
+      />
+
+      <Manual
+        isOpen={isManualOpen} 
+        onClose={() => setIsManualOpen(false)} 
+      />
+
       <AccountManagement 
-        isOpen={isAccountOpen} 
-        onClose={() => setIsAccountOpen(false)} 
+        isOpen={isAccountManagementOpen} 
+        onClose={() => setIsAccountManagementOpen(false)} 
       />
 
       <Dashboard 

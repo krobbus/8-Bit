@@ -13,7 +13,8 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'index.html'),
-        game: resolve(__dirname, 'Game.html')
+        game: resolve(__dirname, 'Game.html'),
+        loginOverlay: 'src/components/LoginOverlay.tsx'
       }
     }
   }

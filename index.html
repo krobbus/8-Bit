@@ -5,13 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>An AI-Driven 8-bit Web Game For Personalized College Program Matching and Career Exploration</title>
     <link rel="icon" type="image/x-icon" href="public/Logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="index.css">
 </head>
 
 <body>
     <h1>An AI-Driven 8-bit Web Game For Personalized College Program Matching and Career Exploration</h1>
     
-    <section class="loginContainer">
+    <section id="loginContainer">
         <section class="buttonLayout">
             <button id="startButton">Play as a Guest</button>
         </section>
@@ -41,32 +42,12 @@
                 <button id="loginButton">Log In</button>
             </section>
         </section>
-        <p id="loginMessage" style="font-size: 2rem;"></p>
 
-        <section class="linkWrapper">
-            <a id="forgotPass" onclick="forgotPassword()">Forgot Password?</a>
-            <a id="manual" onclick="manualDisplay()">How To Play?</a>
-        </section>
+        <p id="loginMessage"></p>
 
-        <section id="popupOverlay">
-            <section id="popupBox">
-                <h2 id="popupTitle">Loading...</h2>
-                <p id="popupContent">Loading...</p>
-
-                <button id="popupClose">Hide</button>
-            </section>
-        </section>
-
-        <!-- manual popup -->
-        <section id="popupOverlayManual">
-            <section id="popupBoxManual">
-                <h2 id="popupTitleManual"></h2>
-                <section id="popupEdgeManual">
-                    <p id="popupContentManual"></p>
-                </section>
-
-                <button id="popupCloseManual">Hide</button>
-            </section>
+        <section id="loginLinkWrapper">
+            <a id="forgotPass" onclick="passwordRecovery()">Forgot Password?</a>
+            <a id="manual" onclick="manual()">How To Play?</a>
         </section>
 
         <section id="loadingScreen">
@@ -77,6 +58,8 @@
         </section>
     </section>
 
+    <div id="loginModalRoot"></div>
+
     <script type="module" src="index.js"></script>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -84,5 +67,6 @@
 
     <script type="module" src="src/pages/utils/firebaseConfig.js"></script>
     <script type="module" src="src/pages/utils/data.js"></script>
+    <script type="module" src="src/components/LoginOverlay.tsx"></script>
 </body>
 </html>

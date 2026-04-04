@@ -85,6 +85,6 @@ h1{
 
 @media (max-width: 700px){
     .modalContainer, .modalContent{
-        transform: translate(0.7);
+        transform: scale(0.7);
     }
 }
