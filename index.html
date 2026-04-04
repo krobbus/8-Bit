@@ -6,21 +6,19 @@
     <title>An AI-Driven 8-bit Web Game For Personalized College Program Matching and Career Exploration</title>
     <link rel="icon" type="image/x-icon" href="/8-Bit/assets/Logo-DV6CUCl2.png">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-  <script type="module" crossorigin src="/8-Bit/assets/main-C9og8IHj.js"></script>
+  <script type="module" crossorigin src="/8-Bit/assets/main-DUP0qR6-.js"></script>
   <link rel="modulepreload" crossorigin href="/8-Bit/assets/modulepreload-polyfill-B5Qt9EMX.js">
   <link rel="modulepreload" crossorigin href="/8-Bit/assets/Manual-DTSpV-4J.js">
   <link rel="modulepreload" crossorigin href="/8-Bit/assets/loginOverlay-CuLsKdEZ.js">
   <link rel="stylesheet" crossorigin href="/8-Bit/assets/Manual-CYlFpdFC.css">
-  <link rel="stylesheet" crossorigin href="/8-Bit/assets/main-LQLcSDn5.css">
+  <link rel="stylesheet" crossorigin href="/8-Bit/assets/main-HilGYaev.css">
 </head>
 
 <body>
     <h1>An AI-Driven 8-bit Web Game For Personalized College Program Matching and Career Exploration</h1>
     
     <section id="loginContainer">
-        <section class="buttonLayout">
-            <button id="startButton">Play as a Guest</button>
-        </section>
+        <button id="guestButton">Play as a Guest</button>
 
         <section class="lineDivider">
             <span class="line"></span>
@@ -28,24 +26,22 @@
             <span class="line"></span>
         </section>
 
-        <section class="buttonLayout">
-            <section id="form">
-                <select id="roleSelect">
-                    <option value="player" selected>Player</option>
-                    <option value="admin">Admin</option>
-                </select>
+        <section id="accountLoginLayout">
+            <select id="roleSelect">
+                <option value="player" selected>Player</option>
+                <option value="admin">Admin</option>
+            </select>
 
-                <input id="inputId" placeholder="Enter your ID / Email" type="text" />
+            <input id="inputId" placeholder="Enter your ID / Email" type="text" />
 
-                <section class="passWrapper">
-                    <input id="inputPassword" placeholder="Enter your password" type="password" />
-                    <button type="button" id="togglePass">
-                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAB1ElEQVR4AeyVPU7EMBCFJ9yAGwAFIFEgGiTq7Wj4a6BAUCAaWijokbagpkEUlHSIhm5rJE4AFMANOELQKyJ5o5Xi2GPHTl6kpyQbe2b8zbN3TgZ+EcDADSB0AB0wcALcAhoG2Bqdl7F0ejEuIY26EYMOAIUhiw4Ycvexdi8HVAcfAsXS58ePQMiNwxDyye0FwCdxKnODAFhZXRTobXJfaCgkrCAAQhbsG7s+3wkA9h9UDxb7HWcBhHMAcsnvBMAlUapzVAFg30OPd9cFpLXo6hzRimfGUQVgBs7lmQBy6VSoOumAUGRziUsH5NKpUHVaOeD24bU0tX+0K7O0trEukDlW8/lmfCmzdHxyINDk/WuqThtoVgBsAuU6hgBy7ZxW3XSAFskYcZYW5qVJUruaXumAJkJ9/04HaHf4+elFbKSd1zUeHeBKri/z6IC+dNJ1HXSAK7ku5n3//kmT2tal7oC9wx2pVC+m+h33+reu3tUBdLUQ17wE4EquL/PogL50slpH2zsd0JZYm/H4uzPVZm6ssXRALNKp5qEDUu1MrLrogFikU81j5YCrs+0iBY02l4smmXXaQLcCYBMo1zEEkGvntOqmA7RI5hqHDsi1c1Xdvvd/AAAA//8LpBxQAAAABklEQVQDAKYOVZDjPzroAAAAAElFTkSuQmCC" alt="Show/Hide PIN">
-                    </button>
-                </section>
-
-                <button id="loginButton">Log In</button>
+            <section class="passWrapper">
+                <input id="inputPassword" placeholder="Enter your password" type="password" />
+                <button type="button" id="togglePass">
+                    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAB1ElEQVR4AeyVPU7EMBCFJ9yAGwAFIFEgGiTq7Wj4a6BAUCAaWijokbagpkEUlHSIhm5rJE4AFMANOELQKyJ5o5Xi2GPHTl6kpyQbe2b8zbN3TgZ+EcDADSB0AB0wcALcAhoG2Bqdl7F0ejEuIY26EYMOAIUhiw4Ycvexdi8HVAcfAsXS58ePQMiNwxDyye0FwCdxKnODAFhZXRTobXJfaCgkrCAAQhbsG7s+3wkA9h9UDxb7HWcBhHMAcsnvBMAlUapzVAFg30OPd9cFpLXo6hzRimfGUQVgBs7lmQBy6VSoOumAUGRziUsH5NKpUHVaOeD24bU0tX+0K7O0trEukDlW8/lmfCmzdHxyINDk/WuqThtoVgBsAuU6hgBy7ZxW3XSAFskYcZYW5qVJUruaXumAJkJ9/04HaHf4+elFbKSd1zUeHeBKri/z6IC+dNJ1HXSAK7ku5n3//kmT2tal7oC9wx2pVC+m+h33+reu3tUBdLUQ17wE4EquL/PogL50slpH2zsd0JZYm/H4uzPVZm6ssXRALNKp5qEDUu1MrLrogFikU81j5YCrs+0iBY02l4smmXXaQLcCYBMo1zEEkGvntOqmA7RI5hqHDsi1c1Xdvvd/AAAA//8LpBxQAAAABklEQVQDAKYOVZDjPzroAAAAAElFTkSuQmCC" alt="Show/Hide PIN">
+                </button>
             </section>
+
+            <button id="loginButton">Log In</button>
         </section>
 
         <p id="loginMessage"></p>
