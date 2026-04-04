@@ -292,9 +292,9 @@ const AccountManagement: React.FC<ModalProps> = ({ isOpen, onClose }) => {
     if (!isOpen) return null;
     return(
         <div className="modalBackdrop">
-            <button id="closeButton" onClick={onClose}>X</button>
-
             <div className="modalContainer">
+                <button id="closeButton" onClick={onClose}>X</button>
+
                 <div className="modalContent">
                     {loading ? <p>Loading...</p> : (
                         <section className="accountManagementModal">

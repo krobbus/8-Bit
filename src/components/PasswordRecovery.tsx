@@ -183,9 +183,9 @@ const PasswordRecovery: React.FC<ModalProps> = ({ isOpen, onClose }) => {
 
     return(
         <div className="modalBackdrop">
-            <button id="closeButton" onClick={onClose}>X</button>
-
             <div className="modalContainer">
+                <button id="closeButton" onClick={onClose}>X</button>
+                
                 <div className="modalContent">
                     <section className="passwordRecoveryContainer">
                         <h1 id="mainTitle">PASSWORD RECOVERY</h1>

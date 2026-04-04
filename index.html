@@ -13,9 +13,7 @@
     <h1>An AI-Driven 8-bit Web Game For Personalized College Program Matching and Career Exploration</h1>
     
     <section id="loginContainer">
-        <section class="buttonLayout">
-            <button id="startButton">Play as a Guest</button>
-        </section>
+        <button id="guestButton">Play as a Guest</button>
 
         <section class="lineDivider">
             <span class="line"></span>
@@ -23,24 +21,24 @@
             <span class="line"></span>
         </section>
 
-        <section class="buttonLayout">
-            <section id="form">
+        <section id="accountLoginLayout">
+            <div class="userWrapper">
                 <select id="roleSelect">
                     <option value="player" selected>Player</option>
                     <option value="admin">Admin</option>
                 </select>
 
-                <input id="inputId" placeholder="Enter your ID / Email" type="text" />
+                <input id="inputEmailId" placeholder="Enter your ID / Email" type="text" />
+            </div>
 
-                <section class="passWrapper">
-                    <input id="inputPassword" placeholder="Enter your password" type="password" />
-                    <button type="button" id="togglePass">
-                        <img src="public/assets/WebAssets/PadlockClosed.png" alt="Show/Hide PIN">
-                    </button>
-                </section>
-
-                <button id="loginButton">Log In</button>
+            <section class="passWrapper">
+                <input id="inputPassword" placeholder="Enter your password" type="password" />
+                <button type="button" id="togglePass">
+                    <img src="public/assets/WebAssets/PadlockClosed.png" alt="Show/Hide PIN">
+                </button>
             </section>
+
+            <button id="loginButton">Log In</button>
         </section>
 
         <p id="loginMessage"></p>
@@ -60,6 +58,7 @@
 
     <div id="loginModalRoot"></div>
 
+    <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js"></script>
     <script type="module" src="index.js"></script>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>

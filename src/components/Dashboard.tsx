@@ -173,9 +173,9 @@ const Dashboard: React.FC<ModalProps> = ({onClose , isOpen}) => {
 
     return(
         <div className="modalBackdrop">
-            <button id="closeButton" onClick={onClose}>X</button>
-
             <div className="modalContainer">
+                <button id="closeButton" onClick={onClose}>X</button>
+                
                 <div className="modalContent">
                     <section className="dashboardContainer">
                         <h1 id="mainTitle">DASHBOARD</h1>

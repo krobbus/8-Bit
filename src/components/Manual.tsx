@@ -27,9 +27,9 @@ const Manual: React.FC<ModalProps> = ({ isOpen, onClose }) => {
 
     return(
         <div className="modalBackdrop">
-            <button id="closeButton" onClick={onClose}>X</button>
-
             <div className="modalContainer">
+                <button id="closeButton" onClick={onClose}>X</button>
+                
                 <div className="modalContent">
                     <section className="manualContainer">
                         <div className="headers">

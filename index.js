@@ -1,10 +1,9 @@
 const roleSelect = document.getElementById("roleSelect");
-const idInput = document.getElementById("inputId");
+const emailIdInput = document.getElementById("inputEmailId");
 const passwordInput = document.getElementById("inputPassword");
-const passInput = document.getElementById("inputPass");
 const togglePassBtn = document.getElementById("togglePass");
 
-const guestBtn = document.getElementById("startButton");
+const guestBtn = document.getElementById("guestButton");
 const loginBtn = document.getElementById("loginButton");
 const msg = document.getElementById("loginMessage");
 const loadingScreen = document.getElementById("loadingScreen");
@@ -13,7 +12,7 @@ let isHidden = true;
 togglePassBtn.addEventListener("click", () => {
   isHidden = !isHidden;
   passwordInput.type = isHidden ? "password" : "text";
-  togglePassBtn.querySelector("img").src = isHidden ? "/public/assets/WebAssets/PadlockClosed.png" : "/public/assets/WebAssets/PadlockOpened.png";
+  togglePassBtn.querySelector("img").src = isHidden ? "assets/WebAssets/PadlockClosed.png" : "assets/WebAssets/PadlockOpened.png";
 });
 
 msg.style.transition = "opacity 0.5s ease";                                                                   // login message
@@ -38,7 +37,7 @@ function playAsGuest() {                                                        
 async function loginUser() {                                                                                  // permanent player login
   loadingScreen.style.display = "flex";
 
-  const userInput = idInput.value.trim();
+  const userInput = emailIdInput.value.trim();
   const passInput = passwordInput.value.trim();
   const role = roleSelect.value;
 
