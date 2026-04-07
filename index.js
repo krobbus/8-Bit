@@ -103,7 +103,7 @@ async function loginUser() {                                                    
       setTimeout(() => {
         loadingScreen.style.display = "none";
         if (role === "admin") {
-          window.location.href = "adminDashboard.html";
+          window.location.href = "./AdminDashboard.html";
         } else { 
           window.location.href = "./Game.html";
           localStorage.setItem("startScene", "LeftWing");

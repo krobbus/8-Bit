@@ -39,8 +39,12 @@ const Manual: React.FC<ModalProps> = ({ isOpen, onClose }) => {
 
                         <nav>
                             <ul>
-                                <li><a href="#introduction" onClick={(e) => handleNavClick(e, 'introductionContainer')}>INTRODUCTION</a></li>
-                                <li><a href="#requirementsContainer" onClick={(e) => handleNavClick(e, 'requirementsContainer')}>SYSTEM REQUIREMENTS</a></li>
+                                <li>
+                                    <a href="#introduction" onClick={(e) => handleNavClick(e, 'introductionContainer')}>INTRODUCTION</a>
+                                    <ul>
+                                        <li><a href="#requirementsContainer" onClick={(e) => handleNavClick(e, 'requirementsContainer')}>SYSTEM REQUIREMENTS</a></li>
+                                    </ul>
+                                </li>
                                 <li>
                                     <a href="#featuresContainer" onClick={(e) => handleNavClick(e, 'featuresContainer')}>FEATURES</a>
                                     <ul>

@@ -46,7 +46,7 @@ body{
 
     display: flex;
     flex-direction: column;
-    gap: 4rem;
+    gap: 2rem;
 
     h1{
         font-size: 4rem;
