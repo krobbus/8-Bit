@@ -52,7 +52,7 @@ async function loginUser() {                                                    
     let userData = null;
     let finalPlayerID = null;
 
-    const isEmail = userInput.includes(".");
+    const isEmail = userInput.includes("@");
     if (isEmail) {
       const emailQuery = await db.ref("webGame")
         .orderByChild("email")

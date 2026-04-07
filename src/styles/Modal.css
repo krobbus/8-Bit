@@ -13,10 +13,10 @@
 }
 
 .modalContainer {
+    position: relative;
     border: 10px solid #dad7cd;
-    min-height: 600px;
-    min-width: 600px;
-    max-width: 1200px;
+    height: 600px;
+    width: 1000px;
 }
 
 .modalContent {

@@ -117,7 +117,7 @@ body{
             justify-content: center;
             align-items: center;
             gap: 1rem;
-            width: 80%;
+            width: 60%;
             box-sizing: border-box;
 
             .userWrapper{
@@ -267,6 +267,7 @@ body{
 
 @media (max-width: 700px){
     body{ padding: 2rem; }
-    h1{ font-size: 2rem; }
-    #guestButton{ width: 100%; }
+    body > h1{ font-size: 2rem; }
+    body > #loginContainer > #guestButton{ width: 100%; }
+    body > #loginContainer > #accountLoginLayout{ width: 100%; }
 }

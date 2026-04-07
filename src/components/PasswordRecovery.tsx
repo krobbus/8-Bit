@@ -21,20 +21,17 @@ const PasswordRecovery: React.FC<ModalProps> = ({ isOpen, onClose }) => {
     const [playerID, setPlayerID] = useState('');
     const [correctPIN, setCorrectPIN] = useState('');
     
-    const [idInput, setIdInput] = useState('');
-    const [emailInput, setEmailInput] = useState('');
-
-    const [verifying, setVerifying] = useState(false);
-    const [verifyResult, setVerifyResult] = useState<'idle' | 'checking' | 'ok' | 'fail'>('idle');
-
+    const [emailIdInput, setEmailIdInput] = useState('');
+    const isEmailMode = emailIdInput.trim().includes('@'); 
     const [pinInput, setPinInput] = useState('');
     const [showPin, setShowPin] = useState(false);
-
     const [newPass, setNewPass] = useState('');
     const [showPass, setShowPass] = useState(false);
     const [confirmPass, setConfirmPass] = useState('');
     const [showConfirm, setShowConfirm] = useState(false);
-    
+
+    const [verifying, setVerifying] = useState(false);
+    const [verifyResult, setVerifyResult] = useState<'idle' | 'checking' | 'ok' | 'fail'>('idle');
     const [message, setMessage] = useState<FpMessage | null>(null);
     const [done, setDone] = useState(false);
     const messageTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -54,8 +51,7 @@ const PasswordRecovery: React.FC<ModalProps> = ({ isOpen, onClose }) => {
             setStep(1);
             setPlayerID('');
             setCorrectPIN('');
-            setIdInput('');
-            setEmailInput('');
+            setEmailIdInput('');
             setVerifying(false);
             setVerifyResult('idle');
             setPinInput('');
@@ -78,12 +74,14 @@ const PasswordRecovery: React.FC<ModalProps> = ({ isOpen, onClose }) => {
     }
 
     function handleProceedToVerify() {
-        if (!idInput.trim()) {
-            showMsg('Please enter your Player ID.', 'red');
+        const val = emailIdInput.trim();
+
+        if (!val) {
+            showMsg('Please enter your Player ID or Email.', 'red');
             return;
         }
-        
-        if (!isEmailValid(emailInput.trim())) {
+
+        if (isEmailMode && !isEmailValid(val)) {
             showMsg('Please use a valid email (example@email.com)', 'red');
             return;
         }
@@ -95,33 +93,46 @@ const PasswordRecovery: React.FC<ModalProps> = ({ isOpen, onClose }) => {
     async function handleVerifyAccount() {
         setVerifying(true);
         setVerifyResult('checking');
-        
+ 
+        const val = emailIdInput.trim();
+ 
         try {
-            const snapshot = await db.ref(`webGame/${idInput.trim()}`).once('value');
-            const data = snapshot.val();
-    
+            let data: any = null;
+            let resolvedID: any = {};
+ 
+            if (isEmailMode) {
+                const emailQuery = await db.ref('webGame')
+                    .orderByChild('email')
+                    .equalTo(val)
+                    .once('value');
+ 
+                if (emailQuery.exists()) {
+                    const results = emailQuery.val();
+                    resolvedID = Object.keys(results)[0];
+                    data = results[resolvedID];
+                }
+            } else {
+                const idSnapshot = await db.ref(`webGame/${val}`).once('value');
+                if (idSnapshot.exists()) {
+                    data       = idSnapshot.val();
+                    resolvedID = val;
+                }
+            }
+ 
             if (!data) {
                 setVerifyResult('fail');
                 showMsg('Account not found.', 'red');
                 return;
             }
-    
-            const emailMatches = (data.email ?? '').toLowerCase() === emailInput.trim().toLowerCase();
-    
-            if (!emailMatches) {
-                setVerifyResult('fail');
-                showMsg('Email does not match this account.', 'red');
-                return;
-            }
-    
+ 
             setVerifyResult('ok');
-            setPlayerID(idInput.trim());
-            setCorrectPIN(data.pin);
-            showMsg('Account verified! Proceeding...', 'green');
+            setPlayerID(resolvedID);
+            setCorrectPIN(String(data.pin));
+            showMsg('Account found! Proceeding...', '#cdff77');
             setTimeout(() => setStep(3), 700);
         } catch {
             setVerifyResult('fail');
-            showMsg('Error connecting to database.', 'red');
+            showMsg('Error connecting to database.', '#ff9090');
         } finally {
             setVerifying(false);
         }
@@ -129,37 +140,55 @@ const PasswordRecovery: React.FC<ModalProps> = ({ isOpen, onClose }) => {
 
     function handleVerifyPIN() {
         if (!isPinValid(pinInput)) {
-            showMsg('Requires exactly 4 digits.', 'red');
+            showMsg('Requires exactly 4 digits.', '#ff9090');
             return;
         }
 
         if (pinInput !== correctPIN) {
-            showMsg('Incorrect PIN.', 'red');
+            showMsg('Incorrect PIN.', '#ff9090');
             return;
         }
 
-        showMsg('PIN verified! Proceeding...', 'green');
+        showMsg('PIN verified! Proceeding...', '#cdff77');
         setTimeout(() => setStep(4), 700);
     }
 
     async function handleSavePassword() {
         if (!isPassValid(newPass)) {
-            showMsg('Must be 5-15 alphanumeric characters [a-Z, 0-9]', 'red');
+            showMsg('Must be 5-15 alphanumeric characters [a-Z, 0-9]', '#ff9090');
             return;
         }
         if (newPass !== confirmPass) {
-            showMsg('Passwords must match.', 'red');
+            showMsg('Passwords must match.', '#ff9090');
             return;
         }
         try {
             await db.ref(`webGame/${playerID}/pass`).set(newPass);
             setDone(true);
         } catch {
-            showMsg('Failed to save password.', 'red');
+            showMsg('Failed to save password.', '#ff9090');
         }
     }
 
     function handleKeyDown(e: React.KeyboardEvent, action: () => void) { if (e.key === 'Enter') action(); }
+
+    const emailIdHint = () => {
+        const val = emailIdInput.trim();
+        if (!val) return 'Enter your Player ID (e.g. example_1234) or Email (e.g. example@email.com)';
+        
+        if (isEmailMode) {
+            return isEmailValid(val) ? 'Email verified!' : 'Please use a valid email (e.g. example@email.com)';
+        }
+
+        return 'Input entered. Press Continue to verify.';
+    };
+ 
+    const emailIdHintColor = () => {
+        const val = emailIdInput.trim();
+        if (!val) return '#454545';
+        if (isEmailMode) return isEmailValid(val) ? '#cdff77' : '#ff9090';
+        return '#fec564';
+    };
  
     const StepIndicator = () => (
         <div className="fpSteps">
@@ -193,57 +222,49 @@ const PasswordRecovery: React.FC<ModalProps> = ({ isOpen, onClose }) => {
 
                         {done ? (
                             <div className="fpSuccess">
-                                <span className="fpSuccessIcon">✓</span>
-                                <h3>Password Updated!</h3>
+                                <h3><span className="fpSuccessIcon">✓</span> PASSWORD UPDATED!</h3>
                                 <p>Your password has been reset successfully.</p>
                                 <button className="fpBtn" onClick={onClose}>Close</button>
                             </div>
                         ) : step === 1 ? (
-                            <div className="fpStep-content">
+                            <div className="fpStepContent">
                                 <span className="mainHeader">Recover Password</span>
                                 <p className="subHeader">Enter your Player ID and registered email.</p>
                 
-                                <input className="fpInput"
+                                <input
+                                    className="fpInput"
                                     type="text"
-                                    placeholder="Enter your Player ID"
-                                    value={idInput}
-                                    onChange={e => setIdInput(e.target.value)}
+                                    placeholder="Enter your Player ID or Email..."
+                                    value={emailIdInput}
+                                    onChange={e => setEmailIdInput(e.target.value)}
                                     onKeyDown={e => handleKeyDown(e, handleProceedToVerify)}
                                 />
-                
-                                <input className="fpInput"
-                                    type="email"
-                                    placeholder="Enter your email"
-                                    value={emailInput}
-                                    onChange={e => setEmailInput(e.target.value)}
-                                    onKeyDown={e => handleKeyDown(e, handleProceedToVerify)}
-                                />
-
-                                <p className="fpHint" style={{
-                                        color: isEmailValid(emailInput)
-                                            ? '#cdff77'
-                                            : emailInput.length > 0 ? '#ff9090' : '#454545'
-                                    }}>
-                                    {isEmailValid(emailInput) ? 'Email verified!' : 'Please use a valid email (example@email.com)'}
+ 
+                                <p className="fpHint" style={{ color: emailIdHintColor() }}>
+                                    {emailIdHint()}
                                 </p>
                 
                                 <button className="fpBtn" onClick={handleProceedToVerify}>Continue</button>
                                 <MessageBanner />
                             </div>
                         ) : step === 2 ? (
-                            <div className="fpStep-content">
+                            <div className="fpStepContent">
                                 <h3 className="mainHeader">Verifying Account</h3>
-                                <p className="subHeader">Checking if <strong>{idInput}</strong> exists and matches your email.</p>
+                                <p className="subHeader">Looking up account by {isEmailMode ? 'email' : 'player ID'}</p>
                 
                                 <div className={`fpVerifyCard ${verifyResult}`}>
                                     <div className="fpVerifyRow">
-                                        <span className="fpVerifyLabel">Player ID</span>
-                                        <span className="fpVerifyValue">{idInput}</span>
+                                        <span className="fpVerifyLabel">
+                                            {isEmailMode ? 'Email' : 'Player ID'}
+                                        </span>
+                                        <span className="fpVerifyValue">{emailIdInput}</span>
                                     </div>
 
                                     <div className="fpVerifyRow">
-                                        <span className="fpVerifyLabel">Email</span>
-                                        <span className="fpVerifyValue">{emailInput}</span>
+                                        <span className="fpVerifyLabel">Method</span>
+                                        <span className="fpVerifyValue">
+                                            {isEmailMode ? 'Email lookup' : 'Direct ID lookup'}
+                                        </span>
                                     </div>
 
                                     <div className="fpVerifyStatus">
@@ -258,7 +279,7 @@ const PasswordRecovery: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                                     <button className="fpBtnSecondary"
                                         onClick={() => { setVerifyResult('idle'); setStep(1); }}
                                     >
-                                        ← Back
+                                        Back
                                     </button>
 
                                     <button className="fpBtn" onClick={handleVerifyAccount} disabled={verifying}>
@@ -269,7 +290,7 @@ const PasswordRecovery: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                                 <MessageBanner />
                             </div>
                         ) : step === 3 ? (
-                            <div className="fpStep-content">
+                            <div className="fpStepContent">
                                 <h3 className="mainHeader">Verify PIN</h3>
                                 <p className="subHeader">Enter the 4-digit PIN for this account.</p>
                 
@@ -299,14 +320,14 @@ const PasswordRecovery: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                                             ? '#cdff77'
                                             : pinInput.length > 0 ? '#ff9090' : '#454545'
                                     }}>
-                                    {isPinValid(pinInput) ? 'PIN verified!' : 'Requires exactly 4 digits'}
+                                    {isPinValid(pinInput) ? 'PIN valid!' : 'Requires exactly 4 digits'}
                                 </p>
                 
                                 <button className="fpBtn" onClick={handleVerifyPIN}>Verify PIN</button>
                                 <MessageBanner />
                             </div>
                         ) : (
-                            <div className="fpStep-content">
+                            <div className="fpStepContent">
                                 <span className="mainHeader">Reset Password</span>
                                 <p className="subHeader">Enter your new password below.</p>
                 
@@ -335,7 +356,7 @@ const PasswordRecovery: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                                             ? '#cdff77'
                                             : newPass.length > 0 ? '#ff9090' : '#454545'
                                     }}>
-                                    {passValid ? 'Password verified!' : 'Must be 5-15 alphanumeric characters [a-Z, 0-9]'}
+                                    {passValid ? 'Password valid!' : 'Must be 5-15 alphanumeric characters [a-Z, 0-9]'}
                                 </p>
                 
                                 <div className="fpInputRow">
