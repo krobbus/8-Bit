@@ -12,12 +12,23 @@
 <body>
     <section id="adminDashboardContainer">
         <header>
-            <h1>SYSTEM ADMIN :: DATA_LOG</h1>
+            <h2>Welcome to dashboard, <span id="playerName">User</span></h2>
 
             <div class="userMetrics">
-                <div class="metricCard">TOTAL USERS: <span id="totalUsers">0</span></div>
-                <div class="metricCard">TOTAL PLAYERS: <span id="totalPlayers">0</span></div>
-                <div class="metricCard">TOTAL ADMINS: <span id="totalAdmins">0</span></div>
+                <div class="metricCard">
+                    <span id="totalUsers">0</span>
+                    <p>TOTAL USERS</p>
+                </div>
+
+                <div class="metricCard">
+                    <span id="totalAdmins">0</span>
+                    <p>TOTAL ADMINS</p>
+                </div>
+
+                <div class="metricCard">
+                    <span id="totalPlayers">0</span>
+                    <p>TOTAL PLAYERS</p>
+                </div>
             </div>
         </header>
 
@@ -44,6 +55,8 @@
         </main>
     </section>
 
+    <div id="loginModalRoot"></div>
+
     <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js"></script>
     <script type="module" src="adminDashboard.js"></script>
 
@@ -52,5 +65,7 @@
 
     <script type="module" src="src/pages/utils/firebaseConfig.js"></script>
     <script type="module" src="src/pages/utils/data.js"></script>
+
+    <script type="module" src="src/components/LoginOverlay.tsx"></script>
 </body>
 </html>

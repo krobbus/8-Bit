@@ -110,7 +110,6 @@ async function loginUser() {                                                    
         };
       }, 500);
     }, 300);
-
   } catch (error) {
     console.error("Error:", error);
     showMessage("Error checking account. Try again later.", "lightcoral");

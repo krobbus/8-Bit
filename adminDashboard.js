@@ -1,6 +1,8 @@
 import { db } from './src/pages/utils/firebaseConfig.js';
 
 function loadDashboard() {
+    const loadingScreen = document.getElementById("loadingScreen");
+    const playerName = document.getElementById('playerName');
     const tableBody = document.getElementById('tableBody');
     const totalPlayers = document.getElementById('totalPlayers');
     const totalAdmins = document.getElementById('totalAdmins');
@@ -11,7 +13,7 @@ function loadDashboard() {
     gameRef.on('value', (snapshot) => {
         const data = snapshot.val();
         if (!data) return;
-
+        
         let playersCount = 0;
         let adminsCount = 0;
         let usersCount = 0;
@@ -43,6 +45,8 @@ function loadDashboard() {
                 </tr>
             `;
         });
+
+        playerName.innerText = user.name || "User";
         totalPlayers.innerText = playersCount;
         totalAdmins.innerText = adminsCount;
         totalUsers.innerText = usersCount;
