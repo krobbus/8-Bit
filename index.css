@@ -112,12 +112,11 @@ body{
         }
 
         #accountLoginLayout{
-            display: flex;
-            flex-direction: row;
+            display: grid;
+            grid-template-columns: minmax(400px, 1fr);
             justify-content: center;
             align-items: center;
             gap: 1rem;
-            width: 100%;
             box-sizing: border-box;
 
             #inputEmailId{
@@ -188,7 +187,7 @@ body{
         }
 
         #loginMessage{ font-size: 2rem; }
-        
+
         #loginLinkWrapper{
             display: flex;
             flex-wrap: wrap;

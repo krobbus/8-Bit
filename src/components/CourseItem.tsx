@@ -24,7 +24,7 @@ const courseDescription: Record<string, string> = {
     IPPG: "Public Policy and Governance program focused on leadership and civic management."
 };
 
-const CourseItem: React.FC<CourseItemProps> = ({ courseCode, assessments }) => {
+const CourseItem: React.FC<CourseItemProps> = ({ courseCode, assessments, isPrivateView = false }) => {
     const assessment = assessments || {};
 
     const getCode = (str: string) => {
@@ -97,7 +97,7 @@ const CourseItem: React.FC<CourseItemProps> = ({ courseCode, assessments }) => {
 
                 </div>
             </div>
-
+        
             <div className="courseStatus">
                 <div className="courseProgressContainer">
                     <div className="progressBarContainer">
@@ -106,10 +106,12 @@ const CourseItem: React.FC<CourseItemProps> = ({ courseCode, assessments }) => {
                     <span className="progressPercentage">{calculatedPercent}%</span>
                 </div>
 
-                <div className="statusRow">
-                    <strong>AI Analysis Status:</strong>
-                    <span>{(calculatedPercent === 100) ? <a href="#commentContainer" onClick={(e) => handleNavClick(e, 'commentContainer')}>Ready for evaluation</a> : "Data Insufficient"}</span>
-                </div>
+                {isPrivateView && (
+                    <div className="statusRow">
+                        <strong>AI Analysis Status:</strong>
+                        <span>{(calculatedPercent === 100) ? <a href="#commentContainer" onClick={(e) => handleNavClick(e, 'commentContainer')}>Ready for evaluation</a> : "Data Insufficient"}</span>
+                    </div>
+                )}
             </div>
         </div>
     );

@@ -4,7 +4,7 @@ import { jsPDF } from 'jspdf';
 import type { StatisticsProps } from './props';
 import CourseItem from './CourseItem';
 
-const StatisticsLoad: React.FC<StatisticsProps> = ({ stats, userData, isGeneratingAI, onGenerateAI }) => {
+const StatisticsLoad: React.FC<StatisticsProps> = ({ stats, userData, isGeneratingAI, onGenerateAI, isPrivateView = false }) => {
     const [isSelectedOpen, setIsSelectedOpen] = useState(true);
     const [isNonselectedOpen, setIsNonselectedOpen] = useState(false);
 
@@ -239,19 +239,21 @@ const StatisticsLoad: React.FC<StatisticsProps> = ({ stats, userData, isGenerati
             <section id="commentContainer" className="commentContainer">
                 <label className="subHeader">AI COMMENT AND SUGGESTIONS</label>
                 
-                <div className="commentButtons">
-                    <button
-                        onClick={onGenerateAI} 
-                        disabled={isGeneratingAI || !hasOneCompleteCourse}
-                    >
-                        {isGeneratingAI 
-                            ? "ANALYZING..." : 
-                            hasExistingComment ? "RE-GENERATE AI ANALYSIS" : "GENERATE AI ANALYSIS"
-                        }
-                    </button>
+                {isPrivateView && (
+                    <div className="commentButtons">
+                        <button
+                            onClick={onGenerateAI} 
+                            disabled={isGeneratingAI || !hasOneCompleteCourse}
+                        >
+                            {isGeneratingAI 
+                                ? "ANALYZING..." : 
+                                hasExistingComment ? "RE-GENERATE AI ANALYSIS" : "GENERATE AI ANALYSIS"
+                            }
+                        </button>
 
-                    {hasExistingComment && (<button onClick={handleDownloadPDF}> DOWNLOAD AS PDF </button>)}
-                </div>
+                        {hasExistingComment && (<button onClick={handleDownloadPDF}> DOWNLOAD AS PDF </button>)}
+                    </div>
+                )}
 
                 <div className="aiCommentBox">
                     {userData?.comment || "Complete courses to unlock AI analysis..."}

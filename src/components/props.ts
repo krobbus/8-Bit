@@ -15,9 +15,11 @@ export interface StatisticsProps {
   userData: any;
   isGeneratingAI: boolean;
   onGenerateAI: () => Promise<void>;
+  isPrivateView?: boolean;
 }
 
 export interface CourseItemProps {
   courseCode: string;
   assessments: any;
+  isPrivateView?: boolean;
 }
