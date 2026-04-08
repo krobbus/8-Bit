@@ -113,44 +113,21 @@ body{
 
         #accountLoginLayout{
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
             justify-content: center;
             align-items: center;
             gap: 1rem;
-            width: 60%;
+            width: 100%;
             box-sizing: border-box;
 
-            .userWrapper{
-                display: flex;
-                flex-direction: row;
-                justify-content: center;
-                align-items: center;
-                gap: 1rem;
+            #inputEmailId{
+                font-family: "Jersey 10", cursive;
+                font-size: 2rem;
+                padding: 1rem;
+                border-radius: 5px;
+                border: 5px solid #a3b18a;
                 width: 100%;
                 box-sizing: border-box;
-
-                #roleSelect {
-                    font-family: "Jersey 10", cursive;
-                    font-size: 2rem;
-                    padding: 1rem;
-                    color: #588157;
-                    border: 5px solid #a3b18a;
-                    border-radius: 5px;
-                    background: #fff;
-                    cursor: pointer;
-                    width: 200px;
-                    box-sizing: border-box;
-                }
-
-                #inputEmailId{
-                    font-family: "Jersey 10", cursive;
-                    font-size: 2rem;
-                    padding: 1rem;
-                    border-radius: 5px;
-                    border: 5px solid #a3b18a;
-                    width: 100%;
-                    box-sizing: border-box;
-                }
             }
 
             .passWrapper{
@@ -188,47 +165,47 @@ body{
                     }
                 }
             }
+        }
 
-            #loginButton{
-                font-family: "Jersey 10", cursive;
-                font-size: 2rem;
-                color: #588157;
-                background-color: #fff;
-                border: 4px solid #a3b18a;
-                box-shadow: 10px 10px 7px rgba(0, 0, 0, 0.1);
+        #loginButton{
+            font-family: "Jersey 10", cursive;
+            font-size: 2rem;
+            color: #588157;
+            background-color: #fff;
+            border: 4px solid #a3b18a;
+            box-shadow: 10px 10px 7px rgba(0, 0, 0, 0.1);
 
-                margin-top: 2rem;
-                padding: 1rem;
-                width: 400px;
-                box-sizing: border-box;
+            margin-top: 2rem;
+            padding: 1rem;
+            width: 400px;
+            box-sizing: border-box;
 
-                &:hover{
-                    color: #fff;
-                    background-color: #a3b18a;
-                    border: 4px solid #fff;
-                }
+            &:hover{
+                color: #fff;
+                background-color: #a3b18a;
+                border: 4px solid #fff;
             }
         }
-    }
 
-    #loginMessage{ font-size: 2rem; }
+        #loginMessage{ font-size: 2rem; }
+        
+        #loginLinkWrapper{
+            display: flex;
+            flex-wrap: wrap;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
 
-    #loginLinkWrapper{
-        display: flex;
-        flex-wrap: wrap;
-        flex-direction: row;
-        justify-content: center;
-        align-items: center;
-        gap: 2rem;
+            #manual, #forgotPass{
+                text-decoration: underline;
+                font-size: 2rem;
+                color: #DAD7CD;
+                cursor: pointer;
+                transition: transform 0.3s ease-in-out;
 
-        #manual, #forgotPass{
-            text-decoration: underline;
-            font-size: 2rem;
-            color: #DAD7CD;
-            cursor: pointer;
-            transition: transform 0.3s ease-in-out;
-
-            &:hover{ transform: scale(1.05); }
+                &:hover{ transform: scale(1.05); }
+            }
         }
     }
 }

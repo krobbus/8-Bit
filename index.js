@@ -1,4 +1,3 @@
-const roleSelect = document.getElementById("roleSelect");
 const emailIdInput = document.getElementById("inputEmailId");
 const passwordInput = document.getElementById("inputPassword");
 const togglePassBtn = document.getElementById("togglePass");
@@ -39,7 +38,6 @@ async function loginUser() {                                                    
 
   const userInput = emailIdInput.value.trim();
   const passInput = passwordInput.value.trim();
-  const role = roleSelect.value;
 
   if (!userInput || !passInput) {
     showMessage("Please fill all fields", "red");
@@ -76,20 +74,16 @@ async function loginUser() {                                                    
       showMessage("Player ID/Email not found.", "lightcoral");
       loadingScreen.style.display = "none";
       return;
-    } else if (userData.temporary) {
+    }
+
+    if (userData.temporary) {
       showMessage("Guest accounts cannot log in permanently.", "lightcoral");
       loadingScreen.style.display = "none";
       return;
-    } else if (userData.pass !== passInput) {
+    } 
+    
+    if (userData.pass !== passInput) {
       showMessage("Incorrect Password.", "lightcoral");
-      loadingScreen.style.display = "none";
-      return;
-    } else if (role === "admin" && userData.adminMode !== true) {                                                    // role restriction
-      showMessage("You are not allowed to access Admin Mode.", "red");
-      loadingScreen.style.display = "none";
-      return;
-    } else if (role === "player" && userData.playerMode !== true) {
-      showMessage("You are not a Player.", "red");
       loadingScreen.style.display = "none";
       return;
     }
@@ -102,12 +96,8 @@ async function loginUser() {                                                    
 
       setTimeout(() => {
         loadingScreen.style.display = "none";
-        if (role === "admin") {
-          window.location.href = "./AdminDashboard.html";
-        } else { 
-          window.location.href = "./Game.html";
-          localStorage.setItem("startScene", "LeftWing");
-        };
+        window.location.href = "./Game.html";
+        localStorage.setItem("startScene", "LeftWing");
       }, 500);
     }, 300);
   } catch (error) {

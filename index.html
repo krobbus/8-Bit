@@ -22,25 +22,18 @@
         </section>
 
         <section id="accountLoginLayout">
-            <div class="userWrapper">
-                <select id="roleSelect">
-                    <option value="player" selected>Player</option>
-                    <option value="admin">Admin</option>
-                </select>
+            <input id="inputEmailId" placeholder="Enter your ID / Email" type="text" />
 
-                <input id="inputEmailId" placeholder="Enter your ID / Email" type="text" />
-            </div>
-
-            <section class="passWrapper">
+            <div class="passWrapper">
                 <input id="inputPassword" placeholder="Enter your password" type="password" />
+
                 <button type="button" id="togglePass">
                     <img src="public/assets/WebAssets/PadlockClosed.png" alt="Show/Hide PIN">
                 </button>
-            </section>
-
-            <button id="loginButton">Log In</button>
+            </div>
         </section>
 
+        <button id="loginButton">Log In</button>
         <p id="loginMessage"></p>
 
         <section id="loginLinkWrapper">
