@@ -30,6 +30,7 @@ const Dashboard: React.FC<ModalProps> = ({onClose , isOpen}) => {
     const [userData, setUserData] = useState<any>(null);
     const [showPassword, setShowPassword] = useState(false);
     const [showPin, setShowPin] = useState(false);
+
     const [editingField, setEditingField] = useState<string | null>(null);
     const [editValue, setEditValue] = useState<any>(null);
     const [isGeneratingAI, setIsGeneratingAI] = useState(false);
@@ -210,7 +211,7 @@ const Dashboard: React.FC<ModalProps> = ({onClose , isOpen}) => {
 
     const handleLogout = () => {
         localStorage.removeItem("playerID");
-        window.location.href = "../../index.html";
+        window.location.href = "./index.html";
     };
 
     const handleReset = async () => {
@@ -233,6 +234,28 @@ const Dashboard: React.FC<ModalProps> = ({onClose , isOpen}) => {
                 alert("Error deleting account.");
             }
         }
+    };
+
+    const editableInputStyle = { 
+        fontSize: "18px", 
+        fontFamily: '"Press Start 2P", cursive', 
+        color: "#fff", 
+        align: "right",
+        background: "#333", 
+        border: "1px solid #fff", 
+        padding: "2px",
+        width: "100%"
+    };
+
+    const readOnlyInputStyle = { 
+        fontSize: "18px", 
+        fontFamily: '"Press Start 2P", cursive', 
+        color: "#fff",
+        align: "right",
+        background: "transparent", 
+        border: "none",
+        overflow: "ellipsis",
+        width: "100%"
     };
 
     if (!isOpen) return null;
@@ -261,7 +284,7 @@ const Dashboard: React.FC<ModalProps> = ({onClose , isOpen}) => {
                                 <li>
                                     <a href="#actionsContainer" onClick={(e) => handleNavClick(e, 'actionsContainer')}>ACTIONS</a>
                                 </li>
-                                <li id="logout"><a href="javascript:void(0)" onClick={handleLogout}>LOGOUT</a></li>
+                                <li id="logout"><a onClick={handleLogout}>LOGOUT</a></li>
                             </ul>
                         </nav>
 
@@ -285,19 +308,19 @@ const Dashboard: React.FC<ModalProps> = ({onClose , isOpen}) => {
 
                         <main>
                             {loading ? (
-                                <div className="displayText">
-                                    <p>Loading Player Data...</p>
+                                <div className="loadingContainer">
+                                    <p className="loadingText">LOADING PLAYER DATA...</p>
                                 </div>
                             ) : !userData ? (
-                                <div className="displayText">
-                                    <p>PLAYER NOT FOUND</p>
+                                <div className="loadingContainer">
+                                    <p className="loadingText">PLAYER NOT FOUND</p>
                                     <button onClick={resetToOwnProfile}>RETURN TO MY PROFILE</button>
                                 </div>
                             ) : (
                                 <>
                                     <div id="profileContainer" className={`profileContainer ${!isPrivateView ? 'visitorMode' : ''}`}>
                                         <label className="mainHeader">
-                                            {activeViewID === loggedInPlayerID ? "MY PROFILE" : "VIEWING PLAYER"}
+                                            {activeViewID === loggedInPlayerID ? "MY PROFILE" : "VIEWING PROFILE"}
                                         </label>
 
                                         <div className="imgWrapper">
@@ -308,28 +331,14 @@ const Dashboard: React.FC<ModalProps> = ({onClose , isOpen}) => {
                                             <label className="subHeader">PLAYER ID:</label>
                                             <div className="idField">
                                                 <input
-                                                    style={{ fontSize: "18px", fontFamily: '"Press Start 2P", cursive', color: "#fff" }}
-                                                    value={activeViewID || "No Player ID"} readOnly
+                                                    style={editingField === 'playerID' ? editableInputStyle : readOnlyInputStyle}
+                                                    value={editingField === 'playerID' ? editValue : (activeViewID || "No Player ID")} 
+                                                    readOnly={editingField !== 'playerID'}
+                                                    onChange={(e) => setEditValue(e.target.value)}
                                                 />
 
                                                 {(activeViewID || activeViewID === "N/A") && (
-                                                    <>
-                                                        <img
-                                                            typeof="text/svg"
-                                                            style={{ filter: "invert()", width: "24px", height: "auto" }}
-                                                            onClick={() => copyToClipboard(activeViewID)}
-                                                            src={"assets/WebAssets/Copy.svg"} 
-                                                            alt="Copy Player ID" 
-                                                        />
-                                                        
-                                                        <img
-                                                            typeof="text/svg"
-                                                            style={{ filter: "invert()", width: "24px", height: "auto" }}
-                                                            onClick={() => editData('playerID', activeViewID)}
-                                                            src={"assets/WebAssets/Edit.svg"} 
-                                                            alt="Edit Player ID" 
-                                                        />
-                                                    </>
+                                                    <img typeof="text/svg" style={{ marginLeft: "10px" }} onClick={() => copyToClipboard(activeViewID)} src={"assets/WebAssets/Copy.svg"}/>
                                                 )}
                                             </div>
                                         </div>
@@ -339,29 +348,25 @@ const Dashboard: React.FC<ModalProps> = ({onClose , isOpen}) => {
                                                 <label className="subHeader">PLAYER EMAIL:</label>
                                                 <div className="emailField">
                                                     <input
-                                                        style={{ fontSize: "18px", fontFamily: '"Press Start 2P", cursive', color: "#fff" }}
-                                                        value={userData?.email || "N/A"} readOnly
+                                                        style={editingField === 'email' ? editableInputStyle : readOnlyInputStyle}
+                                                        value={editingField === 'email' ? editValue : (userData?.email || "N/A")} 
+                                                        readOnly={editingField !== 'email'}
+                                                        onChange={(e) => setEditValue(e.target.value)}
                                                     />
 
-                                                    {(userData?.email || userData.email === "N/A") && (
+                                                    {editingField === 'email' ? (
                                                         <>
-                                                            <img
-                                                                typeof="text/svg"
-                                                                style={{ filter: "invert()", width: "24px", height: "auto" }}
-                                                                onClick={() => copyToClipboard(userData?.email)}
-                                                                src={"assets/WebAssets/Copy.svg"} 
-                                                                alt="Copy Email" 
-                                                            />
-
-                                                            <img
-                                                                typeof="text/svg"
-                                                                style={{ filter: "invert()", width: "24px", height: "auto" }}
-                                                                onClick={() => editData('email', userData?.email)}
-                                                                src={"assets/WebAssets/Edit.svg"} 
-                                                                alt="Edit Email" 
-                                                            />
+                                                            <img typeof="text/svg"onClick={saveEdit} src={"assets/WebAssets/Save.svg"}/>
+                                                            <img typeof="text/svg" onClick={() => setEditingField(null)} src={"assets/WebAssets/Cancel.svg"}/>
                                                         </>
-                                                    )}
+                                                    ) : ((userData?.email || userData.email === "N/A") && (
+                                                        <>
+                                                            <img typeof="text/svg" onClick={() => copyToClipboard(userData.email)} src={"assets/WebAssets/Copy.svg"}/>
+                                                            {isAdmin && (
+                                                                <img typeof="text/svg" style={{ filter: "invert()", width: "24px", height: "auto" }} onClick={() => editData('email', userData.email)} src={"assets/WebAssets/Edit.svg"}/>
+                                                            )}
+                                                        </>
+                                                    ))}
                                                 </div>
                                             </div>
                                         )}
@@ -369,41 +374,53 @@ const Dashboard: React.FC<ModalProps> = ({onClose , isOpen}) => {
                                         <div className="roleContainer">
                                             <label className="subHeader">ROLE:</label>
                                             <div className="roleField">
-                                                <input
-                                                    style={{ fontSize: "18px", fontFamily: '"Press Start 2P", cursive', color: "#fff" }}
-                                                    value={
-                                                        userData?.adminMode && userData?.playerMode ? "Admin" 
-                                                        : userData?.adminMode ? "Admin" 
-                                                        : userData?.playerMode ? "Player"
-                                                        : "Guest"
-                                                    } 
-                                                    readOnly
-                                                />
+                                                {editingField === 'role' ? (
+                                                    <>
+                                                        <label className="editableInput">
+                                                            <input type="checkbox" checked={editValue === 'Admin'} onChange={(e) => setEditValue(e.target.checked ? 'Admin' : 'Player')}/>
+                                                            Is Admin?
+                                                        </label>
 
-                                                {(userData?.adminMode && userData?.playerMode) && (
-                                                    <img
-                                                        typeof="text/svg"
-                                                        style={{ filter: "invert()", width: "24px", height: "auto" }}
-                                                        onClick={() => editData('role', userData?.adminMode ? 'Admin' : 'Player')}
-                                                        src={"assets/WebAssets/Edit.svg"} 
-                                                        alt="Edit Role" 
-                                                    />
+                                                        <img typeof="text/svg"onClick={saveEdit} src={"assets/WebAssets/Save.svg"}/>
+                                                        <img typeof="text/svg" onClick={() => setEditingField(null)} src={"assets/WebAssets/Cancel.svg"}/>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <input
+                                                            style={readOnlyInputStyle} value={userData?.adminMode && userData?.playerMode ? "Admin" 
+                                                                : userData?.adminMode ? "Admin" 
+                                                                : userData?.playerMode ? "Player" 
+                                                                : "Guest"} 
+                                                            readOnly
+                                                        />
+
+                                                        {(userData?.adminMode || userData?.playerMode) && isAdmin && (
+                                                            <img typeof="text/svg" style={{ marginLeft: "10px" }} onClick={() => editData('role', userData?.adminMode ? 'Admin' : 'Player')} src={"assets/WebAssets/Edit.svg"}/>
+                                                        )}
+                                                    </>
                                                 )}
                                             </div>
                                         </div>
 
                                         <div className="nameContainer">
                                             <label className="subHeader">PLAYER NAME:</label>
-                                            <label className="subLabel">{userData?.name || "Guest"}</label>
-                                            {(userData?.name || userData.name === "Guest") && (
-                                                <img
-                                                    typeof="text/svg"
-                                                    style={{ filter: "invert()", width: "24px", height: "auto" }}
-                                                    onClick={() => editData('name', userData?.name)}
-                                                    src={"assets/WebAssets/Edit.svg"} 
-                                                    alt="Edit Name" 
+                                            <div className="nameField">
+                                                <input
+                                                    style={editingField === 'name' ? editableInputStyle : readOnlyInputStyle}
+                                                    value={editingField === 'name' ? editValue : (userData?.name || "Guest")} 
+                                                    readOnly={editingField !== 'name'}
+                                                    onChange={(e) => setEditValue(e.target.value)}
                                                 />
-                                            )}
+                                                
+                                                {editingField === 'name' ? (
+                                                    <>
+                                                        <img typeof="text/svg"onClick={saveEdit} src={"assets/WebAssets/Save.svg"}/>
+                                                        <img typeof="text/svg" onClick={() => setEditingField(null)} src={"assets/WebAssets/Cancel.svg"}/>
+                                                    </>
+                                                ) : ((userData?.name || userData.name === "Guest") && isAdmin && (
+                                                    <img typeof="text/svg" style={{ marginLeft: "10px" }} onClick={() => editData('name', userData?.name)} src={"assets/WebAssets/Edit.svg"}/>
+                                                ))}
+                                            </div>
                                         </div>
                                         
                                         {isPrivateView && (
@@ -411,44 +428,49 @@ const Dashboard: React.FC<ModalProps> = ({onClose , isOpen}) => {
                                                 <label className="subHeader">PASSWORD:</label>
                                                 <div className="passField">
                                                     <input 
-                                                        type={(!userData?.pass || userData.pass === "No Password") ? "text" : (showPassword ? "text" : "password")}
-                                                        style={{ fontSize: "18px", fontFamily: '"Press Start 2P", cursive', color: "#fff" }}
-                                                        value={userData?.pass || "No Password"} readOnly
+                                                        type={editingField === 'pass' ? "text" : ((!userData?.pass || userData.pass === "No Password") ? "text" : (showPassword ? "text" : "password"))}
+                                                        style={editingField === 'pass' ? editableInputStyle : readOnlyInputStyle}
+                                                        value={editingField === 'pass' ? editValue : (userData?.pass || "No Password")} 
+                                                        readOnly={editingField !== 'pass'}
+                                                        onChange={(e) => setEditValue(e.target.value)}
                                                     />
 
-                                                    {(userData?.pass || userData.pass === "No Password") && (
+                                                    {editingField === 'pass' ? (
                                                         <>
-                                                            <img
-                                                                onClick={() => setShowPassword(!showPassword)}
-                                                                src={`assets/WebAssets/Padlock${showPassword ? 'Opened' : 'Closed'}.png`} 
-                                                                alt="Show/Hide Password" 
-                                                            />
-
-                                                            <img
-                                                                typeof="text/svg"
-                                                                style={{ filter: "invert()", width: "24px", height: "auto" }}
-                                                                onClick={() => editData('pass', userData?.pass)}
-                                                                src={"assets/WebAssets/Edit.svg"} 
-                                                                alt="Edit Password" 
-                                                            />
+                                                            <img typeof="text/svg"onClick={saveEdit} src={"assets/WebAssets/Save.svg"}/>
+                                                            <img typeof="text/svg" onClick={() => setEditingField(null)} src={"assets/WebAssets/Cancel.svg"}/>
                                                         </>
-                                                    )}
+                                                    ) : ((userData?.pass || userData.pass === "No Password") && (
+                                                        <>
+                                                            <img onClick={() => setShowPassword(!showPassword)} src={`assets/WebAssets/Padlock${showPassword ? 'Opened' : 'Closed'}.png`}/>
+                                                            {isAdmin && (
+                                                                <img typeof="text/svg" onClick={() => editData('pass', userData?.pass)} src={"assets/WebAssets/Edit.svg"}/>
+                                                            )}
+                                                        </>
+                                                    ))}
                                                 </div>
                                             </div>
                                         )}
 
                                         <div className="genderContainer">
                                             <label className="subHeader">GENDER:</label>
-                                            <label className="subLabel">{userData?.gender || "N/A"}</label>
-                                            {(userData?.gender || userData.gender === "N/A") && (
-                                                <img
-                                                    typeof="text/svg"
-                                                    style={{ filter: "invert()", width: "24px", height: "auto" }}
-                                                    onClick={() => editData('gender', userData?.gender)}
-                                                    src={"assets/WebAssets/Edit.svg"} 
-                                                    alt="Edit Gender" 
+                                            <div className="genderField">
+                                                <input
+                                                    style={editingField === 'gender' ? editableInputStyle : readOnlyInputStyle}
+                                                    value={editingField === 'gender' ? editValue : (userData?.gender || "N/A")} 
+                                                    readOnly={editingField !== 'gender'}
+                                                    onChange={(e) => setEditValue(e.target.value)}
                                                 />
-                                            )}
+
+                                                {editingField === 'gender' ? (
+                                                    <>
+                                                        <img typeof="text/svg"onClick={saveEdit} src={"assets/WebAssets/Save.svg"}/>
+                                                        <img typeof="text/svg" onClick={() => setEditingField(null)} src={"assets/WebAssets/Cancel.svg"}/>
+                                                    </>
+                                                ) : ((userData?.gender || userData.gender === "N/A") && isAdmin && (
+                                                    <img typeof="text/svg" style={{ marginLeft: "10px" }} onClick={() => editData('gender', userData?.gender)} src={"assets/WebAssets/Edit.svg"}/>
+                                                ))}
+                                            </div>
                                         </div>
 
                                         {isPrivateView && (
@@ -456,28 +478,28 @@ const Dashboard: React.FC<ModalProps> = ({onClose , isOpen}) => {
                                                 <label className="subHeader">PIN:</label>
                                                 <div className="pinField">
                                                     <input 
-                                                        type={(!userData?.pin || userData.pin === "No PIN") ? "text" : (showPin ? "text" : "password")}
-                                                        style={{ fontSize: '18px', fontFamily: '"Press Start 2P", cursive', color: "#fff" }}
-                                                        value={userData?.pin || "No PIN"} readOnly
+                                                        type={editingField === 'pin' ? "text" : ((!userData?.pin || userData.pin === "No PIN") ? "text" : (showPin ? "text" : "password"))}
+                                                        style={editingField === 'pin' ? editableInputStyle : readOnlyInputStyle}
+                                                        value={editingField === 'pin' ? editValue : (userData?.pin || "No PIN")} 
+                                                        readOnly={editingField !== 'pin'}
+                                                        onChange={(e) => setEditValue(e.target.value)}
                                                     />
 
-                                                    {(userData?.pin || userData.pin === "No PIN") && (
+                                                    {editingField === 'pin' ? (
                                                         <>
-                                                            <img
-                                                                onClick={() => setShowPin(!showPin)}
-                                                                src={`assets/WebAssets/Padlock${showPin ? 'Opened' : 'Closed'}.png`} 
-                                                                alt="Show/Hide PIN" 
-                                                            />
-
-                                                            <img
-                                                                typeof="text/svg"
-                                                                style={{ filter: "invert()", width: "24px", height: "auto" }}
-                                                                onClick={() => editData('pin', userData?.pin)}
-                                                                src={"assets/WebAssets/Edit.svg"} 
-                                                                alt="Edit PIN" 
-                                                            />
+                                                            <img typeof="text/svg"onClick={saveEdit} src={"assets/WebAssets/Save.svg"}/>
+                                                            <img typeof="text/svg" onClick={() => setEditingField(null)} src={"assets/WebAssets/Cancel.svg"}/>
                                                         </>
-                                                    )}      
+                                                    ) : (
+                                                        (userData?.pin || userData.pin === "No PIN") && (
+                                                            <>
+                                                                <img onClick={() => setShowPin(!showPin)} src={`assets/WebAssets/Padlock${showPin ? 'Opened' : 'Closed'}.png`}/>
+                                                                {isAdmin && (
+                                                                    <img typeof="text/svg" onClick={() => editData('pin', userData?.pin)} src={"assets/WebAssets/Edit.svg"}/>
+                                                                )}
+                                                            </>
+                                                        )
+                                                    )}     
                                                 </div>
                                             </div>
                                         )}
@@ -501,47 +523,6 @@ const Dashboard: React.FC<ModalProps> = ({onClose , isOpen}) => {
                                         </div>
                                     )}
                                 </>
-                            )}
-
-                            {editingField && (
-                                <div className="editBox">
-                                    <label className="label" id="actions">Editing {editingField.toUpperCase()}</label>
-                                    
-                                    {editingField === 'gender' ? (
-                                        <div className="radioGroup">
-                                            <label>
-                                                <input type="radio" name="gender" value="Male" 
-                                                    checked={editValue === 'Male'} 
-                                                    onChange={(e) => setEditValue(e.target.value)} /> Male
-                                            </label>
-
-                                            <label>
-                                                <input type="radio" name="gender" value="Female" 
-                                                    checked={editValue === 'Female'} 
-                                                    onChange={(e) => setEditValue(e.target.value)} /> Female
-                                            </label>
-                                        </div>
-                                    ) : editingField === 'role' ? (
-                                        <label>
-                                            <input type="checkbox" 
-                                                checked={editValue === 'Admin'} 
-                                                onChange={(e) => setEditValue(e.target.checked ? 'Admin' : 'Player')} 
-                                            /> Is Admin?
-                                        </label>
-                                    ) : (
-                                        <input 
-                                            type="text" 
-                                            className="editInput"
-                                            value={editValue} 
-                                            onChange={(e) => setEditValue(e.target.value)} 
-                                        />
-                                    )}
-
-                                    <div className="editActions">
-                                        <button onClick={saveEdit}>SAVE</button>
-                                        <button onClick={() => setEditingField(null)}>CANCEL</button>
-                                    </div>
-                                </div>
                             )}
                         </main>
                     </section>

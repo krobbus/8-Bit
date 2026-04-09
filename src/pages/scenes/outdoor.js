@@ -122,7 +122,7 @@ export default class Outdoor extends Phaser.Scene {
                 x: 470, y: 430, w: 60, h: 30,
                 hintText1: "COMMUNICATE ?",
                 hintHeight: 30, hintWidth: 170, gapY: 0,
-                target: 'OPEN_MANUAL_MODAL'
+                target: 'openManualModal'
             }
         ];
         this.zones.forEach(z => { debugGraphics.strokeRect(z.x, z.y, z.w, z.h); });
@@ -225,7 +225,7 @@ export default class Outdoor extends Phaser.Scene {
 
             if (spaceJustDown || mobileInteractDown) {
                 const returnPos = this.activeZone.spawnInNextScene || null;
-                if (this.activeZone.target === 'OPEN_MANUAL_MODAL') {
+                if (this.activeZone.target === 'openManualModal') {
                     this.npcDialogue.play();
                 } else {
                     this.startPageTransition(this.activeZone.target, returnPos);

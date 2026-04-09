@@ -306,7 +306,7 @@ export default class LeftWing extends Phaser.Scene {
     startPageTransition(targetSceneName, lastPosition) {
         if (targetSceneName === 'openAccountModal') {
             this.input.keyboard.resetKeys();
-            window.dispatchEvent(new CustomEvent('openAccountModal'));
+            window.dispatchEvent(new CustomEvent('openAccountManagementModal'));
             return;
         }
 

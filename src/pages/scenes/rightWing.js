@@ -97,7 +97,7 @@ export default class RightWing extends Phaser.Scene {
             { 
                 x: 700, y: 400, w: 220, h: 40, 
                 hintText1: "VIEW", hintText2: "LEADERBOARD ?", hintWidth: 170, 
-                spawnInNextScene: { x: 50, y: 420 }, target: ""
+                spawnInNextScene: { x: 50, y: 420 }, target: "openLeaderboardModal"
             }
         ];
         this.zones.forEach(z => {
@@ -204,6 +204,12 @@ export default class RightWing extends Phaser.Scene {
     toggleSettings() { this.settingsPanel.setVisible(!this.settingsPanel.visible); }
 
     startPageTransition(targetSceneName, lastPosition) {
+        if (targetSceneName === 'openLeaderboardModal') {
+            this.input.keyboard.resetKeys();
+            window.dispatchEvent(new CustomEvent('openLeaderboardModal'));
+            return;
+        }
+
         const width = this.scale.width;
         const height = this.scale.height;
 

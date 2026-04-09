@@ -112,12 +112,20 @@ body{
         }
 
         #accountLoginLayout{
-            display: grid;
-            grid-template-columns: minmax(400px, 1fr);
+            display: flex;
+            flex-direction: row;
             justify-content: center;
             align-items: center;
             gap: 1rem;
+            max-width: 800px;
+            width: 100%;
             box-sizing: border-box;
+
+            #inputEmailId, #passWrapper{
+                flex: 1;
+                min-width: 400px;
+                box-sizing: border-box;
+            }
 
             #inputEmailId{
                 font-family: "Jersey 10", cursive;
@@ -125,11 +133,9 @@ body{
                 padding: 1rem;
                 border-radius: 5px;
                 border: 5px solid #a3b18a;
-                width: 100%;
-                box-sizing: border-box;
             }
 
-            .passWrapper{
+            #passWrapper{
                 position: relative;
                 display: flex;
                 justify-content: space-between;
@@ -138,8 +144,6 @@ body{
                 border-radius: 5px;
                 background: #fff;
                 border: 5px solid #a3b18a;
-                width: 100%;
-                box-sizing: border-box;
 
                 #inputPassword{
                     font-family: "Jersey 10", cursive;
@@ -161,6 +165,7 @@ body{
                         width: auto;
                         height: 2rem;
                         pointer-events: none;
+                        filter: invert(48%) sepia(13%) saturate(924%) hue-rotate(68deg) brightness(92%) contrast(85%);
                     }
                 }
             }
@@ -241,9 +246,44 @@ body{
     }
 }
 
+@media (max-width: 1200px){
+    #loginContainer {
+        #accountLoginLayout{
+            flex-direction: column;
+        }
+    }
+}
+
 @media (max-width: 700px){
-    body{ padding: 2rem; }
-    body > h1{ font-size: 2rem; }
-    body > #loginContainer > #guestButton{ width: 100%; }
-    body > #loginContainer > #accountLoginLayout{ width: 100%; }
+    body{ 
+        padding: 2rem; 
+
+        h1{ font-size: 2rem; }
+
+        #loginContainer {
+            #guestButton, #loginButton{ 
+                font-size: 1rem;
+                width: 300px;
+            }
+
+            #accountLoginLayout{
+                flex-direction: column;
+
+                #inputEmailId, #passWrapper {
+                    font-size: 1rem;
+                    padding: 0.5rem;
+                    width: 400px;
+                    flex: none;
+
+                    #inputPassword{ font-size: 1rem; }
+
+                    button{
+                        img{ height: 1rem;}
+                    }
+                }
+            }
+
+            #loginLinkWrapper > #forgotPass, #loginLinkWrapper > #manual{ font-size: 1rem; }
+        }
+    }
 }

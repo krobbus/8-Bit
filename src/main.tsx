@@ -13,6 +13,7 @@ import PasswordRecovery from './components/PasswordRecovery';
 import Manual from './components/Manual';
 import AccountManagement from './components/AccountManagement';
 import Dashboard from './components/Dashboard';
+import Leaderboard from './components/Leaderboard';
 
 declare global {
   interface Window {
@@ -52,6 +53,7 @@ const UIOverlay = () => {
   const [isManualOpen, setIsManualOpen] = useState(false);
   const [isAccountManagementOpen, setIsAccountManagementOpen] = useState(false);
   const [isDashboardOpen, setIsDashboardOpen] = useState(false);
+  const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false);
 
   useEffect(() => {
     const game = new Phaser.Game(config);
@@ -74,11 +76,13 @@ const UIOverlay = () => {
     const handleOpenManualModal = () => setIsManualOpen(true);
     const handleOpenAccountManagementModal = () => setIsAccountManagementOpen(true);
     const handleOpenDashboardModal = () => setIsDashboardOpen(true);
+    const handleOpenLeaderboardModal = () => setIsLeaderboardOpen(true);
 
     window.addEventListener('openPasswordRecoveryModal', handleOpenPasswordRecoveryModal);
     window.addEventListener('openManualModal', handleOpenManualModal);
     window.addEventListener('openAccountManagementModal', handleOpenAccountManagementModal);
     window.addEventListener('openDashboardModal', handleOpenDashboardModal);
+    window.addEventListener('openLeaderboardModal', handleOpenLeaderboardModal);
 
     return () => {
       game.destroy(true);
@@ -89,19 +93,20 @@ const UIOverlay = () => {
       window.removeEventListener('openManualModal', handleOpenManualModal);
       window.removeEventListener('openAccountManagementModal', handleOpenAccountManagementModal);
       window.removeEventListener('openDashboardModal', handleOpenDashboardModal);
+      window.removeEventListener('openLeaderboardModal', handleOpenLeaderboardModal);
     };
   }, []);
 
   return (
     <>
-      <PasswordRecovery
-        isOpen={isPasswordRecoveryOpen} 
-        onClose={() => setIsPasswordRecoveryOpen(false)} 
-      />
-
       <Manual
         isOpen={isManualOpen} 
         onClose={() => setIsManualOpen(false)} 
+      />
+      
+      <PasswordRecovery
+        isOpen={isPasswordRecoveryOpen} 
+        onClose={() => setIsPasswordRecoveryOpen(false)} 
       />
 
       <AccountManagement 
@@ -112,6 +117,11 @@ const UIOverlay = () => {
       <Dashboard 
         isOpen={isDashboardOpen} 
         onClose={() => setIsDashboardOpen(false)} 
+      />
+
+      <Leaderboard
+        isOpen={isLeaderboardOpen} 
+        onClose={() => setIsLeaderboardOpen(false)} 
       />
     </>
   );

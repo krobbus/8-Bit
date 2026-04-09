@@ -10,12 +10,14 @@
     justify-content: center;
     align-items: center;
     z-index: 1000;
+    overflow-x: hidden;
 
     .modalContainer {
         position: relative;
         border: 10px solid #dad7cd;
-        height: 500px;
-        width: 1200px;
+        background-color: #588157;
+        width: 60vw;
+        height: 60vh;
 
         #closeButton {
             position: absolute;
@@ -33,9 +35,8 @@
 
         .modalContent {
             overflow-y: scroll;
-            height: 500px;
-            width: 100%;
-            background-color: #588157;
+            height: 60vh;
+            width: 60vh;
             font-family: "Press Start 2P", cursive;
             font-size: 1rem;
             line-height: 1.5;
@@ -82,8 +83,18 @@ h1{
     box-sizing: border-box;
 }
 
+@media (max-width: 1200px){
+    .modalContainer {
+        .modalContent{
+            transform: scale(0.8);
+        }
+    }
+}
+
 @media (max-width: 700px){
-    .modalContainer{
-        transform: scale(0.7);
+    .modalContainer {
+        .modalContent{
+            transform: scale(0.7);
+        }
     }
 }

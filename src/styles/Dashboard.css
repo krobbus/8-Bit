@@ -2,6 +2,8 @@
     position: relative;
     display: flex;
     flex-direction: column;
+    justify-content: center;
+    align-items: center;
     gap: 2rem;
     padding: 2rem;
     margin: 0;
@@ -123,7 +125,7 @@
                 font-size: 20px;
                 border: 0;
                 outline: none;
-                width: stretch;
+                width: 100%;
                 box-sizing: border-box;
             }
 
@@ -145,13 +147,13 @@
 
         #backBtn{
             font-family: "Jersey 10", cursive;
-            font-size: 16px;
+            font-size: 20px;
             color: #588157;
             background-color: #fff;
             border: 4px solid #a3b18a;
             box-shadow: 10px 10px 7px rgba(0, 0, 0, 0.1);
             padding: 1rem;
-            width: 400px;
+            width: 200px;
             box-sizing: border-box;
 
             &:hover{
@@ -162,7 +164,7 @@
         }
     }
 
-    .displayText{
+    .loadingContainer{
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -172,7 +174,7 @@
         width: 100%;
         box-sizing: border-box;
 
-        p{
+        .loadingText{
             font-size: 20px;
             color: #fff;
         }
@@ -219,8 +221,7 @@
             .passContainer{ grid-area: 6 / 2 / 7 / 5; }
             .genderContainer { grid-area: 7 / 1 / 8 / 3; }
             .pinContainer{ grid-area: 7 / 3 / 8 / 5; }
-
-            label{ width: 100%; }
+            
             .imgWrapper{
                 display: flex;
                 align-items: center;
@@ -271,12 +272,25 @@
                 box-shadow: 10px 10px 7px rgba(0, 0, 0, 0.1);
                 width: auto;
 
-                .subLabel, input{ 
-                    font-size: 16px; 
-                    text-align: right;
+                .subHeader{ 
+                    font-size: 18px; 
+                    width: 500px;
+                    box-sizing: border-box;
                 }
 
-                .idField, .emailField, .roleField, .passField, .pinField{
+                img{
+                    filter: invert();
+                    width: 24px;
+                    height: auto;
+                    cursor: pointer;
+                    transition: transform 0.2s ease;
+
+                    &:hover{
+                        transform: scale(1.2);
+                    }
+                }
+
+                .idField, .emailField, .nameField, .roleField, .genderField, .passField, .pinField{
                     display: flex;
                     flex-direction: row;
                     gap: 1rem;
@@ -284,17 +298,25 @@
                     width: 100%;
                     box-sizing: border-box;
 
-                    input{
-                        border: none;
-                        background: transparent;
-                        text-overflow: ellipsis;
-                        outline: none;
+                    .editableInput{
+                        display: flex;
+                        flex-direction: row;
+                        justify-content: center;
+                        align-items: center;
+                        gap: 10px;
                         width: 100%;
                         box-sizing: border-box;
+
+                        input[type="radio"], input[type="checkbox"]{
+                            margin-right: 10px;
+                            cursor: pointer;
+                            accent-color: #a3b18a;
+                        }
                     }
 
                     img{
-                        width: 32px;
+                        filter: invert();
+                        width: 24px;
                         height: auto;
                         cursor: pointer;
                         transition: transform 0.2s ease;
@@ -322,7 +344,6 @@
             .nameContainer{ grid-area: 4 / 2 / 5 / 5; }
             .genderContainer { grid-area: 5 / 2 / 6 / 5; }
 
-            label{ width: 100%; }
             .imgWrapper{
                 display: flex;
                 align-items: center;
@@ -373,12 +394,25 @@
                 box-shadow: 10px 10px 7px rgba(0, 0, 0, 0.1);
                 width: auto;
 
-                .subLabel, input{ 
-                    font-size: 16px; 
-                    text-align: right;
+                .subHeader{ 
+                    font-size: 18px; 
+                    width: 500px;
+                    box-sizing: border-box;
                 }
 
-                .idField, .roleField{
+                img{
+                    filter: invert();
+                    width: 24px;
+                    height: auto;
+                    cursor: pointer;
+                    transition: transform 0.2s ease;
+
+                    &:hover{
+                        transform: scale(1.2);
+                    }
+                }
+
+                .idField, .nameField, .genderField, .roleField{
                     display: flex;
                     flex-direction: row;
                     gap: 1rem;
@@ -386,17 +420,25 @@
                     width: 100%;
                     box-sizing: border-box;
 
-                    input{
-                        border: none;
-                        background: transparent;
-                        text-overflow: ellipsis;
-                        outline: none;
+                    .editableInput{
+                        display: flex;
+                        flex-direction: row;
+                        justify-content: center;
+                        align-items: center;
+                        gap: 10px;
                         width: 100%;
                         box-sizing: border-box;
+
+                        input[type="radio"], input[type="checkbox"]{
+                            margin-right: 10px;
+                            cursor: pointer;
+                            accent-color: #a3b18a;
+                        }
                     }
 
                     img{
-                        width: 32px;
+                        filter: invert();
+                        width: 24px;
                         height: auto;
                         cursor: pointer;
                         transition: transform 0.2s ease;
@@ -406,41 +448,6 @@
                         }
                     }
                 }
-            }
-        }
-
-        .editBox{
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: 1rem;
-            padding: 20px;
-            background-color: rgba(255, 255, 255, 0.1);
-            border: 4px solid #a3b18a;
-            box-shadow: 10px 10px 7px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            box-sizing: border-box;
-
-            label{
-                width: 100%;
-                box-sizing: border-box;
-
-                input[type="radio"], input[type="checkbox"]{
-                    margin: 10px;
-                    cursor: pointer;
-                    accent-color: #a3b18a;
-                }
-            }
-
-            input[type="text"]{
-                font-family: "Jersey 10", cursive;
-                font-size: 2rem;
-                padding: 1rem;
-                border-radius: 5px;
-                border: 5px solid #a3b18a;
-                width: 100%;
-                box-sizing: border-box;
             }
         }
 
