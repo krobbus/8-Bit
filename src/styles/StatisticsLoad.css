@@ -6,6 +6,18 @@
     gap: 1rem;
     margin: 10px;
 
+    .mainHeader{
+        font-size: 20px;
+        text-align: center;
+        padding: 0 10px;
+    }
+
+    .subHeader{
+        font-size: 16px;
+        text-align: left;
+        padding: 0 10px;
+    }
+
     .selectedCourses, .nonselectedCourses{
         display: flex;
         flex-direction: column;

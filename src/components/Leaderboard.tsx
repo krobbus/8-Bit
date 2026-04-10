@@ -119,9 +119,9 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ onClose , isOpen, courseCode 
     return(
         <div className="modalBackdrop">
             <div className="modalContainer">
-                <button id="closeButton" onClick={onClose}>X</button>
-                
                 <div className="modalContent">
+                    <button id="closeButton" onClick={onClose}>X</button>
+
                     <section className="leaderboardContainer">
                         <h1 id="mainTitle">LEADERBOARD</h1>
 

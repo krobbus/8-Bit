@@ -293,11 +293,11 @@ const AccountManagement: React.FC<ModalProps> = ({ isOpen, onClose }) => {
     return(
         <div className="modalBackdrop">
             <div className="modalContainer">
-                <button id="closeButton" onClick={onClose}>X</button>
-
                 <div className="modalContent">
+                    <button id="closeButton" onClick={onClose}>X</button>
+
                     <section className="accountManagementModal">
-                        <h1>{isExistingPlayer ? "PLAYER ACCOUNT MANAGEMENT" : "PLAYER ACCOUNT REGISTRATION"}</h1>
+                        <h1 id="mainTitle">{isExistingPlayer ? "PLAYER ACCOUNT MANAGEMENT" : "PLAYER ACCOUNT REGISTRATION"}</h1>
 
                         {loading ? (
                             <div className="loadingContainer">
@@ -345,7 +345,6 @@ const AccountManagement: React.FC<ModalProps> = ({ isOpen, onClose }) => {
 
                                                         <div className="genderToggle">
                                                             <label className="subHeader">Select Gender</label>
-
                                                             <button 
                                                                 className={`select ${gender === 'male' ? 'active' : ''}`}
                                                                 id="maleButton"
@@ -560,8 +559,7 @@ const AccountManagement: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                                                     <label className="mainHeader">REGISTER ACCOUNT</label>
 
                                                     <div className="emailContainer">
-                                                        <label className="subHeader">Enter your Email</label>
-                                                        
+                                                        <label className="subHeader">Enter your Email</label>                                                       
                                                         <input 
                                                             type="email"
                                                             value={email}
@@ -578,8 +576,7 @@ const AccountManagement: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                                                     </div>
 
                                                     <div className="passContainer">
-                                                        <label className="subHeader">Enter your Password</label>
-                                                        
+                                                        <label className="subHeader">Enter your Password</label>                                                    
                                                         <div className="passWrapper">
                                                             <input 
                                                                 type={showPassword ? "text" : "password"}
@@ -608,8 +605,7 @@ const AccountManagement: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                                                     </div>
 
                                                     <div className="confirmPassContainer">
-                                                        <label className="subHeader">Confirm your Password</label>
-                                                        
+                                                        <label className="subHeader">Confirm your Password</label>                                                    
                                                         <div className="passWrapper">
                                                             <input 
                                                                 type={showConfirmPassword ? "text" : "password"}
@@ -648,6 +644,7 @@ const AccountManagement: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                                                                     placeholder="Enter your 4-digit PIN..."
                                                                     maxLength={4}
                                                                 />
+                                                                
                                                                 <button 
                                                                     id="togglePin" 
                                                                     onClick={() => setShowPin(!showPin)}
@@ -666,7 +663,6 @@ const AccountManagement: React.FC<ModalProps> = ({ isOpen, onClose }) => {
 
                                                         <div className="confirmPinContainer">
                                                             <label className="subHeader">Confirm your PIN number</label>
-
                                                             <div className="confirmPinWrapper">
                                                                 <input 
                                                                     type={showConfirmPin ? "text" : "password"}

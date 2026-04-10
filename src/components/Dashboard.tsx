@@ -263,9 +263,9 @@ const Dashboard: React.FC<ModalProps> = ({onClose , isOpen}) => {
     return(
         <div className="modalBackdrop">
             <div className="modalContainer">
-                <button id="closeButton" onClick={onClose}>X</button>
-                
                 <div className="modalContent">
+                    <button id="closeButton" onClick={onClose}>X</button>
+                    
                     <section className="dashboardContainer">
                         <h1 id="mainTitle">DASHBOARD</h1>
 
@@ -515,7 +515,8 @@ const Dashboard: React.FC<ModalProps> = ({onClose , isOpen}) => {
 
                                     {isPrivateView && (
                                         <div id="actionsContainer" className="actionsContainer">
-                                            <label className="label" id="actions">ACTIONS</label>
+                                            <label className="mainHeader">ACTIONS</label>
+
                                             <div className="buttonWrapper">
                                                 <button id="resetButton" onClick={handleReset}>RESET PROGRESS</button>
                                                 <button id="deleteButton" onClick={handleDeleteAccount}>DELETE ACCOUNT</button>

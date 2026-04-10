@@ -26,6 +26,42 @@
         }
     }
 
+    #mainTitle{
+        font-size: 30px;
+        margin: 0;
+        text-align: left;
+        width: 100%;
+        user-select: none;
+    }
+
+    .mainHeader{
+        font-size: 20px;
+        text-align: center;
+        padding: 0 10px;
+    }
+
+    .subHeader{
+        font-size: 16px;
+        text-align: left;
+        padding: 0 10px;
+    }
+
+    .requirementHint{
+        font-size: 14px;
+        text-align: left;
+    }
+
+    .errorContainer{
+        font-size: 14px;
+        text-align: left;
+        padding: 20px;
+        background-color: #344E41;
+        justify-items: center;
+        white-space: pre-line;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
     nav{
         display: flex;
         flex-direction: row;
@@ -258,6 +294,8 @@
                     border: 5px solid #a3b18a;
                     width: 100%;
                     box-sizing: border-box;
+
+                    &:focus { border-color: #555; }
                 }
 
                 ul{
@@ -462,6 +500,8 @@
                 border: 5px solid #a3b18a;
                 width: 100%;
                 box-sizing: border-box;
+
+                &:focus { border-color: #555; }
             }
         }
 

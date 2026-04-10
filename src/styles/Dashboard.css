@@ -11,6 +11,26 @@
     width: 100%;
     box-sizing: border-box;
 
+    #mainTitle{
+        font-size: 30px;
+        margin: 0;
+        text-align: left;
+        width: 100%;
+        user-select: none;
+    }
+
+    .mainHeader{
+        font-size: 20px;
+        text-align: center;
+        padding: 0 10px;
+    }
+
+    .subHeader{
+        font-size: 16px;
+        text-align: left;
+        padding: 0 10px;
+    }
+
     nav{
         position: sticky; 
         top: 20px;
@@ -107,6 +127,8 @@
         justify-content: center;
         align-items: center;
         gap: 1rem;
+        width: 100%;
+        box-sizing: border-box;
 
         form{
             position: relative;
@@ -117,7 +139,7 @@
             border-radius: 5px;
             background: #fff;
             border: 5px solid #a3b18a;
-            width: 100%;
+            width: stretch;
             box-sizing: border-box;
 
             input{

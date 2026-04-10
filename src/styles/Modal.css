@@ -1,100 +1,51 @@
 .modalBackdrop {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
+    inset: 0;
     background: rgba(0, 0, 0, 0.7);
     backdrop-filter: blur(8px); 
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 1000;
-    overflow-x: hidden;
 
     .modalContainer {
-        position: relative;
-        border: 10px solid #dad7cd;
+        border: 1vmin solid #dad7cd;
         background-color: #588157;
-        width: 60vw;
-        height: 60vh;
-
-        #closeButton {
-            position: absolute;
-            top: -10px;
-            right: -80px;
-            background: #ff4444;
-            color: white;
-            border: 4px solid white;
-            padding: 8px 12px;
-            cursor: pointer;
-            font-family: "Press Start 2P", cursive;
-            font-size: 30px;
-            z-index: 999;
-        }
+        margin: 1rem;
+        width: 120vmin;
+        height: 60vmin;
+        image-rendering: pixelated;
+        z-index: 1001;
 
         .modalContent {
-            overflow-y: scroll;
-            height: 60vh;
-            width: 60vh;
+            position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
+            height: 60vmin;
+            width: 100%;
             font-family: "Press Start 2P", cursive;
-            font-size: 1rem;
+            font-size: clamp(10px, 2vmin, 18px);
             line-height: 1.5;
-            letter-spacing: 2px;
+            letter-spacing: 0.2vmin;
             color: #fff;
-            text-align: center;
-        }
-    }
-}
 
-h1{
-    font-size: 30px;
-    margin: 0;
-    text-align: center;
-    width: 100%;
-    user-select: none;
-}
+            #closeButton {
+                position: absolute;
+                top: 2.4vmin;
+                right: 3vmin;
+                background: #ff4444;
+                color: #fff;
+                border: 0.5vmin solid #fff;
+                padding: 1vmin 2vmin;
+                cursor: pointer;
+                font-family: "Press Start 2P", cursive;
+                font-size: 3vmin;
+                z-index: 1005;
 
-.mainHeader{
-    font-size: 20px;
-    text-align: center;
-    padding: 0 5px;
-}
-
-.subHeader{
-    font-size: 16px;
-    text-align: left;
-    padding: 0 5px;
-}
-
-.requirementHint{
-    font-size: 14px;
-    text-align: left;
-}
-
-.errorContainer{
-    font-size: 14px;
-    text-align: left;
-    padding: 20px;
-    background-color: #344E41;
-    justify-items: center;
-    white-space: pre-line;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-@media (max-width: 1200px){
-    .modalContainer {
-        .modalContent{
-            transform: scale(0.8);
-        }
-    }
-}
-
-@media (max-width: 700px){
-    .modalContainer {
-        .modalContent{
-            transform: scale(0.7);
+                &:hover{
+                    transform: scale(1.05);
+                }
+            }
         }
     }
 }

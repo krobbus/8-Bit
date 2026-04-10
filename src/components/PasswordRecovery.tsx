@@ -213,23 +213,23 @@ const PasswordRecovery: React.FC<ModalProps> = ({ isOpen, onClose }) => {
     return(
         <div className="modalBackdrop">
             <div className="modalContainer">
-                <button id="closeButton" onClick={onClose}>X</button>
-                
                 <div className="modalContent">
+                    <button id="closeButton" onClick={onClose}>X</button>
+                    
                     <section className="passwordRecoveryContainer">
                         <h1 id="mainTitle">PASSWORD RECOVERY</h1>
                         <StepIndicator />
 
                         {done ? (
                             <div className="fpSuccess">
-                                <h3><span className="fpSuccessIcon">✓</span> PASSWORD UPDATED!</h3>
+                                <h3>PASSWORD UPDATED!</h3>
                                 <p>Your password has been reset successfully.</p>
                                 <button className="fpBtn" onClick={onClose}>Close</button>
                             </div>
                         ) : step === 1 ? (
                             <div className="fpStepContent">
-                                <span className="mainHeader">Recover Password</span>
-                                <p className="subHeader">Enter your Player ID and registered email.</p>
+                                <label className="mainHeader">RECOVER PASSWORD</label>
+                                <p className="subHeader">Enter your Player ID and registered email</p>
                 
                                 <input
                                     className="fpInput"
@@ -249,7 +249,7 @@ const PasswordRecovery: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                             </div>
                         ) : step === 2 ? (
                             <div className="fpStepContent">
-                                <h3 className="mainHeader">Verifying Account</h3>
+                                <label className="mainHeader">VERIFYING ACCOUNT</label>
                                 <p className="subHeader">Looking up account by {isEmailMode ? 'email' : 'player ID'}</p>
                 
                                 <div className={`fpVerifyCard ${verifyResult}`}>
@@ -291,8 +291,8 @@ const PasswordRecovery: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                             </div>
                         ) : step === 3 ? (
                             <div className="fpStepContent">
-                                <h3 className="mainHeader">Verify PIN</h3>
-                                <p className="subHeader">Enter the 4-digit PIN for this account.</p>
+                                <label className="mainHeader">VERIFY PIN</label>
+                                <p className="subHeader">Enter the 4-digit PIN for this account</p>
                 
                                 <div className="fpInputRow">
                                     <input className="fpInput"
@@ -328,8 +328,8 @@ const PasswordRecovery: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                             </div>
                         ) : (
                             <div className="fpStepContent">
-                                <span className="mainHeader">Reset Password</span>
-                                <p className="subHeader">Enter your new password below.</p>
+                                <label className="mainHeader">RESET PASSWORD</label>
+                                <p className="subHeader">Enter your new password below</p>
                 
                                 <div className="fpInputRow">
                                     <input className="fpInput"

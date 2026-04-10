@@ -28,14 +28,11 @@ const Manual: React.FC<ModalProps> = ({ isOpen, onClose }) => {
     return(
         <div className="modalBackdrop">
             <div className="modalContainer">
-                <button id="closeButton" onClick={onClose}>X</button>
-                
                 <div className="modalContent">
+                    <button id="closeButton" onClick={onClose}>X</button>
+
                     <section className="manualContainer">
-                        <div className="headers">
-                            <h1 id="mainTitle">An AI-Driven 8-bit Web Game For Personalized College Program Matching and Career Exploration</h1>
-                            <h2 id="subTitle">Player's Manual</h2>
-                        </div>
+                        <h1 id="mainTitle">PLAYER'S MANUAL</h1>
 
                         <nav>
                             <ul>
@@ -83,6 +80,8 @@ const Manual: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                         <main>
                             <>
                                 <section id="introductionContainer">
+                                    <label className="mainHeader">AN AI-DRIVEN 8-BIT WEB GAME FOR PERSONALIZED COLLEGE PROGRAM MATCHING AND CAREER EXPLORATION</label>
+                                    
                                     <img src="" alt="Introduction art" />
 
                                     <p className="caption">
@@ -102,17 +101,17 @@ const Manual: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                                     <div className="cardContainer">
                                         <div className="cardWrapper">
                                             <img src="" alt="Web browser display" />
-                                            <span className="mainContent">A device with a web browser (Google Chrome, Mozilla Firefox, or Microsoft Edge)</span>
+                                            <span className="subContent">A device with a web browser (Google Chrome, Mozilla Firefox, or Microsoft Edge)</span>
                                         </div>
 
                                         <div className="cardWrapper">
                                             <img src="" alt="Internet connection display" />
-                                            <span className="mainContent">Stable internet connection</span>
+                                            <span className="subContent">Stable internet connection</span>
                                         </div>
 
                                         <div className="cardWrapper">
                                             <img src="" alt="Devices requirement display" />
-                                            <span className="mainContent">Desktop, laptop, or mobile device</span>
+                                            <span className="subContent">Desktop, laptop, or mobile device</span>
                                         </div>
                                     </div>
                                 </section>
@@ -121,7 +120,7 @@ const Manual: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                                     <label className="mainHeader">FEATURES</label>
 
                                     <section id="loginProcedureContainer">
-                                        <span className="topic">Login Procedure</span>
+                                        <label className="subHeader">LOGIN PROCEDURE</label>
 
                                         <img src="" alt="Login art" />
 
@@ -169,7 +168,7 @@ const Manual: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                                     </section>
 
                                     <section id="securityMeasureContainer">
-                                        <span className="topic">Security Measure</span>
+                                        <label className="subHeader">SECURITY MEASURE</label>
 
                                         <img src="" alt="Security Measure" />
 
@@ -182,23 +181,23 @@ const Manual: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                                         <div className="cardContainer">
                                             <div className="cardWrapper">
                                                 <img src="" alt="Login authentication" />
-                                                <span className="mainContent">Login authentication ensures secure access</span>
+                                                <span className="subContent">Login authentication ensures secure access</span>
                                             </div>
 
                                             <div className="cardWrapper">
                                                 <img src="" alt="Account login overview" />
-                                                <span className="mainContent">For checking your information, players can hide their password and PIN</span>
+                                                <span className="subContent">For checking your information, players can hide their password and PIN</span>
                                             </div>
 
                                             <div className="cardWrapper">
                                                 <img src="" alt="Forgot password overview" />
-                                                <span className="mainContent">Password recovery system assists users who forget credentials</span>
+                                                <span className="subContent">Password recovery system assists users who forget credentials</span>
                                             </div>
                                         </div>
                                     </section>
 
                                     <section id="guideForPlayersContainer">
-                                        <span className="topic">Guide For Players</span>
+                                        <label className="subHeader">GUIDE FOR PLAYERS</label>
 
                                         <img src="" alt="Guide art" />
 
@@ -211,29 +210,29 @@ const Manual: React.FC<ModalProps> = ({ isOpen, onClose }) => {
 
                                         <div className="cardContainer">
                                             <div className="cardWrapper">
-                                                <span className="mainContent">Answer questions honestly to receive accurate AI recommendations</span>
+                                                <span className="subContent">Answer questions honestly to receive accurate AI recommendations</span>
                                             </div>
 
                                             <div className="cardWrapper">
-                                                <span className="mainContent">Explore different game paths to discover various career options</span>
+                                                <span className="subContent">Explore different game paths to discover various career options</span>
                                             </div>
 
                                             <div className="cardWrapper">
-                                                <span className="mainContent">Review statistics on dashboard to track progress and improvement</span>
+                                                <span className="subContent">Review statistics on dashboard to track progress and improvement</span>
                                             </div>
 
                                             <div className="cardWrapper">
-                                                <span>Define your actual skills and personality traits to ensure accurate and correct results</span>
+                                                <span className="subContent">Define your actual skills and personality traits to ensure accurate and correct results</span>
                                             </div>
 
                                             <div className="cardWrapper">
-                                                <span className="mainContent">Verify that your selected traits accurately reflect your strengths for a more personalized career analysis</span>
+                                                <span className="subContent">Verify that your selected traits accurately reflect your strengths for a more personalized career analysis</span>
                                             </div>
                                         </div>
                                     </section>
 
                                     <section id="logoutProcedureContainer">
-                                        <span className="topic">Logout Procedure</span>
+                                        <label className="subHeader">LOGOUT PROCEDURE</label>
 
                                         <img src="" alt="Logout art" />
 
@@ -249,10 +248,6 @@ const Manual: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                                     <label className="mainHeader">OVERVIEW</label>
 
                                     <section id="scenesContainer">
-                                        <span className="topic">Map Layout</span>
-
-                                        <img src="" alt="Map layout" />
-
                                         <p className="caption">
                                             A lively scenery inside and outside of the main campus serves a unique purpose in 
                                             your career discovery. Use map overview as guide to understand the map layout 
@@ -287,7 +282,7 @@ const Manual: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                                     </section>
 
                                     <section id="modalsContainer">
-                                        <span className="topic">Modals</span>
+                                        <label className="subHeader">MODALS</label>
 
                                         <p className="caption">
 
