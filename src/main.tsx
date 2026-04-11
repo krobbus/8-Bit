@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense, lazy } from 'react';
 import ReactDOM from 'react-dom/client';
 import Phaser from 'phaser';
 
@@ -9,11 +9,11 @@ import Hallway from './pages/scenes/hallway.js';
 import Classroom from './pages/scenes/classroom.js';
 import RightWing from './pages/scenes/rightWing.js';
 
-import PasswordRecovery from './components/PasswordRecovery';
-import Manual from './components/Manual';
-import AccountManagement from './components/AccountManagement';
-import Dashboard from './components/Dashboard';
-import Leaderboard from './components/Leaderboard';
+const PasswordRecovery = lazy(() => import('./components/PasswordRecovery'));
+const Manual = lazy(() => import('./components/Manual'));
+const AccountManagement = lazy(() => import('./components/AccountManagement'));
+const Dashboard = lazy(() => import('./components/Dashboard'));
+const Leaderboard = lazy(() => import('./components/Leaderboard'));
 
 declare global {
   interface Window {
@@ -31,7 +31,7 @@ const config: Phaser.Types.Core.GameConfig = {
   physics: { 
     default: 'arcade',
     arcade: { 
-      debug: true
+      debug: false
     }
   },
   render: {
@@ -98,15 +98,15 @@ const UIOverlay = () => {
   }, []);
 
   return (
-    <>
-      <Manual
-        isOpen={isManualOpen} 
-        onClose={() => setIsManualOpen(false)} 
-      />
-      
+    <Suspense fallback={null}>
       <PasswordRecovery
         isOpen={isPasswordRecoveryOpen} 
         onClose={() => setIsPasswordRecoveryOpen(false)} 
+      />
+
+      <Manual
+        isOpen={isManualOpen} 
+        onClose={() => setIsManualOpen(false)}
       />
 
       <AccountManagement 
@@ -123,7 +123,7 @@ const UIOverlay = () => {
         isOpen={isLeaderboardOpen} 
         onClose={() => setIsLeaderboardOpen(false)} 
       />
-    </>
+    </Suspense>
   );
 };
 

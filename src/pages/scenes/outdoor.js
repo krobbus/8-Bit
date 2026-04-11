@@ -10,7 +10,7 @@ export default class Outdoor extends Phaser.Scene {
         super('Outdoor');
     }
 
-    async create(targetSceneName) {
+    async create() {
         const screenCenterX = this.cameras.main.worldView.x + this.cameras.main.width / 2;
         const screenCenterY = this.cameras.main.worldView.y + this.cameras.main.height / 2;
 
@@ -55,7 +55,7 @@ export default class Outdoor extends Phaser.Scene {
             [
                 "Hello there, welcome\nto the campus!",
                 "Your journey starts\nwith a single step.",
-                "Talk to me if you\nneed directions."
+                "Check the manual on\ntop of the screen."
             ],
             {
                 offsetX: -20,
@@ -65,42 +65,49 @@ export default class Outdoor extends Phaser.Scene {
                 linePause: 2000,
                 loop: false,
                 depth: 200,
-                onComplete: () => {
-                    window.dispatchEvent(new CustomEvent('openManualModal'));
-                    this.npcDialogue.resetToIdle();
-                }
+                onComplete: () => this.npcDialogue.resetToIdle()
             }
         );
 
         let existingAudio = this.sound.get('audiosample');                                                          // audio
-        if (!existingAudio) { this.gameAudio = this.sound.add('audiosample', { loop: true });
-        } else { this.gameAudio = existingAudio; }
-
+        if (!existingAudio) { 
+            this.gameAudio = this.sound.add('audiosample', { loop: true });
+        } else { 
+            this.gameAudio = existingAudio; 
+        }
         const startAudio = () => {
             if (this.sound.context.state === 'suspended') { this.sound.context.resume(); }
             if (!this.gameAudio.isPlaying) { this.gameAudio.play(); }
         };
         startAudio();
-
         this.input.once('pointerdown', () => { startAudio(); });
 
-        this.settings = new Settings(this);                                                                 // settings
-        this.settings.setDepth(3000);
-        this.add.sprite(this.scale.width - 60, 80, 'settings')
-            .setScale(0.1)
+        this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+                                                                          
+        this.manual = this.add.sprite(this.scale.width - 120, 80, 'manual')                                         // manual
+            .setScale(0.3)
             .setDepth(3001)
             .setOrigin(1, 0)
             .setInteractive({ useHandCursor: true })
             .on("pointerdown", () => {
-                this.player.body.setVelocity(0);
-                this.player.anims.stop();
+                if (this.settings.isOpened) this.settings.toggle();
+                this.input.keyboard.resetKeys();
+                window.dispatchEvent(new CustomEvent('openManualModal'));
+                return;
+            });
 
+        this.settings = new Settings(this);                                                                         // settings
+        this.settings.setDepth(3000);
+        this.add.sprite(this.scale.width - 60, 80, 'settings')
+            .setScale(0.3)
+            .setDepth(3001)
+            .setOrigin(1, 0)
+            .setInteractive({ useHandCursor: true })
+            .on("pointerdown", () => {
                 const isModalOpened = document.querySelector('.modalBackdrop') || document.activeElement.tagName === 'INPUT';
                 if (isModalOpened) return;
-                this.settings.toggle();
+                this.settings.toggle()
             });
-        
-        this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
         let debugGraphics = this.add.graphics().lineStyle(2, 0x00ff00, 1);
         this.activeZone = null;
@@ -120,9 +127,9 @@ export default class Outdoor extends Phaser.Scene {
             },
             {
                 x: 470, y: 430, w: 60, h: 30,
-                hintText1: "COMMUNICATE ?",
+                hintText1: "CHAT WITH HER ?",
                 hintHeight: 30, hintWidth: 170, gapY: 0,
-                target: 'openManualModal'
+                target: 'talkToNPC'
             }
         ];
         this.zones.forEach(z => { debugGraphics.strokeRect(z.x, z.y, z.w, z.h); });
@@ -186,29 +193,21 @@ export default class Outdoor extends Phaser.Scene {
     update(){
         if (!this.mobileControls || !this.player || !this.player.body) return;
 
-        if (this.settings && this.settings.isOpened) {
-            this.player.body.setVelocity(0, 0);
-            this.player.anims.stop();
-            return;
-        }
-        
         const isModalOpened = document.querySelector('.modalBackdrop') || document.activeElement.tagName === 'INPUT';
-        if (isModalOpened) {
+        if ((this.settings && this.settings.isOpened) || isModalOpened) {
             this.player.body.setVelocity(0);
             this.player.anims.stop();
+            this.checkProximity();
             return;
         }
 
         const joystick = this.mobileControls.getForce();
         this.player.update(this.isMobileMode, joystick.x, joystick.y, joystick.isRunning);
+        if (this.npcDialogue) this.npcDialogue.update();
         
-        const onStairs = this.stairZones.some(z => 
-            Phaser.Geom.Rectangle.Contains(z, this.player.x, this.player.y) 
-        );
+        const onStairs = this.stairZones.some(z => Phaser.Geom.Rectangle.Contains(z, this.player.x, this.player.y));
         if (onStairs) { this.applyStairPhysics() } else { this.player.body.setAllowGravity(true) }; 
         this.checkProximity();
-
-        if (this.npcDialogue) this.npcDialogue.update();
     }
 
     checkProximity() {
@@ -225,7 +224,8 @@ export default class Outdoor extends Phaser.Scene {
 
             if (spaceJustDown || mobileInteractDown) {
                 const returnPos = this.activeZone.spawnInNextScene || null;
-                if (this.activeZone.target === 'openManualModal') {
+
+                if (this.activeZone.target === 'talkToNPC') {
                     this.npcDialogue.play();
                 } else {
                     this.startPageTransition(this.activeZone.target, returnPos);
@@ -256,15 +256,19 @@ export default class Outdoor extends Phaser.Scene {
         }
     }
 
-    applyStairPhysics() {
+    applyStairPhysics(isRunning) {
         const body = this.player.body;
-        const speed = 0.2;
+        const dampening = isRunning ? 0.15 : 0.4;
         const slope = 0.9;
         
         if (Math.abs(body.velocity.y) > 0.1) {
-            body.velocity.y *= speed;
-            body.velocity.x = -(body.velocity.y * slope);
             body.setAllowGravity(false);
+            body.velocity.y *= dampening;
+            body.velocity.x = -(body.velocity.y * slope);
+
+            const maxStairSpeed = isRunning ? 80 : 40;
+            body.velocity.y = Phaser.Math.Clamp(body.velocity.y, -maxStairSpeed, maxStairSpeed);
+            body.velocity.x = Phaser.Math.Clamp(body.velocity.x, -maxStairSpeed, maxStairSpeed);
         }
     }
 

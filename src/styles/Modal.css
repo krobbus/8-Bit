@@ -1,8 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Jersey+10&family=Micro+5&family=Pixelify+Sans:wght@400..700&display=swap');
+
 .modalBackdrop {
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(8px); 
+    backdrop-filter: blur(1vmin);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -12,8 +14,8 @@
         border: 1vmin solid #dad7cd;
         background-color: #588157;
         margin: 1rem;
-        width: 120vmin;
-        height: 60vmin;
+        width: 150vmin;
+        height: 70vmin;
         image-rendering: pixelated;
         z-index: 1001;
 
@@ -21,9 +23,9 @@
             position: relative;
             overflow-y: auto;
             overflow-x: hidden;
-            height: 60vmin;
+            height: 70vmin;
             width: 100%;
-            font-family: "Press Start 2P", cursive;
+            font-family: "Press Start 2P";
             font-size: clamp(10px, 2vmin, 18px);
             line-height: 1.5;
             letter-spacing: 0.2vmin;
@@ -38,7 +40,7 @@
                 border: 0.5vmin solid #fff;
                 padding: 1vmin 2vmin;
                 cursor: pointer;
-                font-family: "Press Start 2P", cursive;
+                font-family: "Press Start 2P";
                 font-size: 3vmin;
                 z-index: 1005;
 

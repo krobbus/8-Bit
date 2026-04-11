@@ -3,28 +3,28 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 1rem;
-    margin: 10px;
+    gap: 1.8vmin;
+    margin: 1.2vmin;
 
     .mainHeader{
-        font-size: 20px;
+        font-size: 2.5vmin;
         text-align: center;
-        padding: 0 10px;
+        padding: 0 1.2vmin;
     }
 
     .subHeader{
-        font-size: 16px;
+        font-size: 1.8vmin;
         text-align: left;
-        padding: 0 10px;
+        padding: 0 1.2vmin;
     }
 
     .selectedCourses, .nonselectedCourses{
         display: flex;
         flex-direction: column;
         background-color: rgba(255, 255, 255, 0.1);
-        box-shadow: 10px 10px 7px rgba(0, 0, 0, 0.1);
-        border: 4px solid #a3b18a;
-        padding: 2rem;
+        box-shadow: 1.2vmin 1.2vmin 0.8vmin rgba(0, 0, 0, 0.1);
+        border: 0.5vmin solid #a3b18a;
+        padding: 3.7vmin;
         width: 100%;
         box-sizing: border-box;
 
@@ -35,7 +35,7 @@
             align-items: center;
 
             .drawerArrow {
-                width: 30px;
+                width: 3.5vmin;
                 height: auto;
                 filter: invert();
                 cursor: pointer;
@@ -47,7 +47,7 @@
         .drawerContent {
             display: flex;
             flex-direction: column;
-            gap: 1rem;
+            gap: 1.8vmin;
             overflow: hidden;
             transition: max-height 0.4s ease-out, opacity 0.3s ease, padding-top 0.3s ease;
         }
@@ -55,7 +55,7 @@
         .drawerContent.show {
             height: 100%;
             opacity: 1;
-            padding-top: 1rem;
+            padding-top: 1.8vmin;
         }
 
         .drawerContent.hide {
@@ -70,7 +70,7 @@
         flex-direction: row;
         justify-content: center;
         align-items: center;
-        gap: 1rem;
+        gap: 1.8vmin;
         width: 100%;
         box-sizing: border-box;
 
@@ -79,12 +79,11 @@
             flex-direction: column;
             justify-content: flex-start;
             align-items: center;
-            gap: 1rem;
-            
+            gap: 1.8vmin;         
             background-color: rgba(255, 255, 255, 0.1);
-            box-shadow: 10px 10px 7px rgba(0, 0, 0, 0.1);
-            border: 4px solid #a3b18a;
-            padding: 2rem;
+            border: 0.5vmin solid #a3b18a;
+            box-shadow: 1.2vmin 1.2vmin 0.8vmin rgba(0, 0, 0, 0.1);
+            padding: 3.7vmin;
             height: stretch;
             width: 100%;
             box-sizing: border-box;
@@ -97,19 +96,20 @@
                 height: 100%;
                 margin: 0;
                 background-color: rgba(0, 0, 0, 0.2);
-                border-radius: 20px;
+                border-radius: 2.3vmin;
+                box-sizing: border-box;
 
                 ul{
                     display: flex;
                     flex-direction: column;
                     list-style: none;
-                    padding: 1rem 0;
+                    padding: 1.9vmin 0;
                     margin: 0;
                 }
 
                 li, p{
                     text-align: left;
-                    font-size: 14px;
+                    font-size: 1.6vmin;
                 }
             }
         }
@@ -120,12 +120,11 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        gap: 1rem;
-        padding: 2rem;
-        
+        gap: 1.8vmin;
+        padding: 3.7vmin;     
         background-color: rgba(255, 255, 255, 0.1);
-        box-shadow: 10px 10px 7px rgba(0, 0, 0, 0.1);
-        border: 4px solid #a3b18a;
+        border: 0.5vmin solid #a3b18a;
+        box-shadow: 1.2vmin 1.2vmin 0.8vmin rgba(0, 0, 0, 0.1);
         width: 100%;
         box-sizing: border-box;
 
@@ -134,19 +133,19 @@
             flex-direction: row;
             justify-content: center;
             align-items: center;
-            gap: 1rem;
+            gap: 1.8vmin;
             width: 100%;
             box-sizing: border-box;
 
             button{
-                font-family: "Jersey 10", cursive;
-                font-size: 22px;
-                box-shadow: 10px 10px 7px rgba(0, 0, 0, 0.1);
-                padding: 1rem;
+                font-family: "Jersey 10";
+                font-size: 2.5vmin;
+                padding: 1.8vmin;
                 margin: 0;
                 color: #588157;
                 background-color: #fff;
-                border: 4px solid #a3b18a;
+                border: 0.5vmin solid #a3b18a;
+                box-shadow: 1.2vmin 1.2vmin 0.8vmin rgba(0, 0, 0, 0.1);
                 cursor: pointer;
                 width: 100%;
                 box-sizing: border-box;
@@ -154,18 +153,18 @@
                 &:hover{
                     color: #fff;
                     background-color: #a3b18a;
-                    border: 4px solid #fff;
+                    border: 0.5vmin solid #fff;
                 }
             }
         }
 
         .aiCommentBox{
             background-color: rgba(0, 0, 0, 0.4);
-            box-shadow: 10px 10px 7px rgba(0, 0, 0, 0.1);
-            border: 4px solid #a3b18a;
+            border: 0.5vmin solid #a3b18a;
+            box-shadow: 1.2vmin 1.2vmin 0.8vmin rgba(0, 0, 0, 0.1);
             text-align: left;
-            font-size: 14px;
-            padding: 2rem;
+            font-size: 1.6vmin;
+            padding: 3.7vmin;
             width: 100%;
             white-space: pre-wrap;
             box-sizing: border-box;

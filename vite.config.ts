@@ -10,11 +10,19 @@ export default defineConfig({
     open: true,
   },
   build: {
+    chunkSizeWarningLimit: 1000,
+
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'index.html'),
         game: resolve(__dirname, 'Game.html'),
         loginOverlay: 'src/components/LoginOverlay.tsx'
+      },
+      output:{
+        manualChunks: {
+          phaser: ['phaser'],
+          firebase: ['firebase/app', 'firebase/database'],
+        }
       }
     }
   }

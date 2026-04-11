@@ -48,6 +48,45 @@ export default class DialogueBubble {
         this.redrawBg(this.textObj.width, this.textObj.height);
     }
 
+    play() {
+        if (this.destroyed) return;
+        this.lineIndex = 0;
+        this.typeCurrentLine();
+    }
+
+    typeCurrentLine() {
+        if (this.destroyed) return;
+
+        const fullText = this.lines[this.lineIndex] ?? "";
+        this.textObj.setText("");
+        let charIndex = 0;
+
+        this.timer = this.scene.time.addEvent({
+            delay: this.typeDelay,
+            repeat: fullText.length - 1,
+            callback: () => {
+                if (this.destroyed) return;
+                charIndex++;
+                this.textObj.setText(fullText.slice(0, charIndex));
+                this.redrawBg(this.textObj.width, this.textObj.height);
+                this.reposition();
+            }
+        });
+
+        this.scene.time.delayedCall(
+            this.typeDelay * fullText.length + this.linePause,
+            () => {
+                if (this.destroyed) return;
+                this.advance();
+            }
+        );
+    }
+
+    update() {
+        if (this.destroyed) return;
+        this.reposition();
+    }
+
     reposition() {
         if (this.destroyed || !this.npc) return;
 
@@ -83,40 +122,6 @@ export default class DialogueBubble {
         this.bg.lineBetween(tailX + 1, boxH, tailX + t - 1, boxH);
     }
 
-    play() {
-        if (this.destroyed) return;
-        this.lineIndex = 0;
-        this.typeCurrentLine();
-    }
-
-    typeCurrentLine() {
-        if (this.destroyed) return;
-
-        const fullText = this.lines[this.lineIndex] ?? "";
-        this.textObj.setText("");
-        let charIndex = 0;
-
-        this.timer = this.scene.time.addEvent({
-            delay: this.typeDelay,
-            repeat: fullText.length - 1,
-            callback: () => {
-                if (this.destroyed) return;
-                charIndex++;
-                this.textObj.setText(fullText.slice(0, charIndex));
-                this.redrawBg(this.textObj.width, this.textObj.height);
-                this.reposition();
-            }
-        });
-
-        this.scene.time.delayedCall(
-            this.typeDelay * fullText.length + this.linePause,
-            () => {
-                if (this.destroyed) return;
-                this.advance();
-            }
-        );
-    }
-
     advance() {
         if (this.destroyed) return;
         const next = this.lineIndex + 1;
@@ -130,11 +135,6 @@ export default class DialogueBubble {
         } else {
             if (this.onComplete) this.onComplete();
         }
-    }
-
-    update() {
-        if (this.destroyed) return;
-        this.reposition();
     }
 
     resetToIdle() {

@@ -81,26 +81,45 @@ export default class Classroom extends Phaser.Scene {
         this.nameContainer.setDepth(110);
         
         let existingAudio = this.sound.get('audiosample');                                                          // audio
-        if (!existingAudio) { this.gameAudio = this.sound.add('audiosample', { loop: true });
-        } else { this.gameAudio = existingAudio; }
-
+        if (!existingAudio) { 
+            this.gameAudio = this.sound.add('audiosample', { loop: true });
+        } else { 
+            this.gameAudio = existingAudio; 
+        }
         const startAudio = () => {
             if (this.sound.context.state === 'suspended') { this.sound.context.resume(); }
             if (!this.gameAudio.isPlaying) { this.gameAudio.play(); }
         };
         startAudio();
-
         this.input.once('pointerdown', () => { startAudio(); });
 
-        this.settings = new Settings(this);                                                                           // settings
-        this.settings.setDepth(3000);
-        this.add.sprite(this.scale.width - 60, 80, 'settings')
-            .setScale(0.1)
+        this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+
+        this.manual = this.add.sprite(this.scale.width - 120, 80, 'manual')                                         // manual
+            .setScale(0.3)
+            .setDepth(3001)
             .setOrigin(1, 0)
             .setInteractive({ useHandCursor: true })
-            .on("pointerdown", () => this.settings.toggle());
+            .on("pointerdown", () => {
+                if (this.settings.isOpened) this.settings.toggle();
+                this.input.keyboard.resetKeys();
+                window.dispatchEvent(new CustomEvent('openManualModal'));
+                return;
+            });
+
+        this.settings = new Settings(this);                                                                         // settings
+        this.settings.setDepth(3000);
+        this.add.sprite(this.scale.width - 60, 80, 'settings')
+            .setScale(0.3)
+            .setDepth(3001)
+            .setOrigin(1, 0)
+            .setInteractive({ useHandCursor: true })
+            .on("pointerdown", () => {
+                const isModalOpened = document.querySelector('.modalBackdrop') || document.activeElement.tagName === 'INPUT';
+                if (isModalOpened) return;
+                this.settings.toggle()
+            });
         
-        this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
         this.activeZone = null;
 
         const savedMode = localStorage.getItem('mobileMode');

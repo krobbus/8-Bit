@@ -39,8 +39,8 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
     update(isMobile, joystickX, joystickY, isRunning) {
         this.setVelocity(0);
-        let speed = isRunning ? 400 : 200;
-        if (!isMobile && this.keys.SHIFT.isDown) { speed = 400; }
+        let speed = isRunning ? 300 : 200;
+        if (!isMobile && this.keys.SHIFT.isDown) { speed = 300; }
         if (isMobile) {
             this.body.setVelocityX(joystickX * speed);
             this.body.setVelocityY(joystickY * speed);

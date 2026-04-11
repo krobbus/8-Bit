@@ -50,35 +50,42 @@ export default class RightWing extends Phaser.Scene {
         this.npc = new NPC(this, 660, 400, 'male2').setScale(3);
         this.npc = new NPC(this, 990, 410, 'musicmale').setScale(3);
 
-        let existingAudio = this.sound.get('audiosample');                                                              // audio
-        if (!existingAudio){
-            this.gameAudio = this.sound.add('audiosample', { loop: true });
-            this.gameAudio.play();
-        } else{
-            this.gameAudio = existingAudio;
-
-            if (!this.gameAudio.isPlaying) {
-                this.gameAudio.play();
-            }
-        }
-
-        if (this.sound.context.state === 'suspended'){
-            this.sound.context.resume();
-        }
-
-        this.settings = new Settings(this);                                                                             // settings
-        this.settings.setDepth(3000);  
-        this.add.sprite(this.scale.width - 60, 80, 'settings')
-            .setScale(0.1)
-            .setOrigin(1, 0)
-            .setInteractive({ useHandCursor: true })
-            .on("pointerdown", () => {              
-                this.player.body.setVelocity(0);
-                this.player.anims.stop();
-                this.settings.toggle();
-            });
+        let existingAudio = this.sound.get('audiosample');                                                          // audio
+        if (!existingAudio) { this.gameAudio = this.sound.add('audiosample', { loop: true });
+        } else { this.gameAudio = existingAudio; }
+        const startAudio = () => {
+            if (this.sound.context.state === 'suspended') { this.sound.context.resume(); }
+            if (!this.gameAudio.isPlaying) { this.gameAudio.play(); }
+        };
+        startAudio();
+        this.input.once('pointerdown', () => { startAudio(); });
 
         this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+
+        this.manual = this.add.sprite(this.scale.width - 120, 80, 'manual')                                         // manual
+            .setScale(0.3)
+            .setDepth(3001)
+            .setOrigin(1, 0)
+            .setInteractive({ useHandCursor: true })
+            .on("pointerdown", () => {
+                if (this.settings.isOpened) this.settings.toggle();
+                this.input.keyboard.resetKeys();
+                window.dispatchEvent(new CustomEvent('openManualModal'));
+                return;
+            });
+
+        this.settings = new Settings(this);                                                                         // settings
+        this.settings.setDepth(3000);
+        this.add.sprite(this.scale.width - 60, 80, 'settings')
+            .setScale(0.3)
+            .setDepth(3001)
+            .setOrigin(1, 0)
+            .setInteractive({ useHandCursor: true })
+            .on("pointerdown", () => {
+                const isModalOpened = document.querySelector('.modalBackdrop') || document.activeElement.tagName === 'INPUT';
+                if (isModalOpened) return;
+                this.settings.toggle()
+            });
 
         let debugGraphics = this.add.graphics();//.lineStyle(2, 0x00ff00, 1);
         this.activeZone = null;
@@ -142,9 +149,11 @@ export default class RightWing extends Phaser.Scene {
     update(){
         if (!this.mobileControls || !this.player || !this.player.body) return;
         
-        if (this.settings && this.settings.isOpened) {
-            this.player.body.setVelocity(0, 0);
+        const isModalOpened = document.querySelector('.modalBackdrop') || document.activeElement.tagName === 'INPUT';
+        if ((this.settings && this.settings.isOpened) || isModalOpened) {
+            this.player.body.setVelocity(0);
             this.player.anims.stop();
+            this.checkProximity();
             return;
         }
         

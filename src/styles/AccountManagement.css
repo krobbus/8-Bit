@@ -1,60 +1,60 @@
-/*@import url('https://fonts.googleapis.com/css2?family=Jersey+10&family=Pixelify+Sans:wght@400..700&display=swap');*/
-
 .accountManagementModal{
+    position: relative;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 2rem;
-    box-sizing: border-box;
-    padding: 2rem;
+    gap: 3.8vmin;
+    padding: 3.7vmin;
     margin: 0;
+    height: auto;
+    width: 100%;
+    box-sizing: border-box;
 
     .loadingContainer{
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        gap: 1rem;
+        gap: 1.8vmin;
         height: 100%;
         width: 100%;
         box-sizing: border-box;
 
         .loadingText{
-            font-size: 20px;
+            font-size: 2.3vmin;
             color: #fff;
         }
     }
 
     #mainTitle{
-        font-size: 30px;
+        font-size: 3vmin;
+        text-wrap: wrap;
         margin: 0;
         text-align: left;
         width: 100%;
+        max-width: 70vmin;
         user-select: none;
     }
 
     .mainHeader{
-        font-size: 20px;
+        font-size: 2.2vmin;
         text-align: center;
-        padding: 0 10px;
     }
 
     .subHeader{
-        font-size: 16px;
+        font-size: 1.8vmin;
         text-align: left;
-        padding: 0 10px;
+        color: #fff;         
     }
 
     .requirementHint{
-        font-size: 14px;
+        font-size: 1.6vmin;
         text-align: left;
     }
 
     .errorContainer{
-        font-size: 14px;
+        font-size: 1.6vmin;
         text-align: left;
-        padding: 20px;
+        padding: 2.3vmin;
         background-color: #344E41;
         justify-items: center;
         white-space: pre-line;
@@ -67,9 +67,8 @@
         flex-direction: row;
         justify-content: space-evenly;
         align-items: center;
-
         background: #a3b18a;
-        border-radius: 30px;
+        border-radius: 1.2vmin;
         height: auto;
         width: 100%;
         margin: 0;
@@ -79,14 +78,14 @@
         button{
             color: #5e5e5e;
             text-align: center;
-            font-family: "Jersey 10", cursive;
-            font-size: 22px;
-
+            font-family: "Jersey 10";
+            font-size: 2.5vmin;
             border: none;
-            border-radius: 30px;
+            border-radius: 1.2vmin;
             width: 100%;
             margin: 0;
-            padding: 10px;
+            padding: 1.1vmin;
+            box-sizing: border-box;
             transition: background 0.4s ease-in-out;
         }
 
@@ -120,7 +119,7 @@
             &.account { transform: translateX(-66.66%); }
 
             .page { 
-                padding: 0 10px;
+                padding: 0 1.1vmin;
                 height: auto;
                 width: 33.33%;
                 flex-shrink: 0;
@@ -150,7 +149,7 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        gap: 1rem;
+        gap: 1.8vmin;
         width: 100%;
         box-sizing: border-box;
 
@@ -166,8 +165,8 @@
                 align-items: center;
                 justify-content: center;
                 position: relative;
-                border-radius: 30px;
-                height: 250px;
+                border-radius: 3.5vmin;
+                height: 29vmin;
                 width: 60%;
                 overflow: hidden;
                 box-sizing: border-box;
@@ -175,22 +174,17 @@
                 &::before {
                     content: "";
                     position: absolute;
-                    top: 0; 
-                    left: 0; 
-                    right: 0; 
-                    bottom: 0;
-                    
+                    inset: 0;        
                     background-image: url("/assets/Background/AvatarBg.jpg");
                     background-position: center;
                     background-size: cover;
-                    background-repeat: no-repeat;
-                    
-                    filter: brightness(0.8) blur(2px) grayscale(20%); 
+                    background-repeat: no-repeat; 
+                    filter: brightness(0.8) blur(0.2vmin) grayscale(20%); 
                     z-index: 1;
                 }
 
                 img{
-                    height: 200px;
+                    height: 23vmin;
                     width: auto;
                     z-index: 2;
                 }
@@ -202,43 +196,42 @@
                 justify-content: center;
                 align-items: center;
                 flex-grow: 1;
-                gap: 1rem;
+                gap: 1.8vmin;
 
                 button{
-                    font-family: "Jersey 10", cursive;
-                    font-size: 22px;
+                    font-family: "Jersey 10";
+                    font-size: 2.5vmin;
                     color: #000;
                     background-color: #fff;
-                    border: 5px solid #000;
-
+                    border: 0.6vmin solid #000;
                     flex-grow: 1;
-                    height: 50px;
-                    width: 200px;
+                    height: 5.7vmin;
+                    width: 23vmin;
                     box-sizing: border-box;
                 }
 
                 #maleButton.active {
                     color: #fff;
                     background-color: rgb(61, 166, 252);
-                    border: 5px solid #fff;
+                    border: 0.6vmin solid #fff;
                 }
 
                 #femaleButton.active {
                     color: #fff;
                     background-color: rgb(255, 134, 221);
-                    border: 5px solid #fff;
+                    border: 0.6vmin solid #fff;
                 }
 
                 #maleButton:not(.active) {
                     color: rgb(255, 255, 255, 0.3);
                     background-color: rgba(61, 166, 252, 0.3);
-                    border: 5px solid rgb(255, 255, 255, 0.3);
+                    border: 0.6vmin solid rgb(255, 255, 255, 0.3);
                 }
 
                 #femaleButton:not(.active) {
                     color: rgb(255, 255, 255, 0.3);
                     background-color: rgba(255, 134, 221, 0.3);
-                    border: 5px solid rgb(255, 255, 255, 0.3);
+                    border: 0.6vmin solid rgb(255, 255, 255, 0.3);
                 }
             }
         }
@@ -251,11 +244,11 @@
             box-sizing: border-box;
 
             input{
-                font-family: "Jersey 10", cursive;
-                font-size: 24px;
-                padding: 1rem;
-                border-radius: 5px;
-                border: 5px solid #a3b18a;
+                font-family: "Jersey 10";
+                font-size: 2.8vmin;
+                padding: 1.8vmin;
+                border-radius: 0.6vmin;
+                border: 0.6vmin solid #a3b18a;
                 width: 100%;
                 box-sizing: border-box;
             }
@@ -267,7 +260,7 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        gap: 1rem;
+        gap: 1.8vmin;
         width: 100%;
         box-sizing: border-box;
 
@@ -275,7 +268,7 @@
             display: flex;
             flex-direction: row;
             align-items: center;
-            gap: 1rem;
+            gap: 1.8vmin;
             width: 100%;
             box-sizing: border-box;
 
@@ -287,11 +280,11 @@
                 box-sizing: border-box;
 
                 input{
-                    font-family: "Jersey 10", cursive;
-                    font-size: 24px;
-                    padding: 1rem;
-                    border-radius: 5px;
-                    border: 5px solid #a3b18a;
+                    font-family: "Jersey 10";
+                    font-size: 2.8vmin;
+                    padding: 1.8vmin;
+                    border-radius: 0.6vmin;
+                    border: 0.6vmin solid #a3b18a;
                     width: 100%;
                     box-sizing: border-box;
 
@@ -305,7 +298,7 @@
                     margin: 0;
                     padding: 0;
                     width: auto;
-                    max-height: 250px;
+                    max-height: 29vmin;
                     overflow-y: auto;
                     background-color: #fff;
                     list-style: none;
@@ -313,11 +306,11 @@
                     box-sizing: border-box;
 
                     li {
-                        padding: 10px;
-                        font-size: 16px;
+                        padding: 1.1vmin;
+                        font-size: 1.9vmin;
                         color: black;
                         cursor: pointer;
-                        border-bottom: 1px solid rgb(51, 51, 51, 0.5);
+                        border-bottom: 0.1vmin solid rgb(51, 51, 51, 0.5);
                         
                         &:hover {
                             background-color: #f0f0f0;
@@ -328,21 +321,20 @@
             }
 
             #addButton{
-                font-family: "Jersey 10", cursive;
-                font-size: 22px;
+                font-family: "Jersey 10";
+                font-size: 2.5vmin;
                 color: #588157;
                 background-color: #fff;
-                border: 4px solid #a3b18a;
-                box-shadow: 10px 10px 7px rgba(0, 0, 0, 0.1);
-
-                padding: 1rem;
-                width: 200px;
+                border: 0.5vmin solid #a3b18a;
+                box-shadow: 1,2vmin 1.2vmin 0.8vmin rgba(0, 0, 0, 0.1);
+                padding: 1.8vmin;
+                width: 23vmin;
                 box-sizing: border-box;
 
                 &:hover{
                     color: #fff;
                     background-color: #a3b18a;
-                    border: 4px solid #fff;
+                    border: 0.5vmin solid #fff;
                 }
             }
         }
@@ -352,7 +344,7 @@
             flex-direction: row;
             justify-content: center;
             align-items: center;
-            gap: 1rem;
+            gap: 1.8vmin;
             width: 100%;
             box-sizing: border-box;
 
@@ -360,7 +352,7 @@
                 display: flex;
                 flex-direction: column;
                 justify-content: flex-start;
-                gap: 1rem;
+                gap: 1.8vmin;
                 width: 100%;
                 box-sizing: border-box;
 
@@ -369,11 +361,11 @@
                     flex-direction: column;
                     justify-content: center;
                     align-items: center;
-                    height: 300px;
+                    height: 35vmin;
                     padding: 0;
                     margin: 0;
                     list-style: none;
-                    border: 5px dashed rgb(255, 255, 255, 0.8);
+                    border: 0.6vmin dashed rgb(255, 255, 255, 0.8);
                     background: rgba(253, 253, 253, 0.2);
                     overflow-y: auto;
 
@@ -381,35 +373,25 @@
                         display: flex;
                         justify-content: space-between;
                         align-items: center;
-                        padding: 10px 1rem;
+                        padding: 1.2vmin 1.4vmin;
                         height: auto;
                         width: 100%;
-
                         color: black;
-                        font-family: "Jersey 10", cursive;
-                        font-size: 18px;
+                        font-family: "Jersey 10";
+                        font-size: 2vmin;
                         text-transform: uppercase;
-
                         border: none;
-                        border-bottom: 2px dashed #000;
+                        border-bottom: 0.2vmin dashed #000;
                         border-radius: 0;
                         box-sizing: border-box;
 
-                        &:last-child {
-                            border-bottom: none;
-                        }
-
-                        &.skill {
-                            background-color: #c6f1ff;
-                        }
-
-                        &.personality {
-                            background-color: #fafad2;
-                        }
+                        &:last-child { border-bottom: none; }
+                        &.skill { background-color: #c6f1ff; }
+                        &.personality { background-color: #fafad2; }
 
                         button {
-                            font-family: "Jersey 10", cursive;
-                            font-size: 16px;
+                            font-family: "Jersey 10";
+                            font-size: 1.8vmin;
                             color: rgb(255, 255, 255);
                             background-color: rgba(0, 0, 0, 0.2);
                             border: none;
@@ -429,7 +411,7 @@
         .courseSelectionContainer {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 1rem; 
+            gap: 1.8vmin; 
             justify-content: center;
 
             input[type="checkbox"]{
@@ -440,9 +422,7 @@
                     border-color: #90ee90;
                     background-color: #3a5a40;
 
-                    em{
-                        color: #dad7cd;
-                    }
+                    em{ color: #dad7cd; }
                 }
             }
 
@@ -451,25 +431,19 @@
                 flex-direction: column;
                 justify-content: center;
                 align-items: center;
-                gap: 1rem;
-
-                padding: 20px;
-                border: 4px solid #dad7cd;
-                line-height: 22px;
+                gap: 1.8vmin;
+                padding: 2.3vmin;
+                border: 0.5vmin solid #dad7cd;
+                line-height: 2.5vmin;
                 background-color: #a3b18a;
                 color: #fff;
-
                 cursor: pointer;
                 box-sizing: border-box;
 
-                &:hover {
-                    border-color: #344e41;
-                }
-
-                strong { font-size: 18px; }
-
+                &:hover { border-color: #344e41; }
+                strong { font-size: 2vmin; }
                 em {
-                    font-size: 16px;
+                    font-size: 1.8vmin;
                     color: #333;
                 }
             }
@@ -481,7 +455,7 @@
         flex-direction: column;
         justify-content: space-evenly;
         align-items: center;
-        gap: 1rem;
+        gap: 1.8vmin;
         width: 100%;
         box-sizing: border-box;
 
@@ -493,11 +467,11 @@
             box-sizing: border-box;
 
             input{
-                font-family: "Jersey 10", cursive;
-                font-size: 24px;
-                padding: 1rem;
-                border-radius: 5px;
-                border: 5px solid #a3b18a;
+                font-family: "Jersey 10";
+                font-size: 2.8vmin;
+                padding: 1.8vmin;
+                border-radius: 0.6vmin;
+                border: 0.6vmin solid #a3b18a;
                 width: 100%;
                 box-sizing: border-box;
 
@@ -510,24 +484,25 @@
             display: flex;
             align-items: center;
             width: 100%;
+            box-sizing: border-box;
 
             button{
                 position: absolute;
-                right: 0.5rem;
+                right: 1vmin;
                 background: none;
                 border: none;
                 cursor: pointer;
-                
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                padding: 1rem;
+                padding: 1.8vmin;
 
                 img{
                     filter: invert(48%) sepia(13%) saturate(924%) hue-rotate(68deg) brightness(92%) contrast(85%);
-                    width: 40px;
+                    width: 4.6vmin;
                     height: auto;
                     pointer-events: none;
+                    box-sizing: border-box;
                 }
             }
         }
@@ -535,7 +510,7 @@
         .pinLayout{
             display: flex;
             flex-direction: row;
-            gap: 1rem;
+            gap: 1.8vmin;
             width: 100%;
             box-sizing: border-box;
         }
@@ -547,22 +522,21 @@
         justify-content: center;
 
         #saveButton{
-            font-family: "Jersey 10", cursive;
-            font-size: 22px;
+            font-family: "Jersey 10";
+            font-size: 2.5vmin;
             color: #588157;
             background-color: #fff;
-            border: 4px solid #a3b18a;
-            box-shadow: 10px 10px 7px rgba(0, 0, 0, 0.1);
-
-            margin-top: 2rem;
-            padding: 1rem;
-            width: 400px;
+            border: 0.5vmin solid #a3b18a;
+            box-shadow: 1.2vmin 1.2vmin 0.8vmin rgba(0, 0, 0, 0.1);
+            margin-top: 3.8vmin;
+            padding: 1.8vmin;
+            width: 46vmin;
             box-sizing: border-box;
 
             &:hover{
                 color: #fff;
                 background-color: #a3b18a;
-                border: 4px solid #fff;
+                border: 0.5vmin solid #fff;
             }
         }
     }

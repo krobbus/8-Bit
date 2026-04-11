@@ -297,7 +297,7 @@ const AccountManagement: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                     <button id="closeButton" onClick={onClose}>X</button>
 
                     <section className="accountManagementModal">
-                        <h1 id="mainTitle">{isExistingPlayer ? "PLAYER ACCOUNT MANAGEMENT" : "PLAYER ACCOUNT REGISTRATION"}</h1>
+                        <h1 id="mainTitle">{isExistingPlayer ? "ACCOUNT MANAGEMENT" : "ACCOUNT REGISTRATION"}</h1>
 
                         {loading ? (
                             <div className="loadingContainer">

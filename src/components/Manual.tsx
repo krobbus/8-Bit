@@ -4,14 +4,12 @@ import '../styles/Modal.css';
 import '../styles/Manual.css';
 
 const Manual: React.FC<ModalProps> = ({ isOpen, onClose }) => { 
-    if (!isOpen) return;  
-
     useEffect(() => {
         if (window.game?.input?.keyboard){
             isOpen ? window.game.input.keyboard.stopListeners() : window.game.input.keyboard.startListeners();
         }
         return () => window.game?.input?.keyboard?.startListeners();
-    }, []);
+    }, [isOpen]);
 
     const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
         e.preventDefault();
@@ -25,20 +23,23 @@ const Manual: React.FC<ModalProps> = ({ isOpen, onClose }) => {
         }
     };
 
+    if (!isOpen) return;  
+
     return(
         <div className="modalBackdrop">
             <div className="modalContainer">
                 <div className="modalContent">
                     <button id="closeButton" onClick={onClose}>X</button>
 
-                    <section className="manualContainer">
+                    <section id="manualContainer" className="manualContainer">
                         <h1 id="mainTitle">PLAYER'S MANUAL</h1>
 
                         <nav>
                             <ul>
                                 <li>
-                                    <a href="#introduction" onClick={(e) => handleNavClick(e, 'introductionContainer')}>INTRODUCTION</a>
+                                    <a href="#manualContainer" onClick={(e) => handleNavClick(e, 'manualContainer')}>HOME</a>
                                     <ul>
+                                        <li><a href="#introductionContainer" onClick={(e) => handleNavClick(e, 'introductionContainer')}>INTRODUCTION</a></li>
                                         <li><a href="#requirementsContainer" onClick={(e) => handleNavClick(e, 'requirementsContainer')}>SYSTEM REQUIREMENTS</a></li>
                                     </ul>
                                 </li>
@@ -55,7 +56,7 @@ const Manual: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                                     <a href="#overviewContainer" onClick={(e) => handleNavClick(e, 'overviewContainer')}>OVERVIEW</a>
                                     <ul>
                                         <li>
-                                            <a href="#mapLayoutContainer" onClick={(e) => handleNavClick(e, 'mapLayoutContainer')}>MAP LAYOUT</a>
+                                            <a href="#scenesContainer" onClick={(e) => handleNavClick(e, 'scenesContainer')}>SCENES</a>
                                             <ul>
                                                 <li><a href="#outdoorContainer" onClick={(e) => handleNavClick(e, 'outdoorContainer')}>OUTDOOR SCENE</a></li>
                                                 <li><a href="#leftWingContainer" onClick={(e) => handleNavClick(e, 'leftWingContainer')}>LEFT WING SCENE</a></li>
@@ -248,6 +249,8 @@ const Manual: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                                     <label className="mainHeader">OVERVIEW</label>
 
                                     <section id="scenesContainer">
+                                        <label className="subHeader">SCENES</label>
+
                                         <p className="caption">
                                             A lively scenery inside and outside of the main campus serves a unique purpose in 
                                             your career discovery. Use map overview as guide to understand the map layout 
@@ -255,25 +258,25 @@ const Manual: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                                         </p>
 
                                         <div className="cardContainer">
-                                            <div className="cardWrapper">
+                                            <div id="outdoorContainer" className="cardWrapper">
                                                 <img src="" alt="Outdoor scene" />
                                                 <span className="mainContent">Outdoor Scene (Outside of the campus)</span>
                                                 <p className="subContent"></p>
                                             </div>
 
-                                            <div className="cardWrapper">
+                                            <div id="leftWingContainer" className="cardWrapper">
                                                 <img src="" alt="Left wing scene" />
                                                 <span className="mainContent">Left Wing Scene (Inside of the campus)</span>
                                                 <p className="subContent"></p>
                                             </div>
 
-                                            <div className="cardWrapper">
+                                            <div id="hallwayContainer" className="cardWrapper">
                                                 <img src="" alt="Hallway scene" />
                                                 <span className="mainContent">Hallway Scene (Inside of the campus)</span>
                                                 <p className="subContent"></p>
                                             </div>
 
-                                            <div className="cardWrapper">
+                                            <div id="rightWingContainer" className="cardWrapper">
                                                 <img src="" alt="Right wing scene" />
                                                 <span className="mainContent">Right Wing Scene (Inside of the campus)</span>
                                                 <p className="subContent"></p>

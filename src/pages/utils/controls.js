@@ -12,14 +12,14 @@ export function createMobileControls(scene) {
     const screenWidth = scene.scale.width;
 
     const dpadContainer = scene.add.container(0, 0)                                                     // d-pad
-        .setSize(200, 200)
+        .setSize(300, 300)
         .setInteractive()
         .setScrollFactor(0)
         .setDepth(1000)
         .setAlpha(idleAlpha)
         .setVisible(false)
 
-    const dpadVisual = scene.add.sprite(0, 0, 'dpadunclicked').setScale(3);
+    const dpadVisual = scene.add.sprite(0, 0, 'dpadunclicked').setScale(4.5);
     dpadContainer.add(dpadVisual);
 
     const createZone = (x, y, width, height, direction) => {
@@ -35,10 +35,10 @@ export function createMobileControls(scene) {
 
         return zone;
     };
-    const upZone = createZone(0, -40, 60, 50, 'up').setScrollFactor(0);
-    const downZone = createZone(0, 40, 60, 50, 'down').setScrollFactor(0);
-    const leftZone = createZone(-40, 0, 50, 60, 'left').setScrollFactor(0);
-    const rightZone = createZone(40, 0, 50, 60, 'right').setScrollFactor(0);
+    const upZone = createZone(0, -60, 80, 70, 'up').setScrollFactor(0);
+    const downZone = createZone(0, 60, 80, 70, 'down').setScrollFactor(0);
+    const leftZone = createZone(-60, 0, 70, 80, 'left').setScrollFactor(0);
+    const rightZone = createZone(60, 0, 70, 80, 'right').setScrollFactor(0);
     dpadContainer.add([upZone, downZone, leftZone, rightZone]);
 
     scene.input.on('pointerup', () => {
@@ -87,7 +87,7 @@ export function createMobileControls(scene) {
         const viewWidth = scene.cameras.main.width;
         const viewHeight = scene.cameras.main.height;
 
-        dpadContainer.setPosition(150, viewHeight - 160);
+        dpadContainer.setPosition(180, viewHeight - 200);
         runBtn.setPosition(viewWidth - 130, viewHeight - 280);
         interactBtn.setPosition(viewWidth - 150, viewHeight - 160);
     };

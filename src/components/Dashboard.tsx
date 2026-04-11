@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo, type SyntheticEvent } from 'react';
+import React, { useEffect, useState, useMemo, type SyntheticEvent, type CSSProperties } from 'react';
 import type { ModalProps } from './props';
 import { db } from './firebaseConfig';
 import '../styles/Modal.css';
@@ -219,7 +219,7 @@ const Dashboard: React.FC<ModalProps> = ({onClose , isOpen}) => {
             await db.ref(`webGame/${loggedInPlayerID}`).update({
                 quizResults: {},
                 scores: {},
-                progress: 0,
+                assessments: {},
                 comment: ""
             });
         }
@@ -236,25 +236,28 @@ const Dashboard: React.FC<ModalProps> = ({onClose , isOpen}) => {
         }
     };
 
-    const editableInputStyle = { 
-        fontSize: "18px", 
-        fontFamily: '"Press Start 2P", cursive', 
+    const editableInputStyle: CSSProperties = { 
+        fontSize: "2.1vmin", 
+        fontFamily: '"Press Start 2P"', 
         color: "#fff", 
-        align: "right",
+        textAlign: "right",
         background: "#333", 
         border: "1px solid #fff", 
-        padding: "2px",
+        padding: "0.2vmin",
         width: "100%"
     };
 
-    const readOnlyInputStyle = { 
-        fontSize: "18px", 
-        fontFamily: '"Press Start 2P", cursive', 
+    const readOnlyInputStyle: CSSProperties = { 
+        fontSize: "2.1vmin", 
+        fontFamily: '"Press Start 2P"', 
         color: "#fff",
-        align: "right",
+        textAlign: "right",
         background: "transparent", 
+        padding: "0.2vmin",
         border: "none",
-        overflow: "ellipsis",
+        whiteSpace: "nowrap",
+        overflow: "hidden",
+        textOverflow: "ellipsis",
         width: "100%"
     };
 
@@ -455,21 +458,30 @@ const Dashboard: React.FC<ModalProps> = ({onClose , isOpen}) => {
                                         <div className="genderContainer">
                                             <label className="subHeader">GENDER:</label>
                                             <div className="genderField">
-                                                <input
-                                                    style={editingField === 'gender' ? editableInputStyle : readOnlyInputStyle}
-                                                    value={editingField === 'gender' ? editValue : (userData?.gender || "N/A")} 
-                                                    readOnly={editingField !== 'gender'}
-                                                    onChange={(e) => setEditValue(e.target.value)}
-                                                />
-
                                                 {editingField === 'gender' ? (
                                                     <>
+                                                        <label className="editableInput">
+                                                            <input type="checkbox" checked={editValue === 'Female'} onChange={(e) => setEditValue(e.target.checked ? 'Female' : 'Male')}/>
+                                                            Is Female?
+                                                        </label>
+
                                                         <img typeof="text/svg"onClick={saveEdit} src={"assets/WebAssets/Save.svg"}/>
                                                         <img typeof="text/svg" onClick={() => setEditingField(null)} src={"assets/WebAssets/Cancel.svg"}/>
                                                     </>
-                                                ) : ((userData?.gender || userData.gender === "N/A") && isAdmin && (
-                                                    <img typeof="text/svg" style={{ marginLeft: "10px" }} onClick={() => editData('gender', userData?.gender)} src={"assets/WebAssets/Edit.svg"}/>
-                                                ))}
+                                                ) : (
+                                                    <>
+                                                        <input
+                                                            style={editingField === 'gender' ? editableInputStyle : readOnlyInputStyle}
+                                                            value={editingField === 'gender' ? editValue : (userData?.gender || "N/A")} 
+                                                            readOnly={editingField !== 'gender'}
+                                                            onChange={(e) => setEditValue(e.target.value)}
+                                                        />
+
+                                                        {(userData?.gender || userData.gender === "N/A") && isAdmin && (
+                                                            <img typeof="text/svg" style={{ marginLeft: "10px" }} onClick={() => editData('gender', userData?.gender)} src={"assets/WebAssets/Edit.svg"}/>
+                                                        )}
+                                                    </>
+                                                )}
                                             </div>
                                         </div>
 

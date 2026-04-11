@@ -1,11 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=Jersey+10&family=Micro+5&family=Pixelify+Sans:wght@400..700&display=swap');
-
 .manualContainer{
     position: relative;
     display: flex;
     flex-direction: column;
     gap: 3.8vmin;
-    padding: 2rem;
+    padding: 3.7vmin;
     margin: 0;
     height: auto;
     width: 100%;
@@ -13,9 +11,11 @@
 
     #mainTitle{
         font-size: 3vmin;
+        text-wrap: wrap;
         margin: 0;
         text-align: left;
         width: 100%;
+        max-width: 70vmin;
         user-select: none;
     }
 
@@ -27,16 +27,14 @@
     .subHeader{
         font-size: 1.8vmin;
         text-align: left;
-        color: #fff;
-        padding-left: 10px;
-        border-left: 10px solid #fff;            
+        color: #fff;         
     }
 
     nav{
         position: sticky; 
-        top: 20px;
+        top: 2.3vmin;
         left: 0;
-        border-radius: 10px;
+        border-radius: 1.2vmin;
         background: #a3b18a;
         z-index: 99;
         transition: none;
@@ -49,7 +47,6 @@
             flex-direction: row;
             justify-content: space-evenly;
             align-items: center;
-            
             list-style: none;
             padding: 0;
             margin: 0;
@@ -63,11 +60,9 @@
                     flex-direction: row;
                     justify-content: center;
                     align-items: center;
-                    gap: 1rem;
-
-                    height: 40px;
-                    padding: 0 40px;
-
+                    gap: 1.8vmin;
+                    height: 4.7vmin;
+                    padding: 0 4.7vmin;
                     font-size: 1.4vmin;
                     color: #344e41;
                     text-decoration: none;
@@ -84,17 +79,14 @@
                     left: right;
                     z-index: 120;
                     background: #141414;
-                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
-
+                    box-shadow: 0 0.4vmin 0.9vmin rgba(0, 0, 0, 0.4);
                     list-style: none;
                     padding: 0;
                     margin: 0;
-                    
                     display: flex;
                     flex-direction: column;
                     max-height: 0;
-                    min-width: 28vmin;
-                    
+                    min-width: 20vmin;             
                     opacity: 0;
                     visibility: hidden;
                     overflow: visible;
@@ -102,14 +94,14 @@
 
                     li{
                         width: 100%;
+                        box-sizing: border-box;
 
                         a{  
                             display: block;
                             height: auto;
-                            padding: 10px 15px;
-                            border-bottom: 2px dashed #333;
+                            padding: 1.2vmin 1.7vmin;
+                            border-bottom: 0.2vmin dashed #333;
                             background: #a3b18a;
-
                             font-size: 1.4vmin;
                             color: #344e41;
                             text-align: center;
@@ -121,15 +113,12 @@
                             right: 100%;
                             z-index: 130;
                             background: #141414;
-                            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
-
+                            box-shadow: 0 0.4vmin 0.9vmin rgba(0, 0, 0, 0.4);
                             list-style: none;
                             padding: 0;
                             margin: 0;
-                            
                             display: flex;
                             flex-direction: column;
-
                             min-width: 28vmin;
                             overflow: hidden;
                             transition: all 0.3s ease-in-out;
@@ -137,10 +126,9 @@
                             a{  
                                 display: block;
                                 height: auto;
-                                padding: 10px 15px;
-                                border-bottom: 2px dashed #333;
+                                padding: 1.2vmin 1.7vmin;
+                                border-bottom: 0.2vmin dashed #333;
                                 background: #a3b18a;
-
                                 font-size: 1.4vmin;
                                 color: #344e41;
                                 text-align: center;
@@ -157,7 +145,7 @@
                 &:hover > ul, &.active > ul{
                     opacity: 1;
                     visibility: visible;
-                    max-height: 300px;
+                    max-height: 35vmin;
                 }
             }
         }
@@ -168,7 +156,7 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        gap: 1rem;
+        gap: 1.8vmin;
 
         section{
             display: flex;
@@ -176,16 +164,16 @@
             justify-content: center;
             align-items: center;
             background: #588157;
-            border-radius: 10px;
-            padding: 20px;
-            gap: 1rem;
+            border-radius: 1.2vmin;
+            padding: 2.3vmin;
+            gap: 1.8vmin;
             width: 100%;
             box-sizing: border-box;
 
             img{
-                height: 400px;
+                height: 46vmin;
                 width: 100%;
-                border-radius: 10px;
+                border-radius: 1.2vmin;
                 border: 1px solid #fff;
                 box-sizing: border-box;
             }
@@ -203,8 +191,8 @@
                 flex-grow: 1;
                 justify-content: center;
                 align-items: center;
-                padding: 10px;
-                gap: 1rem;
+                padding: 1.2vmin;
+                gap: 1.8vmin;
                 width: 100%;
                 box-sizing: border-box;
 
@@ -214,16 +202,16 @@
                     justify-content: center;
                     align-items: center;
                     background: #476846;
-                    border-radius: 10px;
-                    padding: 2rem;
-                    gap: 1rem;
+                    border-radius: 1.2vmin;
+                    padding: 3.7vmin;
+                    gap: 1.8vmin;
                     width: 100%;
                     box-sizing: border-box;
 
                     img{
-                        height: 200px;
+                        height: 23vmin;
                         width: 100%;
-                        border-radius: 10px;
+                        border-radius: 1.2vmin;
                         border: 1px solid #fff;
                         box-sizing: border-box;
                     }
@@ -233,7 +221,7 @@
                         flex-direction: column;
                         justify-content: center;
                         align-items: center;
-                        gap: 2rem;
+                        gap: 3.7vmin;
 
                         .mainContent{
                             font-size: 1.8vmin; 

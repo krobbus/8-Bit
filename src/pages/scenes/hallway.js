@@ -56,38 +56,50 @@ export default class Hallway extends Phaser.Scene {
         this.player = new Player(this, spawnX, spawnY, gender, playerName)                                          // player
             .setDepth(1)
             .setScale(3);
+        this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
 
         this.npc = new NPC(this, 2000, 400, 'male1').setScale(3);
         this.npc = new NPC(this, 2970, 400, 'group').setScale(3);
-            
-        this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
 
         let existingAudio = this.sound.get('audiosample');                                                          // audio
-        if (!existingAudio) { this.gameAudio = this.sound.add('audiosample', { loop: true });
-        } else { this.gameAudio = existingAudio; }
-
+        if (!existingAudio) { 
+            this.gameAudio = this.sound.add('audiosample', { loop: true });
+        } else { 
+            this.gameAudio = existingAudio; 
+        }
         const startAudio = () => {
             if (this.sound.context.state === 'suspended') { this.sound.context.resume(); }
             if (!this.gameAudio.isPlaying) { this.gameAudio.play(); }
         };
         startAudio();
-
         this.input.once('pointerdown', () => { startAudio(); });
+
+        this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+
+        this.manual = this.add.sprite(this.scale.width - 120, 80, 'manual')                                         // manual
+            .setScale(0.3)
+            .setDepth(3001)
+            .setOrigin(1, 0)
+            .setInteractive({ useHandCursor: true })
+            .on("pointerdown", () => {
+                if (this.settings.isOpened) this.settings.toggle();
+                this.input.keyboard.resetKeys();
+                window.dispatchEvent(new CustomEvent('openManualModal'));
+                return;
+            });
 
         this.settings = new Settings(this);                                                                         // settings
         this.settings.setDepth(3000);
-        this.add.sprite(viewWidth - 10, 80, 'settings')
-            .setScale(0.1)
+        this.add.sprite(this.scale.width - 60, 80, 'settings')
+            .setScale(0.3)
+            .setDepth(3001)
             .setOrigin(1, 0)
-            .setScrollFactor(0)
             .setInteractive({ useHandCursor: true })
             .on("pointerdown", () => {
-                this.player.body.setVelocity(0);
-                this.player.anims.stop();
-                this.settings.toggle();
+                const isModalOpened = document.querySelector('.modalBackdrop') || document.activeElement.tagName === 'INPUT';
+                if (isModalOpened) return;
+                this.settings.toggle()
             });
-
-        this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
         let debugGraphics = this.add.graphics();//.lineStyle(2, 0x00ff00, 1);
         this.activeZone = null;
