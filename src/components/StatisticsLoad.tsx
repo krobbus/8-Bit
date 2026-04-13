@@ -4,7 +4,7 @@ import { jsPDF } from 'jspdf';
 import type { StatisticsProps } from './props';
 import CourseItem from './CourseItem';
 
-const StatisticsLoad: React.FC<StatisticsProps> = ({ stats, userData, isGeneratingAI, onGenerateAI, isPrivateView = false }) => {
+const StatisticsLoad: React.FC<StatisticsProps> = ({ stats, userData, isGeneratingAI, onGenerateAI, isPrivateView = false, isOwnerView, viewingPlayerID }) => {
     const [isSelectedOpen, setIsSelectedOpen] = useState(true);
     const [isNonselectedOpen, setIsNonselectedOpen] = useState(false);
 
@@ -181,6 +181,8 @@ const StatisticsLoad: React.FC<StatisticsProps> = ({ stats, userData, isGenerati
                             key={courseCode}
                             courseCode={courseCode}
                             assessments={assessments}
+                            isPrivateView={isPrivateView}
+                            viewingPlayerID={viewingPlayerID ?? ''}
                         />
                     ))}
                 </div>
@@ -203,6 +205,8 @@ const StatisticsLoad: React.FC<StatisticsProps> = ({ stats, userData, isGenerati
                             key={courseCode}
                             courseCode={courseCode}
                             assessments={assessments}
+                            isPrivateView={isPrivateView}
+                            viewingPlayerID={viewingPlayerID ?? ''}
                         />
                     ))}
                 </div>
@@ -241,7 +245,7 @@ const StatisticsLoad: React.FC<StatisticsProps> = ({ stats, userData, isGenerati
             <section id="commentContainer" className="commentContainer">
                 <label className="subHeader">AI COMMENT AND SUGGESTIONS</label>
                 
-                {isPrivateView && (
+                {isOwnerView && (
                     <div className="commentButtons">
                         <button
                             onClick={onGenerateAI} 

@@ -1,6 +1,7 @@
 import React from 'react';
 import '../styles/CourseItem.css';
 import type { CourseItemProps } from "./props";
+import { db } from './firebaseConfig';
 
 const courseNames: Record<string, string> = {
     CITCS: "COLLEGE OF INFORMATION TECHNOLOGY AND COMPUTER STUDIES (CITCS)",
@@ -24,7 +25,7 @@ const courseDescription: Record<string, string> = {
     IPPG: "Public Policy and Governance program focused on leadership and civic management."
 };
 
-const CourseItem: React.FC<CourseItemProps> = ({ courseCode, assessments, isPrivateView = false }) => {
+const CourseItem: React.FC<CourseItemProps> = ({ courseCode, assessments, isPrivateView = false, viewingPlayerID }) => {
     const assessment = assessments || {};
 
     const getCode = (str: string) => {
@@ -58,6 +59,42 @@ const CourseItem: React.FC<CourseItemProps> = ({ courseCode, assessments, isPriv
         }
     };
 
+    const handleViewHistory = async (type: string) => {
+        const playerID = viewingPlayerID || localStorage.getItem("playerID");
+        if (!playerID) return;
+
+        try {
+            const key = `${fixedCode}_${type}`;
+            const snapshot = await db.ref(`webGame/${playerID}/assessments/${key}`).once('value');
+            const data = snapshot.val();
+
+            console.log('history data:', data);
+
+            if (!data) return;
+
+            const resultsMap = data.results || {};
+            const latestIndex = Object.keys(resultsMap).length - 1;
+            const latestTake = resultsMap[latestIndex];
+            if (!latestTake) return;
+
+            const questionsMap = latestTake.questions || {};
+            const results = Object.values(questionsMap);
+
+            console.log('dispatching results:', results);
+
+            window.dispatchEvent(new CustomEvent('openResultModal', {
+                detail: {
+                    results,
+                    rawType: type,
+                    courseCode: fixedCode,
+                    source: 'dashboard'
+                }
+            }));
+        } catch (err) {
+            console.error("Failed to load history:", err);
+        }
+    };
+
     return (
         <div className="courseStatCard">
             <div className="courseInfo">
@@ -68,23 +105,32 @@ const CourseItem: React.FC<CourseItemProps> = ({ courseCode, assessments, isPriv
             <div className="courseContent">
                 <div className="taskGrid">
                     <div className="taskItem">
-                        <span>Course-Related Assessment:</span>
+                        <span className="assessmentTitle">Course-Related Assessment:</span>
                         <span className={hasQuiz ? "statusDone" : "statusPending"}>
                             {hasQuiz ? "Complete" : "Not Complete"}
+                            {hasQuiz && (
+                                <img typeof="text/svg" onClick={() => handleViewHistory('CourseRelated')} src={"assets/WebAssets/History.svg"}/>
+                            )}
                         </span>
                     </div>
 
                     <div className="taskItem">
-                        <span>Personality Assessment:</span>
+                        <span className="assessmentTitle">Personality Assessment:</span>
                         <span className={hasPers ? "statusDone" : "statusPending"}>
                             {hasPers ? "Complete" : "Not Complete"}
+                            {hasPers && (
+                                <img typeof="text/svg" onClick={() => handleViewHistory('Personality')} src={"assets/WebAssets/History.svg"}/>
+                            )}
                         </span>
                     </div>
 
                     <div className="taskItem">
-                        <span>Skill Assessment:</span>
+                        <span className="assessmentTitle">Skill Assessment:</span>
                         <span className={hasSkill ? "statusDone" : "statusPending"}>
                             {hasSkill ? "Complete" : "Not Complete"}
+                            {hasSkill && (
+                                <img typeof="text/svg" onClick={() => handleViewHistory('Skill')} src={"assets/WebAssets/History.svg"}/>
+                            )}
                         </span>
                     </div>
 

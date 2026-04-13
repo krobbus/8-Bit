@@ -1,0 +1,138 @@
+.resultContainer{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 3.8vmin;
+    padding: 3.7vmin;
+    margin: 0;
+    height: auto;
+    width: 100%;
+    box-sizing: border-box;
+
+    #mainTitle{
+        font-size: 3vmin;
+        text-wrap: wrap;
+        margin: 0;
+        text-align: left;
+        width: 100%;
+        max-width: 70vmin;
+        user-select: none;
+    }
+
+    .mainHeader{
+        font-size: 2.2vmin;
+        text-align: center;
+    }
+
+    main{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 1.8vmin;
+        width: 100%;
+        box-sizing: border-box;
+
+        .courseInfo{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 1.8vmin;
+            background-color: #3A5A40;
+            border-bottom-left-radius: 3.4vmin;
+            border-bottom-right-radius: 3.4vmin;
+            padding: 2.8vmin;
+            margin: 0;
+
+            .courseTitle, .courseDescription{ 
+                font-size: 2.4vmin;
+                text-align: center;
+            }
+
+            .courseDescription{
+                font-size: 2.2vmin;
+                color: #DAD7CD;
+            }
+        }
+
+        .resultEntry {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8vmin;
+            border: 0.2vmin dashed #DAD7CD;
+            padding: 1.8vmin;
+            width: 100%;
+            box-sizing: border-box;
+
+            .resultQuestion { font-size: 2vmin; color: #ffffff; text-align: justify; }
+            .answerContainer{
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+
+                .resultAnswer, .resultCorrect { font-size: 1.8vmin; color: #83ff30; text-align: center; }
+                .resultWrong { font-size: 1.8vmin; color: #f6898b; text-align: center; }
+            }
+            .explanationContainer{
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                gap: 1.8vmin;
+                padding: 2.3vmin;
+                background-color: rgba(255, 255, 255, 0.1);
+                border: 0.5vmin solid #a3b18a;
+                box-shadow: 1.2vmin 1.2vmin 0.8vmin rgba(0, 0, 0, 0.1);
+                width: 100%;
+                box-sizing: border-box;
+
+                .resultExplanation { font-size: 1.6vmin; color: #DAD7CD; text-align: center; }
+                .resultSource { font-size: 1.6vmin; color: #DAD7CD; text-align: center; }
+                .urlField{
+                    display: flex;
+                    flex-direction: row;
+                    gap: 1.8vmin;
+                    background-color: transparent;
+                    width: 100%;
+                    box-sizing: border-box;
+
+                    #urlLink{
+                        flex: 1;
+                        overflow: hidden;
+                        color: #DAD7CD;
+                    }
+
+                    img{
+                        filter: invert();
+                        width: 2.8vmin;
+                        height: auto;
+                        cursor: pointer;
+                        transition: transform 0.2s ease;
+
+                        &:hover{ transform: scale(1.2); }
+                    }
+                }
+            }
+        }
+
+        #proceedButton{
+            font-family: "Jersey 10";
+            font-size: 2.3vmin;
+            color: #588157;
+            background-color: #fff;
+            border: 0.5vmin solid #a3b18a;
+            box-shadow: 1.2vmin 1.2vmin 0.8vmin rgba(0, 0, 0, 0.1);
+            padding: 1.8vmin;
+            width: 23vmin;
+            box-sizing: border-box;
+
+            &:hover{
+                color: #fff;
+                background-color: #a3b18a;
+                border: 0.5vmin solid #fff;
+            }
+        }
+    }
+}

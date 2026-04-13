@@ -45,12 +45,30 @@
                 justify-content: space-between;
                 align-items: center;
 
-                span{ font-size: 1.6vmin; }
-
                 &:last-child {
                     border-top: 0.5vmin dashed #a3b18a;
                     margin-top: 1.8vmin;
                     padding-top: 1.8vmin;
+                }
+
+                .assessmentTitle{ font-size: 1.6vmin; }
+                .statusDone, .statusPending{
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: center;
+                    align-items: center;
+                    gap: 1.8vmin;
+                    font-size: 1.6vmin;
+
+                    img{
+                        filter: invert();
+                        width: 2.8vmin;
+                        height: auto;
+                        cursor: pointer;
+                        transition: transform 0.2s ease;
+
+                        &:hover{ transform: scale(1.2); }
+                    }
                 }
             }
         }

@@ -608,7 +608,7 @@ export default class Classroom extends Phaser.Scene {
                     .forEach(c => c.destroy());
                 const expParts = [currentQ.explanation || ""];
                 if (currentQ.source) expParts.push(`Source: ${currentQ.source}`);
-                if (currentQ.url)    expParts.push(`${currentQ.url}`);
+                if (currentQ.url) expParts.push(`${currentQ.url}`);
                 this.questionUI(expParts.join("\n\n"));
             });
             this.time.delayedCall(delayTimer + 15000, () => { this.cleanupAndNext(); });
@@ -712,11 +712,17 @@ export default class Classroom extends Phaser.Scene {
 
         const isAssessment = this.rawType === 'Skill' || this.rawType === 'Personality';
         this.time.delayedCall(1200, () => {
-            if (isAssessment){
+            window.dispatchEvent(new CustomEvent('openResultModal', {
+                detail: {
+                    results: this.assessmentResults,
+                    rawType: this.rawType,
+                    courseCode: this.courseCode
+                }
+            }));
+
+            window.addEventListener('resultModalClosed', () => {
                 this.startPageTransition('Hallway');
-            } else{
-                this.showResultsModal();   
-            }
+            }, { once: true });
         });
     }
 
@@ -725,13 +731,13 @@ export default class Classroom extends Phaser.Scene {
             const playerID = localStorage.getItem("playerID");
             if (!playerID) return;
  
-            const key     = `${this.courseCode}_${this.rawType}`;
+            const key = `${this.courseCode}_${this.rawType}`;
             const baseRef = db.ref(`webGame/${playerID}/assessments/${key}`);
  
-            const snapshot        = await baseRef.once('value');
-            const existing        = snapshot.val();
+            const snapshot = await baseRef.once('value');
+            const existing  = snapshot.val();
             const existingResults = (existing && existing.results) ? existing.results : {};
-            const nextTakeIndex   = Object.keys(existingResults).length;
+            const nextTakeIndex = Object.keys(existingResults).length;
  
             const questionsMap = {};
             this.assessmentResults.forEach((item, i) => {
@@ -754,193 +760,12 @@ export default class Classroom extends Phaser.Scene {
             await baseRef.child(`results/${nextTakeIndex}`).set({
                 completedAt: Date.now(),
                 ...(score && { score }),
-                questions:   questionsMap
+                questions: questionsMap
             });
  
         } catch (err) {
             console.error("Failed to save assessment results:", err);
         }
-    }
-
-    showResultsModal() {
-        const width = this.scale.width;
-        const height = this.scale.height;
-        const isAssessment = this.rawType === 'Skill' || this.rawType === 'Personality';
-        this.input.keyboard.enabled = false;
-
-        const overlay = this.add.rectangle(width / 2, height / 2, width, height, 0x000000, 0.85)
-            .setDepth(500)
-            .setScrollFactor(0);
-
-        const modalW = width - 80;
-        const modalH = height - 80;
-        const modalX = 40;
-        const modalY = 40;
-
-        const modalBg = this.add.graphics().setDepth(501)
-            .fillStyle(0x344E41, 1)
-            .lineStyle(3, 0xA3B18A, 1)
-            .fillRoundedRect(modalX, modalY, modalW, modalH, 12)
-            .strokeRoundedRect(modalX, modalY, modalW, modalH, 12);
-
-        const titleText = isAssessment ? "Assessment Complete!" : `Score: ${this.assessmentResults.filter(r => r.correct).length} / ${this.assessmentResults.length}`;
-        
-        this.add.text(width / 2, modalY + 24, titleText, {
-            fontFamily: '"Press Start 2P"',
-            fontSize: "12px",
-            fill: "#A3B18A",
-            align: "center"
-        }).setOrigin(0.5, 0).setDepth(502);
-
-        const contentStartY = modalY + 60;
-        const contentPadX = modalX + 24;
-        const contentW = modalW - 48;
-
-        const scrollbarW    = 8;
-        const scrollbarX    = modalX + modalW - 16;
-        const scrollbarMinY = contentStartY + 4;
-        const visibleH      = modalH - 80;
-        const scrollbarMaxH = visibleH - 8;
-
-        let entries = [];
-        this.assessmentResults.forEach((r, i) => {
-            entries.push({ type: 'question', index: i, text: `Q${i + 1}: ${r.question}` });
-            if (isAssessment) {
-                entries.push({ type: 'answer', text: `Your Answer: ${r.answer}` });
-            } else {
-                entries.push({ type: r.correct ? 'correct' : 'wrong', text: `Your Answer: ${r.selected}` });
-                entries.push({ type: 'correct',     text: `Correct Answer: ${r.answer}` });
-                entries.push({ type: 'explanation', text: `Explanation: ${r.explanation}` });
-                if (r.source) entries.push({ type: 'source', text: `Source: ${r.source}` });
-                if (r.url)    entries.push({ type: 'url',    text: `${r.url}` });
-                entries.push({ type: 'divider' });
-            }
-        });
-
-        const scrollContainer = this.add.container(0, 0).setDepth(502);
-        let curY = contentStartY + 10;
-        const lineSpacing = 8;
-
-        entries.forEach(entry => {
-            if (entry.type === 'divider') {
-                const line = this.add.graphics()
-                    .setDepth(502)
-                    .lineStyle(1, 0xA3B18A, 0.4)
-                    .lineBetween(contentPadX, curY + 6, contentPadX + contentW, curY + 6);
-                scrollContainer.add(line);
-                curY += 18;
-                return;
-            }
-
-            const colorMap = {
-                question:    "#ffffff",
-                answer:      "#A3B18A",
-                correct:     "#76c442",
-                wrong:       "#BC4749",
-                explanation: "#aaaaaa",
-                source:      "#7ec8e3",
-                url:         "#5a9fd4"
-            };
-
-            const t = this.add.text(contentPadX, curY, entry.text, {
-                fontFamily: '"Press Start 2P"',
-                fontSize: "7px",
-                fill: colorMap[entry.type] || "#ffffff",
-                wordWrap: { width: contentW - scrollbarW - 8},
-                lineSpacing: 5,
-                resolution: 2
-            });
-            scrollContainer.add(t);
-            curY += t.height + lineSpacing;
-        });
-
-        const totalContentH = curY - contentStartY;
-        const maxScroll     = Math.max(0, totalContentH - visibleH + 20);
- 
-        const maskShape = this.make.graphics();
-        maskShape.fillRect(modalX, contentStartY, modalW - 20, visibleH);
-        const mask = maskShape.createGeometryMask();
-        scrollContainer.setMask(mask);
-
-        const trackBg = this.add.graphics().setDepth(503)
-            .fillStyle(0x1a2e1f, 0.8)
-            .fillRoundedRect(scrollbarX, scrollbarMinY, scrollbarW, scrollbarMaxH, 4);
- 
-        const thumbH    = maxScroll > 0
-            ? Math.max(24, (visibleH / (totalContentH + 20)) * scrollbarMaxH)
-            : scrollbarMaxH;
-        const thumbGfx  = this.add.graphics().setDepth(504);
-        let   scrollY   = 0;
- 
-        const redrawThumb = () => {
-            thumbGfx.clear();
-            const thumbY = maxScroll > 0
-                ? scrollbarMinY + (scrollY / maxScroll) * (scrollbarMaxH - thumbH)
-                : scrollbarMinY;
-            thumbGfx
-                .fillStyle(0xA3B18A, 0.9)
-                .fillRoundedRect(scrollbarX, thumbY, scrollbarW, thumbH, 4);
-        };
-        redrawThumb();
- 
-        const applyScroll = (newY) => {
-            scrollY = Phaser.Math.Clamp(newY, 0, maxScroll);
-            scrollContainer.y = -scrollY;
-            redrawThumb();
-        };
-
-        let isDragging   = false;
-        let dragStartY   = 0;
-        let dragScrollY0 = 0;
-
-        const scrollbarZone = this.add.zone(
-            scrollbarX, scrollbarMinY,
-            scrollbarW + 10, scrollbarMaxH
-        ).setOrigin(0, 0).setDepth(505).setInteractive();
- 
-        scrollbarZone.on('pointerdown', (ptr) => {
-            isDragging    = true;
-            dragStartY    = ptr.y;
-            dragScrollY0  = scrollY;
-        });
- 
-        this.input.on('pointermove', (ptr) => {
-            if (!isDragging) return;
-            const delta    = ptr.y - dragStartY;
-            const scrollPx = (delta / (scrollbarMaxH - thumbH)) * maxScroll;
-            applyScroll(dragScrollY0 + scrollPx);
-        });
- 
-        this.input.on('pointerup', () => { isDragging = false; });
-
-        const hint = this.add.text(width / 2, modalY + modalH - 24, "[ Press any key to continue ]", {
-            fontFamily: '"Press Start 2P"',
-            fontSize: "7px",
-            fill: "#ffffff",
-            align: "center"
-        }).setOrigin(0.5, 1).setDepth(503);
-
-        this.tweens.add({
-            targets: hint,
-            alpha: 0.3,
-            duration: 700,
-            yoyo: true,
-            repeat: -1
-        });
-
-        this.time.delayedCall(400, () => {
-            this.input.keyboard.enabled = true;
- 
-            this.finishingHandler = () => {
-                this.input.off('wheel');
-                this.input.off('pointermove');
-                this.input.off('pointerup');
-                this.input.keyboard.off('keydown', this.finishingHandler);
-                this.startPageTransition('Hallway');
-            };
- 
-            this.input.keyboard.once('keydown', this.finishingHandler);
-        });
     }
 
     update(){ if (!this.mobileControls) return; }

@@ -56,7 +56,6 @@ export const AssetLib = {
         // game assets
         { key: 'settings', path: 'assets/GameAssets/Settings.svg' },
         { key: 'manual', path: 'assets/GameAssets/Manual.svg' },
-        { key: 'systemdialogue', path: 'assets/GameAssets/SystemDialogueBox.png' },
         { key: 'spacebar', path: 'assets/GameAssets/Spacebar.png' },
 
         // controls

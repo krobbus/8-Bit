@@ -220,7 +220,10 @@ export default class LeftWing extends Phaser.Scene {
 
         if (this.activeZone.target === 'openModal') {
             if (!this.isMenuOpen) {
-                if (isInteracting) this.isMenuOpen = true;
+                if (isInteracting) {
+                    this.isMenuOpen = true;
+                    this.menuIndex = 0;
+                }
             } else {
                 if (isUp) this.menuIndex = (this.menuIndex - 1 + this.menuOptions.length) % this.menuOptions.length;
                 if (isDown) this.menuIndex = (this.menuIndex + 1) % this.menuOptions.length;

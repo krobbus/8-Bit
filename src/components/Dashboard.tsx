@@ -205,7 +205,7 @@ const Dashboard: React.FC<ModalProps> = ({onClose , isOpen}) => {
 
     const copyToClipboard = (text: string) => {
         navigator.clipboard.writeText(text).then(() => {
-            alert("Email copied to clipboard!");
+            alert("Text copied to clipboard!");
         });
     };
 
@@ -341,7 +341,7 @@ const Dashboard: React.FC<ModalProps> = ({onClose , isOpen}) => {
                                                 />
 
                                                 {(activeViewID || activeViewID === "N/A") && (
-                                                    <img typeof="text/svg" style={{ marginLeft: "10px" }} onClick={() => copyToClipboard(activeViewID)} src={"assets/WebAssets/Copy.svg"}/>
+                                                    <img typeof="text/svg" onClick={() => copyToClipboard(activeViewID)} src={"assets/WebAssets/Copy.svg"}/>
                                                 )}
                                             </div>
                                         </div>
@@ -366,7 +366,7 @@ const Dashboard: React.FC<ModalProps> = ({onClose , isOpen}) => {
                                                         <>
                                                             <img typeof="text/svg" onClick={() => copyToClipboard(userData.email)} src={"assets/WebAssets/Copy.svg"}/>
                                                             {isAdmin && (
-                                                                <img typeof="text/svg" style={{ filter: "invert()", width: "24px", height: "auto" }} onClick={() => editData('email', userData.email)} src={"assets/WebAssets/Edit.svg"}/>
+                                                                <img typeof="text/svg" onClick={() => editData('email', userData.email)} src={"assets/WebAssets/Edit.svg"}/>
                                                             )}
                                                         </>
                                                     ))}
@@ -398,7 +398,7 @@ const Dashboard: React.FC<ModalProps> = ({onClose , isOpen}) => {
                                                         />
 
                                                         {(userData?.adminMode || userData?.playerMode) && isAdmin && (
-                                                            <img typeof="text/svg" style={{ marginLeft: "10px" }} onClick={() => editData('role', userData?.adminMode ? 'Admin' : 'Player')} src={"assets/WebAssets/Edit.svg"}/>
+                                                            <img typeof="text/svg" onClick={() => editData('role', userData?.adminMode ? 'Admin' : 'Player')} src={"assets/WebAssets/Edit.svg"}/>
                                                         )}
                                                     </>
                                                 )}
@@ -421,7 +421,7 @@ const Dashboard: React.FC<ModalProps> = ({onClose , isOpen}) => {
                                                         <img typeof="text/svg" onClick={() => setEditingField(null)} src={"assets/WebAssets/Cancel.svg"}/>
                                                     </>
                                                 ) : ((userData?.name || userData.name === "Guest") && isAdmin && (
-                                                    <img typeof="text/svg" style={{ marginLeft: "10px" }} onClick={() => editData('name', userData?.name)} src={"assets/WebAssets/Edit.svg"}/>
+                                                    <img typeof="text/svg" onClick={() => editData('name', userData?.name)} src={"assets/WebAssets/Edit.svg"}/>
                                                 ))}
                                             </div>
                                         </div>
@@ -461,8 +461,8 @@ const Dashboard: React.FC<ModalProps> = ({onClose , isOpen}) => {
                                                 {editingField === 'gender' ? (
                                                     <>
                                                         <label className="editableInput">
-                                                            <input type="checkbox" checked={editValue === 'Female'} onChange={(e) => setEditValue(e.target.checked ? 'Female' : 'Male')}/>
-                                                            Is Female?
+                                                            <input type="checkbox" checked={editValue === 'Male'} onChange={(e) => setEditValue(e.target.checked ? 'Male' : 'Female')}/>
+                                                            Is Male?
                                                         </label>
 
                                                         <img typeof="text/svg"onClick={saveEdit} src={"assets/WebAssets/Save.svg"}/>
@@ -478,7 +478,7 @@ const Dashboard: React.FC<ModalProps> = ({onClose , isOpen}) => {
                                                         />
 
                                                         {(userData?.gender || userData.gender === "N/A") && isAdmin && (
-                                                            <img typeof="text/svg" style={{ marginLeft: "10px" }} onClick={() => editData('gender', userData?.gender)} src={"assets/WebAssets/Edit.svg"}/>
+                                                            <img typeof="text/svg" onClick={() => editData('gender', userData?.gender)} src={"assets/WebAssets/Edit.svg"}/>
                                                         )}
                                                     </>
                                                 )}
@@ -523,6 +523,8 @@ const Dashboard: React.FC<ModalProps> = ({onClose , isOpen}) => {
                                         isGeneratingAI={isGeneratingAI}
                                         onGenerateAI={handleGenerateAI}
                                         isPrivateView={isPrivateView}
+                                        isOwnerView={activeViewID === loggedInPlayerID}
+                                        viewingPlayerID={activeViewID || ''}
                                     />
 
                                     {isPrivateView && (
