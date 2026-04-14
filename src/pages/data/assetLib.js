@@ -14,7 +14,7 @@ export const AssetLib = {
         { key: 'female1', path: 'assets/Character/NPC/Female1.png', width: 50, height: 50, end: 4 },
         { key: 'female2', path: 'assets/Character/NPC/Female2.png', width: 50, height: 50, end: 3 },
         { key: 'female3', path: 'assets/Character/NPC/Female3.png', width: 50, height: 50, end: 3 },
-        { key: 'male1', path: 'assets/Character/NPC/Male1.png', width: 50, height: 50, end: 2 },
+        { key: 'male1', path: 'assets/Character/NPC/Male1.png', width: 50, height: 50, end: 1 },
         { key: 'male2', path: 'assets/Character/NPC/Male2.png', width: 50, height: 50, end: 3 },
         { key: 'musicmale', path: 'assets/Character/NPC/MusicMale.png', width: 50, height: 50, end: 3 },
         { key: 'group', path: 'assets/Character/NPC/Group.png', width: 50, height: 50, end: 5 },

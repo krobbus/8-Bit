@@ -1,6 +1,7 @@
 import { db } from '../../components/firebaseConfig';
 import Player from '/src/pages/prefabs/player.js';
 import NPC from '/src/pages/prefabs/npc.js';
+import DialogueBubble from '/src/pages/prefabs/dialoguebubble.js';
 import { createMobileControls } from '/src/pages/utils/controls.js';
 import Settings from '/src/pages/prefabs/settings.js';
 
@@ -58,8 +59,49 @@ export default class Hallway extends Phaser.Scene {
             .setScale(3);
         this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
 
-        this.npc = new NPC(this, 2000, 400, 'male1').setScale(3);
-        this.npc = new NPC(this, 2970, 400, 'group').setScale(3);
+        this.npc3 = new NPC(this, 2000, 400, 'male1').setScale(3);
+        this.npcDialogue3 = new DialogueBubble(
+            this,
+            this.npc3,
+            [
+                "I was just standing here wondering... is creativity just intelligence having fun?",
+                "Did you know Steve Jobs took calligraphy classes just for the art of it?",
+                "In CAS, we don't just learn facts; we learn how to connect the dots.",
+                "Don't be afraid to be a little 'different' here."
+            ],
+            {
+                offsetX: -20,
+                offsetY: -70,
+                maxWidth: 220,
+                typeDelay: 45,
+                linePause: 2000,
+                loop: false,
+                depth: 200,
+                onComplete: () => this.npcDialogue3.resetToIdle()
+            }
+        );
+
+        this.npc4 = new NPC(this, 2970, 400, 'group').setScale(3);
+        this.npcDialogue4 = new DialogueBubble(
+            this,
+            this.npc4,
+            [
+                "Hi there! We're just polishing our lesson plan.",
+                "They say teaching is the profession that creates all others, and it’s true!",
+                "Did you know 'Education' means to 'draw out' what’s already inside?",
+                "It takes a lot of patience, but seeing that 'aha!' moment in a student's eyes is worth it."
+            ],
+            {
+                offsetX: -20,
+                offsetY: -70,
+                maxWidth: 220,
+                typeDelay: 45,
+                linePause: 2000,
+                loop: false,
+                depth: 200,
+                onComplete: () => this.npcDialogue4.resetToIdle()
+            }
+        );
 
         let existingAudio = this.sound.get('audiosample');                                                          // audio
         if (!existingAudio) { 
@@ -76,10 +118,11 @@ export default class Hallway extends Phaser.Scene {
 
         this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
-        this.manual = this.add.sprite(this.scale.width - 120, 80, 'manual')                                         // manual
+        this.manual = this.add.sprite(viewWidth - 70, 80, 'manual')                                         // manual
             .setScale(0.3)
             .setDepth(3001)
             .setOrigin(1, 0)
+            .setScrollFactor(0)
             .setInteractive({ useHandCursor: true })
             .on("pointerdown", () => {
                 if (this.settings.isOpened) this.settings.toggle();
@@ -90,10 +133,11 @@ export default class Hallway extends Phaser.Scene {
 
         this.settings = new Settings(this);                                                                         // settings
         this.settings.setDepth(3000);
-        this.add.sprite(this.scale.width - 60, 80, 'settings')
+        this.add.sprite(viewWidth - 10, 80, 'settings')
             .setScale(0.3)
             .setDepth(3001)
             .setOrigin(1, 0)
+            .setScrollFactor(0)
             .setInteractive({ useHandCursor: true })
             .on("pointerdown", () => {
                 const isModalOpened = document.querySelector('.modalBackdrop') || document.activeElement.tagName === 'INPUT';
@@ -105,24 +149,43 @@ export default class Hallway extends Phaser.Scene {
         this.activeZone = null;
 
         this.zones = [
+            {                   // left wing
+                x: 0, y: 400, w: 50, h: 40, hintText1: "DO YOU WANT TO", hintText2: "ENTER LEFT WING ?", 
+                hintHeight: 50, hintWidth: 210, spawnInNextScene: { x: 1160, y: 430 }, target: "LeftWing" },
             { 
-                x: 0, y: 400, w: 50, h: 40, 
-                hintText2: "ENTER LEFT WING ?", hintWidth: 210, 
-                spawnInNextScene: { x: 1160, y: 420 }, target: "LeftWing"
+                x: 60, y: 400, w: 590, h: 40, hintText1: "DO YOU WANT TO", hintText2: "PLAY CITCS ?", 
+                hintHeight: 50, hintWidth: 180, target: "openMenu", course: "CITCS" },
+            { 
+                x: 720, y: 400, w: 590, h: 40, hintText1: "DO YOU WANT TO", hintText2: "PLAY CCJ ?", 
+                hintHeight: 50, hintWidth: 180, target: "openMenu", course: "CCJ" },
+            { 
+                x: 1390, y: 400, w: 590, h: 40, hintText1: "DO YOU WANT TO", hintText2: "PLAY CBA ?",
+                hintHeight: 50, hintWidth: 180, target: "openMenu", course: "CBA" 
             },
-            { x: 60, y: 400, w: 590, h: 40, hintText2: "PLAY CITCS ?", hintWidth: 180, target: "openModal", course: "CITCS" },
-            { x: 720, y: 400, w: 590, h: 40, hintText2: "PLAY CCJ ?", hintWidth: 180, target: "openModal", course: "CCJ" },
-            { x: 1390, y: 400, w: 590, h: 40, hintText2: "PLAY CBA ?", hintWidth: 180, target: "openModal", course: "CBA" },
-            { x: 2050, y: 400, w: 590, h: 40, hintText2: "PLAY CAS ?", hintWidth: 180, target: "openModal", course: "CAS" },
-            { x: 3375, y: 400, w: 590, h: 40, hintText2: "PLAY CTE ?", hintWidth: 180, target: "openModal", course: "CTE" },
-            { x: 4040, y: 400, w: 590, h: 40, hintText2: "PLAY COM ?", hintWidth: 180, target: "openModal", course: "COM" },
-            { x: 4705, y: 400, w: 590, h: 40, hintText2: "PLAY ISW ?", hintWidth: 180, target: "openModal", course: "ISW" },
-            { x: 5365, y: 400, w: 590, h: 40, hintText2: "PLAY IPPG ?", hintWidth: 180, target: "openModal", course: "IPPG", specialLayout1: true},
+            {                   // NPC 3
+                x: 1970, y: 410, w: 60, h: 30, hintText1: "INTERACT WITH HIM ?", 
+                hintHeight: 30, hintWidth: 230, target: "talkToNPC3" },
             { 
-                x: 5960, y: 400, w: 50, h: 40, 
-                hintText2: "ENTER RIGHT WING ?", hintWidth: 220, 
-                spawnInNextScene: { x: 50, y: 420 }, target: "RightWing", specialLayout2: true
-            }
+                x: 2050, y: 400, w: 590, h: 40, hintText1: "DO YOU WANT TO", hintText2: "PLAY CAS ?", 
+                hintHeight: 50, hintWidth: 180, target: "openMenu", course: "CAS" },
+            {                      // NPC 4
+                x: 2940, y: 410, w: 60, h: 30, hintText1: "INTERACT WITH THEM ?", 
+                hintHeight: 30, hintWidth: 240, target: "talkToNPC4" },
+            { 
+                x: 3375, y: 400, w: 590, h: 40, hintText1: "DO YOU WANT TO", hintText2: "PLAY CTE ?", 
+                hintHeight: 50, hintWidth: 180, target: "openMenu", course: "CTE" },
+            { 
+                x: 4040, y: 400, w: 590, h: 40, hintText1: "DO YOU WANT TO", hintText2: "PLAY COM ?", 
+                hintHeight: 50, hintWidth: 180, target: "openMenu", course: "COM" },
+            {
+                x: 4705, y: 400, w: 590, h: 40, hintText1: "DO YOU WANT TO", hintText2: "PLAY ISW ?", 
+                hintHeight: 50, hintWidth: 180, target: "openMenu", course: "ISW" },
+            { 
+                x: 5365, y: 400, w: 590, h: 40, hintText1: "DO YOU WANT TO", hintText2: "PLAY IPPG ?", 
+                hintHeight: 50, hintWidth: 180, target: "openMenu", course: "IPPG", specialLayout1: true },
+            {                   // right wing
+                x: 5960, y: 400, w: 50, h: 40, hintText1: "DO YOU WANT TO", hintText2: "ENTER RIGHT WING ?", 
+                hintHeight: 50, hintWidth: 220, spawnInNextScene: { x: 50, y: 430 }, target: "RightWing", specialLayout2: true }
         ];
         this.zones.forEach(z => {
             debugGraphics.strokeRect(z.x, z.y, z.w, z.h);
@@ -149,9 +212,12 @@ export default class Hallway extends Phaser.Scene {
     }
 
     createUIElements(){
+        this.physics.add.collider(this.player, this.npc3);                                                           // collider
+        this.physics.add.collider(this.player, this.npc4);  
+
         this.hintBubble = this.add.graphics();
         this.hintLabel = this.add.container(0, 0).setVisible(false).setDepth(20);
-            this.hintPart1 = this.add.text(0, 0, "DO YOU WANT TO", {
+            this.hintPart1 = this.add.text(0, 0, "", {
                 fontFamily: '"Press Start 2P"',
                 fontSize: "10px",
                 fill: "#ffffff"
@@ -201,6 +267,8 @@ export default class Hallway extends Phaser.Scene {
         
         const joystick = this.mobileControls.getForce();
         this.player.update(this.isMobileMode, joystick.x, joystick.y, joystick.isRunning);
+        if (this.npcDialogue3) this.npcDialogue3.update();
+        if (this.npcDialogue4) this.npcDialogue4.update();
         this.checkProximity();
     }
 
@@ -234,7 +302,7 @@ export default class Hallway extends Phaser.Scene {
         const isDown = downJustDown || mobileDown;
         const isInteracting = interactJustDown || mobileInteractDown;
 
-        if (this.activeZone.target === 'openModal') {
+        if (this.activeZone.target === 'openMenu') {
             if (!this.isMenuOpen) {
                 if (isInteracting) {
                     this.isMenuOpen = true;
@@ -259,7 +327,14 @@ export default class Hallway extends Phaser.Scene {
 
             if (isInteracting) {
                 const returnPos = this.activeZone.spawnInNextScene || null;
-                this.startPageTransition(this.activeZone.target, returnPos);
+
+                if (this.activeZone.target === 'talkToNPC3') {
+                    this.npcDialogue3.play();
+                } else if (this.activeZone.target === 'talkToNPC4') {
+                    this.npcDialogue4.play();
+                } else {
+                    this.startPageTransition(this.activeZone.target, returnPos);
+                }
             }
         }
 
@@ -275,13 +350,13 @@ export default class Hallway extends Phaser.Scene {
             .clear()
             .fillStyle(0x125729, 0.9)
             .lineStyle(4, 0xffffff, 1)
-            .fillRoundedRect(-20, -15, this.activeZone.hintWidth, 50, 10)
-            .strokeRoundedRect(-20, -15, this.activeZone.hintWidth, 50, 10);
+            .fillRoundedRect(-20, -15, this.activeZone.hintWidth, this.activeZone.hintHeight, 10)
+            .strokeRoundedRect(-20, -15, this.activeZone.hintWidth, this.activeZone.hintHeight, 10);
         
         const labelX = this.activeZone.x;
         const labelY = this.activeZone.y - 120;
         
-        this.hintPart1.setVisible(true);
+        this.hintPart1.setVisible(true).setText(this.activeZone.hintText1);
         this.hintPart2.setVisible(true).setText(this.activeZone.hintText2);
 
         const offsetX = this.activeZone.specialLayout1 ? -210 : this.activeZone.specialLayout2 ? -260 : 70;
@@ -290,7 +365,7 @@ export default class Hallway extends Phaser.Scene {
     }
 
     renderMenu(){
-        const isMenu = this.activeZone.target === 'openModal' && this.isMenuOpen;
+        const isMenu = this.activeZone.target === 'openMenu' && this.isMenuOpen;
 
         this.hintBubble
             .clear()

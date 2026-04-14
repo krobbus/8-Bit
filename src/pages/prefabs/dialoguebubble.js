@@ -38,14 +38,15 @@ export default class DialogueBubble {
             fontFamily: this.fontFamily,
             fontSize: this.fontSize,
             fill: "#ffffff",
+            align: "justify",
             lineSpacing: 6,
             resolution: 2,
             wordWrap: { width: this.maxWidth - this.padX * 2, useAdvancedWrap: true }
         });
         this.container.add(this.textObj);
 
-        this.reposition();
         this.redrawBg(this.textObj.width, this.textObj.height);
+        this.reposition();
     }
 
     play() {
@@ -90,9 +91,11 @@ export default class DialogueBubble {
     reposition() {
         if (this.destroyed || !this.npc) return;
 
+        const boxH = Math.max(24, this.textObj.height + this.padY * 2);
+
         this.container.setPosition(
             this.npc.x + this.offsetX,
-            this.npc.y + this.offsetY
+            this.npc.y + this.offsetY - boxH
         );
     }
 

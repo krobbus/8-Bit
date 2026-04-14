@@ -36,6 +36,8 @@ const AccountManagement: React.FC<ModalProps> = ({ isOpen, onClose }) => {
     const [isPinValid, setIsPinValid] = useState(false);
     const [formError, setFormError] = useState<{ field: string; message: string } | null>(null);
 
+    const switchView = (target: 'character' | 'preference' | 'account') => {setView(target)};
+
     const skills = selectedTags.filter(t => t.type === "skill");
     const personalities = selectedTags.filter(t => t.type === "personality");
     const maxLimit = 5;
@@ -54,15 +56,13 @@ const AccountManagement: React.FC<ModalProps> = ({ isOpen, onClose }) => {
         return email.trim() !== "" || password.trim() !== "" || pin.trim() !== "";
     }, [email, password, pin]);
 
-    useEffect(() => {
-        if (window.game?.input?.keyboard){ 
-            isOpen ? window.game.input.keyboard.stopListeners() : window.game.input.keyboard.startListeners(); 
-        }
-        return () => window.game?.input?.keyboard?.startListeners();
-    }, [isOpen]);
+    const dbRef = useRef<ReturnType<typeof db.ref> | null>(null);
 
-    const initDatabaseListener = (playerID: string) => {
+    const refreshData = (playerID: string) => {
+        if (dbRef.current) dbRef.current.off('value');
         const userRef = db.ref(`webGame/${playerID}`);
+        dbRef.current = userRef;
+
         userRef.on('value', (snapshot) => {
             const data = snapshot.val();
             
@@ -82,58 +82,58 @@ const AccountManagement: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                 setPin(data.pin || "");
                 setConfirmPin(data.pin || "");
                 validatePin(data.pin || "");
+            } else{
+                setIsExistingPlayer(false);
             }
+
             setLoading(false);
         });
     };
 
     useEffect(() => {
+        if (window.game?.input?.keyboard){ 
+            isOpen ? window.game.input.keyboard.stopListeners() : window.game.input.keyboard.startListeners(); 
+        }
+        return () => window.game?.input?.keyboard?.startListeners();
+    }, [isOpen]);
+
+    useEffect(() => {
         if (!isOpen) return;
+
+        setLoading(true);
 
         const existingPlayerID = localStorage.getItem("playerID");
         if (!existingPlayerID) {
             setIsExistingPlayer(false);
             setLoading(false);
         } else {
-            initDatabaseListener(existingPlayerID);
+            refreshData(existingPlayerID);
         }
 
         return () => {
-            const id = localStorage.getItem("playerID");
-            if (id) db.ref(`webGame/${id}`).off('value');
+            if (dbRef.current) {
+                dbRef.current.off('value');
+                dbRef.current = null;
+            }
         };
     }, [isOpen]);
-
-    const switchView = (target: 'character' | 'preference' | 'account') => {
-        setView(target);
-    };
 
     useEffect(() => {
         if (formError) {
             setIsDropdownOpen(false);
-
-            const timer = setTimeout(() => {
-                setFormError(null);
-            }, 4000);
-
+            const timer = setTimeout(() => { setFormError(null)}, 4000);
+            
             return () => clearTimeout(timer);
         }
     }, [formError]);
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-                setIsDropdownOpen(false);
-            }
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) setIsDropdownOpen(false);
         };
+        if (isDropdownOpen) document.addEventListener('mousedown', handleClickOutside);
 
-        if (isDropdownOpen) {
-            document.addEventListener('mousedown', handleClickOutside);
-        }
-
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
+        return () => document.removeEventListener('mousedown', handleClickOutside);
     }, [isDropdownOpen]);
 
     const handleAddTag = (tag: { text: string; type: string }) => {
@@ -154,9 +154,7 @@ const AccountManagement: React.FC<ModalProps> = ({ isOpen, onClose }) => {
         setFormError(null);
     };
 
-    const handleRemoveTag = (index: number) => {
-        setSelectedTags(prev => prev.filter((_, i) => i !== index));
-    };
+    const handleRemoveTag = (index: number) => {setSelectedTags(prev => prev.filter((_, i) => i !== index))};
 
     const handleCourseChange = (courseValue: string) => {
         setSelectedCourses(prev => {
@@ -194,6 +192,7 @@ const AccountManagement: React.FC<ModalProps> = ({ isOpen, onClose }) => {
 
     const handleSave = async () => {
         setFormError(null);
+        
         let playerID = localStorage.getItem("playerID");
         let invalidBaseFields: string[] = [];
         const hasSkill = selectedTags.some(t => t.type === 'skill');
@@ -280,8 +279,9 @@ const AccountManagement: React.FC<ModalProps> = ({ isOpen, onClose }) => {
             }
             await dbRef.child(playerID).set(updatedData);
             localStorage.setItem("playerData", JSON.stringify(updatedData));
-
             setIsExistingPlayer(true);
+            if (playerID) refreshData(playerID);
+
             alert(isSavingAsPermanent ? "Account Updated Successfully!" : "Guest Progress Saved!");
             onClose();
         } catch (error) {

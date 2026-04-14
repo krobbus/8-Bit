@@ -104,7 +104,11 @@
                     }
                 }
 
-                &:hover > ul, &.active > ul{ max-height: 35vmin; }
+                &:hover > ul, &.active > ul {
+                    opacity: 1;
+                    visibility: visible;
+                    max-height: 35vmin;
+                }
             }
 
             #home{ a{ color: #fff; }}

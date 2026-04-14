@@ -1,6 +1,7 @@
 import { db } from '../../components/firebaseConfig';
 import Player from '/src/pages/prefabs/player.js';
 import NPC from '/src/pages/prefabs/npc.js';
+import DialogueBubble from '/src/pages/prefabs/dialoguebubble.js';
 import { createMobileControls } from '/src/pages/utils/controls.js';
 import Settings from '/src/pages/prefabs/settings.js';
 
@@ -47,8 +48,46 @@ export default class RightWing extends Phaser.Scene {
             .setDepth(1)
             .setScale(3);
 
-        this.npc = new NPC(this, 660, 400, 'male2').setScale(3);
-        this.npc = new NPC(this, 990, 410, 'musicmale').setScale(3);
+        this.npc5 = new NPC(this, 660, 400, 'male2').setScale(3);
+        this.npcDialogue5 = new DialogueBubble(
+            this,
+            this.npc5,
+            [
+                "Time is money, friend! 'Company' literally means 'sharing bread.'",
+                "Remember, business opportunities are like buses, there’s always another one coming.",
+                "Your net worth is your network, so start making connections today!"
+            ],
+            {
+                offsetX: -20,
+                offsetY: -70,
+                maxWidth: 220,
+                typeDelay: 45,
+                linePause: 2000,
+                loop: false,
+                depth: 200,
+                onComplete: () => this.npcDialogue5.resetToIdle()
+            }
+        );
+
+        this.npc6 = new NPC(this, 990, 410, 'musicmale').setScale(3);
+        this.npcDialogue6 = new DialogueBubble(
+            this,
+            this.npc6,
+            [
+                "(Low-bit muffled singing)",
+                "(He's vibing too hard to notice you...)"
+            ],
+            {
+                offsetX: -20,
+                offsetY: -70,
+                maxWidth: 220,
+                typeDelay: 45,
+                linePause: 2000,
+                loop: false,
+                depth: 200,
+                onComplete: () => this.npcDialogue6.resetToIdle()
+            }
+        );
 
         let existingAudio = this.sound.get('audiosample');                                                          // audio
         if (!existingAudio) { this.gameAudio = this.sound.add('audiosample', { loop: true });
@@ -93,19 +132,29 @@ export default class RightWing extends Phaser.Scene {
         this.zones = [
             { 
                 x: 50, y: 400, w: 50, h: 60, 
-                hintText1: "ENTER", hintText2: "HALLWAY ?", hintWidth: 130, 
-                spawnInNextScene: { x: 5970, y: 420 }, target: "Hallway"
+                hintText1: "ENTER", hintText2: "HALLWAY ?", hintHeight: 50, hintWidth: 130, 
+                spawnInNextScene: { x: 5970, y: 430 }, target: "Hallway"
             },
             { 
                 x: 280, y: 400, w: 200, h: 40, 
-                hintText1: "DO YOU WANT TO", hintText2: "GO OUTSIDE ?", hintWidth: 190, 
+                hintText1: "DO YOU WANT TO", hintText2: "GO OUTSIDE ?", hintHeight: 50, hintWidth: 180, 
                 spawnInNextScene: { x: 1000, y: 340 }, target: "Outdoor"
+            },
+            {
+                x: 630, y: 410, w: 60, h: 30,
+                hintText1: "INTERACT WITH HIM ?", hintHeight: 30, hintWidth: 230,
+                target: 'talkToNPC5'
             },
             { 
                 x: 700, y: 400, w: 220, h: 40, 
-                hintText1: "VIEW", hintText2: "LEADERBOARD ?", hintWidth: 170, 
-                spawnInNextScene: { x: 50, y: 420 }, target: "openLeaderboardModal"
-            }
+                hintText1: "DO YOU WANT TO", hintText2: "VIEW LEADERBOARD ?", hintHeight: 50, hintWidth: 230, 
+                /*spawnInNextScene: { x: 50, y: 420 },*/ target: "openLeaderboardModal"
+            },
+            {
+                x: 960, y: 420, w: 60, h: 30,
+                hintText1: "INTERACT WITH HIM ?", hintHeight: 30, hintWidth: 230,
+                target: 'talkToNPC6'
+            },
         ];
         this.zones.forEach(z => {
             debugGraphics.strokeRect(z.x, z.y, z.w, z.h);
@@ -125,6 +174,9 @@ export default class RightWing extends Phaser.Scene {
     createUIElements(){
         const screenCenterX = this.cameras.main.worldView.x + this.cameras.main.width / 2;
         const screenCenterY = this.cameras.main.worldView.y + this.cameras.main.height / 2;
+
+        this.physics.add.collider(this.player, this.npc5);                                                           // collider
+        this.physics.add.collider(this.player, this.npc6);
 
         const color = 0x125729;
         const alpha = 0.9;
@@ -159,6 +211,8 @@ export default class RightWing extends Phaser.Scene {
         
         const joystick = this.mobileControls.getForce();
         this.player.update(this.isMobileMode, joystick.x, joystick.y, joystick.isRunning);
+        if (this.npcDialogue5) this.npcDialogue5.update();
+        if (this.npcDialogue6) this.npcDialogue6.update();
         this.checkProximity();
     }
 
@@ -178,25 +232,28 @@ export default class RightWing extends Phaser.Scene {
 
             if (spaceJustDown || mobileInteractDown) {
                 const returnPos = this.activeZone.spawnInNextScene || null;
-                this.startPageTransition(this.activeZone.target, returnPos);
+
+                if (this.activeZone.target === 'talkToNPC5') {
+                    this.npcDialogue5.play();
+                } else if (this.activeZone.target === 'talkToNPC6') {
+                    this.npcDialogue6.play();
+                } else {
+                    this.startPageTransition(this.activeZone.target, returnPos);
+                }
             }
 
             this.hintBubble
                 .clear()
                 .fillStyle(0x125729, 0.9)
                 .lineStyle(4, 0xffffff, 1)
-                .fillRoundedRect(-20, -15, this.activeZone.hintWidth, 50, 10)
-                .strokeRoundedRect(-20, -15, this.activeZone.hintWidth, 50, 10);
+                .fillRoundedRect(-20, -15, this.activeZone.hintWidth, this.activeZone.hintHeight, 10)
+                .strokeRoundedRect(-20, -15, this.activeZone.hintWidth, this.activeZone.hintHeight, 10);
 
             this.hintPart1.setText(this.activeZone.hintText1);
             this.hintPart2.setText(this.activeZone.hintText2);
 
             const labelX = this.activeZone.x;
             const labelY = this.activeZone.y - 120;
-
-            if (Phaser.Input.Keyboard.JustDown(this.spaceKey)) {
-                this.startPageTransition(this.activeZone.target);
-            }
 
             if (this.activeZone.specialLayout) {
                 this.hintLabel.setPosition(this.player.x - 170, this.player.y - 15);

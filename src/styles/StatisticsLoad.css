@@ -150,10 +150,18 @@
                 width: 100%;
                 box-sizing: border-box;
 
-                &:hover{
+                &:hover:not(:disabled){
                     color: #fff;
                     background-color: #a3b18a;
                     border: 0.5vmin solid #fff;
+                }
+
+                &:disabled{
+                    color: #777;
+                    background-color: rgba(255, 255, 255, 0.3);
+                    border: 0.5vmin solid #777;
+                    box-shadow: none;
+                    cursor: not-allowed;
                 }
             }
         }

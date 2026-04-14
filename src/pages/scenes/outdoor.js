@@ -48,24 +48,24 @@ export default class Outdoor extends Phaser.Scene {
             .setDepth(1)
             .setScale(1.8);
 
-        this.npc = new NPC(this, 500, 420, 'female1').setScale(1.8);
-        this.npcDialogue = new DialogueBubble(
+        this.npc1 = new NPC(this, 500, 420, 'female1').setScale(1.8);
+        this.npcDialogue1 = new DialogueBubble(
             this,
-            this.npc,
+            this.npc1,
             [
-                "Hello there, welcome\nto the campus!",
-                "Your journey starts\nwith a single step.",
-                "Check the manual on\ntop of the screen."
+                "Hello there, welcome to the campus!",
+                "Your journey starts with a single step.",
+                "Check the manual at the top of the screen."
             ],
             {
                 offsetX: -20,
-                offsetY: -90,
+                offsetY: -70,
                 maxWidth: 220,
                 typeDelay: 45,
                 linePause: 2000,
                 loop: false,
                 depth: 200,
-                onComplete: () => this.npcDialogue.resetToIdle()
+                onComplete: () => this.npcDialogue1.resetToIdle()
             }
         );
 
@@ -117,19 +117,19 @@ export default class Outdoor extends Phaser.Scene {
                 x: 850, y: 230, w: 160, h: 60,
                 hintText1: "DO YOU WANT TO", hintText2: "ENTER LEFT WING ?",
                 hintHeight: 50, hintWidth: 210, gapY: 15,
-                spawnInNextScene: { x: 870, y: 400 }, target: 'LeftWing'
+                spawnInNextScene: { x: 870, y: 430 }, target: 'LeftWing'
             },
             { 
                 x: 1050, y: 300, w: 60, h: 100,
                 hintText1: "DO YOU WANT TO", hintText2: "ENTER RIGHT WING ?",
                 hintHeight: 50, hintWidth: 220, gapY: 15, specialLayout: true,
-                spawnInNextScene: { x: 420, y: 400 }, target: 'RightWing'
+                spawnInNextScene: { x: 420, y: 430 }, target: 'RightWing'
             },
             {
                 x: 470, y: 430, w: 60, h: 30,
-                hintText1: "CHAT WITH HER ?",
-                hintHeight: 30, hintWidth: 170, gapY: 0,
-                target: 'talkToNPC'
+                hintText1: "INTERACT WITH HER ?",
+                hintHeight: 30, hintWidth: 230, gapY: 0,
+                target: 'talkToNPC1'
             }
         ];
         this.zones.forEach(z => { debugGraphics.strokeRect(z.x, z.y, z.w, z.h); });
@@ -153,7 +153,7 @@ export default class Outdoor extends Phaser.Scene {
             { x: 350, y: 240, w: 610, h: 340 },
             { x: 410, y: 250, w: 720, h: 100 },
             { x: 1180, y: 240, w: 140, h: 340 },
-            { x: 1150, y: 250, w: 100, h: 100 },
+            { x: 1150, y: 250, w: 100, h: 100 }
         ];
             this.obstacleGroup = this.physics.add.staticGroup(); 
         obstacles.forEach(ob => {
@@ -161,7 +161,7 @@ export default class Outdoor extends Phaser.Scene {
             this.obstacleGroup.add(obstacle);
         });
         this.physics.add.collider(this.player, this.obstacleGroup);                                     // collider
-        this.physics.add.collider(this.player, this.npc);
+        this.physics.add.collider(this.player, this.npc1);
 
         this.stairZones = [                                                                             // stairs
             new Phaser.Geom.Rectangle(730, 230, 380, 70),
@@ -203,7 +203,7 @@ export default class Outdoor extends Phaser.Scene {
 
         const joystick = this.mobileControls.getForce();
         this.player.update(this.isMobileMode, joystick.x, joystick.y, joystick.isRunning);
-        if (this.npcDialogue) this.npcDialogue.update();
+        if (this.npcDialogue1) this.npcDialogue1.update();
         
         const onStairs = this.stairZones.some(z => Phaser.Geom.Rectangle.Contains(z, this.player.x, this.player.y));
         if (onStairs) { this.applyStairPhysics() } else { this.player.body.setAllowGravity(true) }; 
@@ -225,8 +225,8 @@ export default class Outdoor extends Phaser.Scene {
             if (spaceJustDown || mobileInteractDown) {
                 const returnPos = this.activeZone.spawnInNextScene || null;
 
-                if (this.activeZone.target === 'talkToNPC') {
-                    this.npcDialogue.play();
+                if (this.activeZone.target === 'talkToNPC1') {
+                    this.npcDialogue1.play();
                 } else {
                     this.startPageTransition(this.activeZone.target, returnPos);
                 }

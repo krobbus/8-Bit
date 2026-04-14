@@ -1,6 +1,7 @@
 import { db } from '../../components/firebaseConfig';
 import Player from '/src/pages/prefabs/player.js';
 import NPC from '/src/pages/prefabs/npc.js';
+import DialogueBubble from '/src/pages/prefabs/dialoguebubble.js';
 import { createMobileControls } from '/src/pages/utils/controls.js';
 import Settings from '/src/pages/prefabs/settings.js';
 
@@ -47,7 +48,27 @@ export default class LeftWing extends Phaser.Scene {
             .setDepth(1)
             .setScale(3);
 
-        this.npc = new NPC(this, 180, 400, 'female2').setScale(3);
+        this.npc2 = new NPC(this, 180, 400, 'female2').setScale(3);
+        this.npcDialogue2 = new DialogueBubble(
+            this,
+            this.npc2,
+            [
+                "Eyes up, classmate! I’m practicing my situational awareness.",
+                "Did you know 'Forensics' comes from the Latin word for 'open court'?",
+                "Pretty cool, right? Attention to detail is everything here.",
+                "If you can spot the one thing out of place in this room, you’re already halfway to a degree."
+            ],
+            {
+                offsetX: -20,
+                offsetY: -70,
+                maxWidth: 220,
+                typeDelay: 45,
+                linePause: 2000,
+                loop: false,
+                depth: 200,
+                onComplete: () => this.npcDialogue2.resetToIdle()
+            }
+        );
 
         let existingAudio = this.sound.get('audiosample');                                                          // audio
         if (!existingAudio) { this.gameAudio = this.sound.add('audiosample', { loop: true });
@@ -90,20 +111,25 @@ export default class LeftWing extends Phaser.Scene {
         this.activeZone = null;
 
         this.zones = [
+            {
+                x: 150, y: 410, w: 60, h: 30,
+                hintText1: "INTERACT WITH HER ?", hintHeight: 30, hintWidth: 230,
+                target: 'talkToNPC2'
+            },
             { 
                 x: 250, y: 400, w: 220, h: 40, 
-                hintText1: "CHECK ACCOUNT", hintText2: "INFORMATION ?", hintWidth: 170, 
+                hintText1: "CHECK ACCOUNT", hintText2: "INFORMATION ?", hintHeight: 50, hintWidth: 170, 
                 target: 'openModal'
             },
             { 
                 x: 770, y: 400, w: 200, h: 40, 
-                hintText1: "DO YOU WANT TO", hintText2: "GO OUTSIDE ?", hintWidth: 180, 
+                hintText1: "DO YOU WANT TO", hintText2: "GO OUTSIDE ?", hintHeight: 50, hintWidth: 180, 
                 spawnInNextScene: { x: 930, y: 280 }, target: "Outdoor"
             },
             { 
                 x: 1170, y: 400, w: 50, h: 60, 
-                hintText1: "ENTER", hintText2: "HALLWAY ?", hintWidth: 130,  
-                spawnInNextScene: { x: 50, y: 420 }, target: "Hallway", specialLayout: true 
+                hintText1: "ENTER", hintText2: "HALLWAY ?", hintHeight: 50, hintWidth: 130,  
+                spawnInNextScene: { x: 50, y: 430 }, target: "Hallway", specialLayout: true 
             }
         ];
         this.zones.forEach(z => {
@@ -132,6 +158,8 @@ export default class LeftWing extends Phaser.Scene {
     createUIElements(){
         const screenCenterX = this.cameras.main.worldView.x + this.cameras.main.width / 2;
         const screenCenterY = this.cameras.main.worldView.y + this.cameras.main.height / 2;
+                                    
+        this.physics.add.collider(this.player, this.npc2);                                                           // collider
 
         this.hintLabel = this.add.container(0, 0).setVisible(false).setDepth(20);
         this.hintBubble = this.add.graphics();
@@ -185,6 +213,7 @@ export default class LeftWing extends Phaser.Scene {
 
         const joystick = this.mobileControls.getForce();
         this.player.update(this.isMobileMode, joystick.x, joystick.y, joystick.isRunning);
+        if (this.npcDialogue2) this.npcDialogue2.update();
         this.checkProximity();
     }
 
@@ -239,7 +268,12 @@ export default class LeftWing extends Phaser.Scene {
 
             if (isInteracting) {
                 const returnPos = this.activeZone.spawnInNextScene || null;
-                this.startPageTransition(this.activeZone.target, returnPos);
+
+                if (this.activeZone.target === 'talkToNPC2') {
+                    this.npcDialogue2.play();
+                } else {
+                    this.startPageTransition(this.activeZone.target, returnPos);
+                }
             }
         }
 
@@ -255,14 +289,14 @@ export default class LeftWing extends Phaser.Scene {
             .clear()
             .fillStyle(0x125729, 0.9)
             .lineStyle(4, 0xffffff, 1)
-            .fillRoundedRect(-20, -15, this.activeZone.hintWidth, 50, 10)
-            .strokeRoundedRect(-20, -15, this.activeZone.hintWidth, 50, 10);
+            .fillRoundedRect(-20, -15, this.activeZone.hintWidth, this.activeZone.hintHeight, 10)
+            .strokeRoundedRect(-20, -15, this.activeZone.hintWidth, this.activeZone.hintHeight, 10);
+
+        this.hintPart1.setVisible(true).setText(this.activeZone.hintText1);
+        this.hintPart2.setVisible(true).setText(this.activeZone.hintText2);
         
         const labelX = this.activeZone.x;
         const labelY = this.activeZone.y - 120;
-        
-        this.hintPart1.setVisible(true).setText(this.activeZone.hintText1);
-        this.hintPart2.setVisible(true).setText(this.activeZone.hintText2);
 
         if (this.activeZone.specialLayout) {
             this.hintLabel.setPosition(this.player.x - 170, this.player.y - 15);
