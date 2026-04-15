@@ -839,6 +839,7 @@ export default class Classroom extends Phaser.Scene {
                 (this.mobileControls.isDpadDownJustDown ? this.mobileControls.isDpadDownJustDown() : false);
 
             const confirmJustDown =
+                Phaser.Input.Keyboard.JustDown(this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER)) ||
                 Phaser.Input.Keyboard.JustDown(this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)) ||
                 this.mobileControls.isInteractJustDown();
 

@@ -25,7 +25,7 @@ body{
     background-image: url("public/assets/Background/PLMUN.png");
     background-position: center;
     background-repeat: no-repeat;
-    background-size: cover;
+    background-size: stretch;
     background-attachment: scroll;
     background-color: rgba(0, 0, 0, 0.4);
     background-blend-mode: multiply;

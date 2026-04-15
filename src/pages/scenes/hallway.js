@@ -71,7 +71,7 @@ export default class Hallway extends Phaser.Scene {
             ],
             {
                 offsetX: -20,
-                offsetY: -70,
+                offsetY: -80,
                 maxWidth: 220,
                 typeDelay: 45,
                 linePause: 2000,
@@ -94,7 +94,7 @@ export default class Hallway extends Phaser.Scene {
             ],
             {
                 offsetX: -20,
-                offsetY: -70,
+                offsetY: -80,
                 maxWidth: 220,
                 typeDelay: 45,
                 linePause: 2000,
@@ -123,6 +123,7 @@ export default class Hallway extends Phaser.Scene {
             }
         });
 
+        this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
         this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
         this.manual = this.add.sprite(viewWidth - 70, 80, 'manual')                                         // manual
@@ -276,7 +277,10 @@ export default class Hallway extends Phaser.Scene {
     }
 
     checkProximity() {
-        const interactJustDown = Phaser.Input.Keyboard.JustDown(this.spaceKey);
+        const enterJustDown = Phaser.Input.Keyboard.JustDown(this.enterKey);
+        const spaceJustDown = Phaser.Input.Keyboard.JustDown(this.spaceKey);
+        const interactJustDown = enterJustDown || spaceJustDown;
+
         const upJustDown = 
             Phaser.Input.Keyboard.JustDown(this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP)) ||
             Phaser.Input.Keyboard.JustDown(this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W));
