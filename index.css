@@ -39,6 +39,9 @@ body{
     justify-content: center;
     align-items: center;
     gap: 3.7vmin;
+    height: 100%;
+    width: 100%;
+    box-sizing: border-box;
 
     h1{
         font-size: 7.5vmin;
@@ -62,7 +65,7 @@ body{
             font-size: 3.8vmin;
             color: #588157;
             background-color: #fff;
-            border: 0.4vmin solid #a3b18a;
+            border: 0.5vmin solid #a3b18a;
             box-shadow: 1.2vmin 1.2vmin 0.8vmin rgba(0, 0, 0, 0.1);
 
             margin-top: 3.8vmin;

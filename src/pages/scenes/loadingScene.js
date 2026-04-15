@@ -111,7 +111,11 @@ export default class LoadingScene extends Phaser.Scene {
             const lastScene = localStorage.getItem('lastActiveScene') || 'Outdoor';
             const target = startScene === "LeftWing" ? "LeftWing" : lastScene;
 
-            if (startScene === "LeftWing") localStorage.removeItem("startScene");
+            if (startScene === "LeftWing") {
+                localStorage.removeItem("startScene");
+                localStorage.setItem('lastActivePosition', JSON.stringify({ x: 870, y: 430 }));
+                localStorage.setItem('lastActiveScene', 'LeftWing');
+            }
             
             window.dispatchEvent(new CustomEvent('updateGameTitle', { 
                 detail: { text: `${target} - An AI-Driven 8-bit Web Game For Personalized College Program Matching and Career Exploration` } 

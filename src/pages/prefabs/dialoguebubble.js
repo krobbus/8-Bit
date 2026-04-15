@@ -4,7 +4,7 @@ export default class DialogueBubble {
         this.npc = npc;
         this.lines = Array.isArray(lines) ? lines : [lines];
 
-        this.fontSize = options.fontSize ?? "9px";
+        this.fontSize = options.fontSize ?? "12px";
         this.fontFamily = options.fontFamily ?? '"Press Start 2P"';
         this.maxWidth = options.maxWidth ?? 220;
         this.padX = options.padX ?? 14;

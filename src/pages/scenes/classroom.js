@@ -80,18 +80,24 @@ export default class Classroom extends Phaser.Scene {
         this.nameContainer.add([this.nameBg, this.nameText]);
         this.nameContainer.setDepth(110);
         
-        let existingAudio = this.sound.get('audiosample');                                                          // audio
-        if (!existingAudio) { 
-            this.gameAudio = this.sound.add('audiosample', { loop: true });
-        } else { 
-            this.gameAudio = existingAudio; 
-        }
+        let existingAudio = this.sound.get('classroombg');                                                          // audio
+        if (existingAudio) existingAudio.destroy();
+        this.gameAudio = this.sound.add('classroombg', { loop: true });
+
         const startAudio = () => {
-            if (this.sound.context.state === 'suspended') { this.sound.context.resume(); }
-            if (!this.gameAudio.isPlaying) { this.gameAudio.play(); }
+            if (this.sound.context.state === 'suspended') this.sound.context.resume(); 
+            if (!this.gameAudio.isPlaying) this.gameAudio.play();
         };
         startAudio();
-        this.input.once('pointerdown', () => { startAudio(); });
+
+        this.input.once('pointerdown', startAudio);
+        this.input.keyboard.once('keydown', startAudio);
+        this.events.once('shutdown', () => {
+            if (this.gameAudio) {
+                this.gameAudio.stop();
+                this.gameAudio.destroy();
+            }
+        });
 
         this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
@@ -791,6 +797,11 @@ export default class Classroom extends Phaser.Scene {
                 localStorage.setItem('lastActiveScene', targetSceneName);
                 if (lastPosition){
                     localStorage.setItem('lastActivePosition', JSON.stringify(lastPosition));
+                }
+
+                if (this.gameAudio) {
+                    this.gameAudio.stop();
+                    this.gameAudio.destroy();
                 }
                 this.scene.start(targetSceneName);
             }

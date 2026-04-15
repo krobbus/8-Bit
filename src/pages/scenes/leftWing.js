@@ -70,15 +70,24 @@ export default class LeftWing extends Phaser.Scene {
             }
         );
 
-        let existingAudio = this.sound.get('audiosample');                                                          // audio
-        if (!existingAudio) { this.gameAudio = this.sound.add('audiosample', { loop: true });
-        } else { this.gameAudio = existingAudio; }
+        let existingAudio = this.sound.get('gamebg');                                                          // audio
+        if (existingAudio) existingAudio.destroy();
+        this.gameAudio = this.sound.add('gamebg', { loop: true });
+
         const startAudio = () => {
-            if (this.sound.context.state === 'suspended') { this.sound.context.resume(); }
-            if (!this.gameAudio.isPlaying) { this.gameAudio.play(); }
+            if (this.sound.context.state === 'suspended') this.sound.context.resume(); 
+            if (!this.gameAudio.isPlaying) this.gameAudio.play();
         };
         startAudio();
-        this.input.once('pointerdown', () => { startAudio(); });
+
+        this.input.once('pointerdown', startAudio);
+        this.input.keyboard.once('keydown', startAudio);
+        this.events.once('shutdown', () => {
+            if (this.gameAudio) {
+                this.gameAudio.stop();
+                this.gameAudio.destroy();
+            }
+        });
 
         this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
@@ -158,8 +167,6 @@ export default class LeftWing extends Phaser.Scene {
     createUIElements(){
         const screenCenterX = this.cameras.main.worldView.x + this.cameras.main.width / 2;
         const screenCenterY = this.cameras.main.worldView.y + this.cameras.main.height / 2;
-                                    
-        this.physics.add.collider(this.player, this.npc2);                                                           // collider
 
         this.hintLabel = this.add.container(0, 0).setVisible(false).setDepth(20);
         this.hintBubble = this.add.graphics();
@@ -379,6 +386,11 @@ export default class LeftWing extends Phaser.Scene {
                 localStorage.setItem('lastActiveScene', targetSceneName);
                 if (lastPosition){
                     localStorage.setItem('lastActivePosition', JSON.stringify(lastPosition));
+                }
+
+                if (this.gameAudio) {
+                    this.gameAudio.stop();
+                    this.gameAudio.destroy();
                 }
                 this.scene.start(targetSceneName);
             }

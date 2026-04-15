@@ -11,13 +11,13 @@ export const AssetLib = {
         { key: 'backfemale', path: 'assets/Character/BackFemale.png', width: 50, height: 50 },
 
         // NPC
-        { key: 'female1', path: 'assets/Character/NPC/Female1.png', width: 50, height: 50, end: 4 },
-        { key: 'female2', path: 'assets/Character/NPC/Female2.png', width: 50, height: 50, end: 3 },
-        { key: 'female3', path: 'assets/Character/NPC/Female3.png', width: 50, height: 50, end: 3 },
+        { key: 'female1', path: 'assets/Character/NPC/Female1.png', width: 50, height: 50, end: 3 },
+        { key: 'female2', path: 'assets/Character/NPC/Female2.png', width: 50, height: 50, end: 2 },
+        { key: 'female3', path: 'assets/Character/NPC/Female3.png', width: 50, height: 50, end: 2 },
         { key: 'male1', path: 'assets/Character/NPC/Male1.png', width: 50, height: 50, end: 1 },
-        { key: 'male2', path: 'assets/Character/NPC/Male2.png', width: 50, height: 50, end: 3 },
-        { key: 'musicmale', path: 'assets/Character/NPC/MusicMale.png', width: 50, height: 50, end: 3 },
-        { key: 'group', path: 'assets/Character/NPC/Group.png', width: 50, height: 50, end: 5 },
+        { key: 'male2', path: 'assets/Character/NPC/Male2.png', width: 50, height: 50, end: 2 },
+        { key: 'musicmale', path: 'assets/Character/NPC/MusicMale.png', width: 50, height: 50, end: 2 },
+        { key: 'group', path: 'assets/Character/NPC/Group.png', width: 50, height: 50, end: 4 },
 
         // background
             // male
@@ -50,7 +50,7 @@ export const AssetLib = {
         { key: 'hallwaybg', path: 'assets/Background/Hallway.png', width: 4000, height: 300 },
         { key: 'rightwingbg', path: 'assets/Background/RightWing.png', width: 800, height: 300 },
 
-        // NPC
+        //NPC
         { key: 'staticgroup', path: 'assets/Character/NPC/StaticGroup.png', width: 50, height: 50 },
 
         // game assets
@@ -70,6 +70,11 @@ export const AssetLib = {
         { key: 'dpadup', path: 'assets/GameAssets/Controls/DpadUp.png' },
     ],
     audio: [
-        { key: 'audiosample', path: 'assets/PixelAudio.mp3' }
+        { key: 'gamebg', path: 'assets/GameAudio/GameBgMusic.mp3' },
+        { key: 'classroombg', path: 'assets/GameAudio/ClassroomBgMusic.mp3' },
+        { key: 'chataudio', path: 'assets/GameAudio/ChatAudio.mp3' },
+        { key: 'answeraudio', path: 'assets/GameAudio/AnswerAudio.mp3' },
+        { key: 'correctaudio', path: 'assets/GameAudio/CorrectAudio.mp3' },
+        { key: 'wrongaudio', path: 'assets/GameAudio/WrongAudio.mp3' }
     ]
 };

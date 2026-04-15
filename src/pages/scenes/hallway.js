@@ -82,6 +82,7 @@ export default class Hallway extends Phaser.Scene {
         );
 
         this.npc4 = new NPC(this, 2970, 400, 'group').setScale(3);
+        this.staticNpc4 = new NPC(this, 2970, 400, 'staticgroup').setScale(3).setVisible(false);
         this.npcDialogue4 = new DialogueBubble(
             this,
             this.npc4,
@@ -103,18 +104,24 @@ export default class Hallway extends Phaser.Scene {
             }
         );
 
-        let existingAudio = this.sound.get('audiosample');                                                          // audio
-        if (!existingAudio) { 
-            this.gameAudio = this.sound.add('audiosample', { loop: true });
-        } else { 
-            this.gameAudio = existingAudio; 
-        }
+        let existingAudio = this.sound.get('gamebg');                                                          // audio
+        if (existingAudio) existingAudio.destroy();
+        this.gameAudio = this.sound.add('gamebg', { loop: true });
+
         const startAudio = () => {
-            if (this.sound.context.state === 'suspended') { this.sound.context.resume(); }
-            if (!this.gameAudio.isPlaying) { this.gameAudio.play(); }
+            if (this.sound.context.state === 'suspended') this.sound.context.resume(); 
+            if (!this.gameAudio.isPlaying) this.gameAudio.play();
         };
         startAudio();
-        this.input.once('pointerdown', () => { startAudio(); });
+
+        this.input.once('pointerdown', startAudio);
+        this.input.keyboard.once('keydown', startAudio);
+        this.events.once('shutdown', () => {
+            if (this.gameAudio) {
+                this.gameAudio.stop();
+                this.gameAudio.destroy();
+            }
+        });
 
         this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
@@ -160,8 +167,7 @@ export default class Hallway extends Phaser.Scene {
                 hintHeight: 50, hintWidth: 180, target: "openMenu", course: "CCJ" },
             { 
                 x: 1390, y: 400, w: 590, h: 40, hintText1: "DO YOU WANT TO", hintText2: "PLAY CBA ?",
-                hintHeight: 50, hintWidth: 180, target: "openMenu", course: "CBA" 
-            },
+                hintHeight: 50, hintWidth: 180, target: "openMenu", course: "CBA" },
             {                   // NPC 3
                 x: 1970, y: 410, w: 60, h: 30, hintText1: "INTERACT WITH HIM ?", 
                 hintHeight: 30, hintWidth: 230, target: "talkToNPC3" },
@@ -212,9 +218,6 @@ export default class Hallway extends Phaser.Scene {
     }
 
     createUIElements(){
-        this.physics.add.collider(this.player, this.npc3);                                                           // collider
-        this.physics.add.collider(this.player, this.npc4);  
-
         this.hintBubble = this.add.graphics();
         this.hintLabel = this.add.container(0, 0).setVisible(false).setDepth(20);
             this.hintPart1 = this.add.text(0, 0, "", {
@@ -331,7 +334,17 @@ export default class Hallway extends Phaser.Scene {
                 if (this.activeZone.target === 'talkToNPC3') {
                     this.npcDialogue3.play();
                 } else if (this.activeZone.target === 'talkToNPC4') {
+                    this.npc4.setVisible(false);
+                    this.staticNpc4.setVisible(true);
+
+                    this.npcDialogue4.npc = this.staticNpc4;
                     this.npcDialogue4.play();
+                    this.npcDialogue4.onComplete = () => {
+                        this.npcDialogue4.resetToIdle();
+                        this.staticNpc4.setVisible(false);
+                        this.npc4.setVisible(true);
+                        this.npcDialogue4.npc = this.npc4;
+                    };
                 } else {
                     this.startPageTransition(this.activeZone.target, returnPos);
                 }
@@ -429,6 +442,12 @@ export default class Hallway extends Phaser.Scene {
                 if (lastPosition){
                     localStorage.setItem('lastActivePosition', JSON.stringify(lastPosition));
                 }
+                
+                if (this.gameAudio) {
+                    this.gameAudio.stop();
+                    this.gameAudio.destroy();
+                }
+
                 this.scene.start(targetSceneName, { 
                     selectedCourse: courseName,
                     selectedType: typeName,

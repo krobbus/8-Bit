@@ -59,33 +59,45 @@ const AccountManagement: React.FC<ModalProps> = ({ isOpen, onClose }) => {
     const dbRef = useRef<ReturnType<typeof db.ref> | null>(null);
 
     const refreshData = (playerID: string) => {
+        setLoading(true);
+
         if (dbRef.current) dbRef.current.off('value');
         const userRef = db.ref(`webGame/${playerID}`);
         dbRef.current = userRef;
 
-        userRef.on('value', (snapshot) => {
+        userRef.once('value').then((snapshot) => {
             const data = snapshot.val();
             
             if (data) {
                 setIsExistingPlayer(true);
 
-                setName(data.name || "");
-                validateName(data.name || "");
+                const name = String(data.name || "");
+                const email = String(data.email || "");
+                const pass = String(data.pass || "");
+                const pin = String(data.pin || "");
+
+                setName(name);
+                validateName(name);
                 setSelectedTags(data.tags || []);
                 setGender(data.gender?.toLowerCase() === "male" ? "male" : "female");
                 setSelectedCourses(data.courses || []);
-                setEmail(data.email || "");
-                validateEmail(data.email || "");
-                setPassword(data.pass || "");
-                setConfirmPassword(data.pass || "");
-                validatePass(data.pass || "");
-                setPin(data.pin || "");
-                setConfirmPin(data.pin || "");
-                validatePin(data.pin || "");
+                setEmail(email);
+                validateEmail(email);
+                setPassword(pass);
+                setConfirmPassword(pass);
+                validatePass(pass);
+                setPin(pin);
+                setConfirmPin(pin);
+                validatePin(pin);
             } else{
                 setIsExistingPlayer(false);
             }
-
+        })
+        .catch((error) => {
+            console.error("Firebase Error:", error);
+            alert("Data retrieval error: Could not connect to database.");
+        })
+        .finally(() => {
             setLoading(false);
         });
     };
@@ -99,7 +111,6 @@ const AccountManagement: React.FC<ModalProps> = ({ isOpen, onClose }) => {
 
     useEffect(() => {
         if (!isOpen) return;
-
         setLoading(true);
 
         const existingPlayerID = localStorage.getItem("playerID");
@@ -167,25 +178,25 @@ const AccountManagement: React.FC<ModalProps> = ({ isOpen, onClose }) => {
     };
 
     const validateName = (val: string) => {
-        const isValid = /^[A-Za-z]{4,10}$/.test(val);
+        const isValid = /^[A-Za-z]{4,10}$/.test(String(val ?? ""));
         setIsNameValid(isValid);
         return isValid;
     };
 
     const validateEmail = (val: string) => {
-        const isValid = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(val);
+        const isValid = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(String(val ?? ""));
         setIsEmailValid(isValid);
         return isValid;
     };
 
     const validatePass = useCallback((val: string) => {
-        const isValid = /^(?=.*[a-zA-Z])(?=.*[0-9]).{5,15}$/.test(val);
+        const isValid = /^(?=.*[a-zA-Z])(?=.*[0-9]).{5,15}$/.test(String(val ?? ""));
         setIsPassValid(isValid);
         return isValid;
     }, []);
 
     const validatePin = useCallback((val: string) => {
-        const isValid = /^\d{4}$/.test(val);
+        const isValid = /^\d{4}$/.test(String(val ?? ""));
         setIsPinValid(isValid);
         return isValid;
     }, []);
@@ -279,17 +290,17 @@ const AccountManagement: React.FC<ModalProps> = ({ isOpen, onClose }) => {
             }
             await dbRef.child(playerID).set(updatedData);
             localStorage.setItem("playerData", JSON.stringify(updatedData));
-            setIsExistingPlayer(true);
-            if (playerID) refreshData(playerID);
-
+            
             alert(isSavingAsPermanent ? "Account Updated Successfully!" : "Guest Progress Saved!");
             onClose();
+            window.location.reload();
         } catch (error) {
             alert("Failed to save character.");
         }
     };
 
     if (!isOpen) return null;
+
     return(
         <div className="modalBackdrop">
             <div className="modalContainer">
