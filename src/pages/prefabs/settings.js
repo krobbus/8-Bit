@@ -6,6 +6,17 @@ export default class SettingsPanel extends Phaser.GameObjects.Container {
         const storedMobileMode = localStorage.getItem('mobileMode') === 'true';
         scene.isMobileMode = storedMobileMode;
 
+        const volumes = {
+            HIGH: 1.0,
+            MEDIUM: 0.5,
+            LOW: 0.2,
+            OFF: 0
+        };
+        const volumesOrder = ['HIGH', 'MEDIUM', 'LOW', 'OFF'];
+        const storedVolume = localStorage.getItem('volumeLevel') || 'HIGH';
+        scene.sound.volume = volumes[storedVolume];
+        scene.sound.mute = storedVolume === 'OFF';
+
         this.scene = scene;
         this.setDepth(100);
         this.setVisible(false);
@@ -18,7 +29,7 @@ export default class SettingsPanel extends Phaser.GameObjects.Container {
         const items = [
             { key: 'title', text: 'SETTINGS', y: -160, size: '22px', fill: '#ffffff' },
             { key: 'mobile', text: `Mobile Mode: ${scene.isMobileMode ? 'ON' : 'OFF'}`, y: -100, size: '18px', fill: '#ffffff', interactive: true },
-            { key: 'volume', text: `Sound: ${scene.sound.mute ? 'OFF' : 'ON'}`, y: -60, size: '18px', fill: '#ffffff', interactive: true },
+            { key: 'volume', text: `Sound: ${storedVolume}`, y: -60, size: '18px', fill: '#ffffff', interactive: true },
         ];
 
         if (scene.scene.key === 'Classroom') {
@@ -67,8 +78,15 @@ export default class SettingsPanel extends Phaser.GameObjects.Container {
                     break;
 
                 case 'volume':
-                    this.scene.sound.mute = !this.scene.sound.mute;
-                    textObj.setText("Sound: " + (this.scene.sound.mute ? "ON" : "OFF"));
+                    const currentLevel = localStorage.getItem('volumes') || 'HIGH';
+                    const currentIndex = volumesOrder.indexOf(currentLevel);
+                    const nextLevel = volumesOrder[(currentIndex + 1) % volumesOrder.length];
+
+                    localStorage.setItem('volumes', nextLevel);
+                    this.scene.sound.volume = volumes[nextLevel];
+                    this.scene.sound.mute = nextLevel === 'OFF';
+
+                    textObj.setText(`Sound: ${nextLevel}`);
                     break;
                 
                 case 'back':

@@ -581,6 +581,12 @@ export default class Classroom extends Phaser.Scene {
         if (this.optionsContainer) this.optionsContainer.setVisible(false);
 
         const currentQ = this.courseQuestions[this.currentQuestionIndex];
+
+        if (isAssessment) {
+            const answerAudio = this.sound.add('answeraudio');
+            answerAudio.once('complete', () => answerAudio.destroy());
+            answerAudio.play();
+        }
         
         const npcCount = isAssessment ? 4 : 3;
         const shuffledNPCs = [1, 3, 4, 5, 6, 7, 8].sort(() => 0.5 - Math.random()).slice(0, npcCount);
@@ -639,6 +645,10 @@ export default class Classroom extends Phaser.Scene {
         } else {
             const correctAnswer = currentQ.answer || currentQ.correctAnswer;
             const isCorrect = selectedOption === correctAnswer;
+
+            const resultAudio = this.sound.add(isCorrect ? 'correctaudio' : 'wrongaudio');
+            resultAudio.once('complete', () => resultAudio.destroy());
+            resultAudio.play();
 
             this.assessmentResults.push({
                 question: currentQ.question,

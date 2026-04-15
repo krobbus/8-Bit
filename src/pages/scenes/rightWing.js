@@ -241,10 +241,17 @@ export default class RightWing extends Phaser.Scene {
 
             if (interactJustDown || mobileInteractDown) {
                 const returnPos = this.activeZone.spawnInNextScene || null;
+                const chatAudio = this.sound.add('chataudio');
 
                 if (this.activeZone.target === 'talkToNPC5') {
+                    chatAudio.once('complete', () => chatAudio.destroy());
+                    chatAudio.play();
+
                     this.npcDialogue5.play();
                 } else if (this.activeZone.target === 'talkToNPC6') {
+                    chatAudio.once('complete', () => chatAudio.destroy());
+                    chatAudio.play();
+                    
                     this.npcDialogue6.play();
                 } else {
                     this.startPageTransition(this.activeZone.target, returnPos);

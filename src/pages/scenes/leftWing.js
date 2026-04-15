@@ -280,6 +280,10 @@ export default class LeftWing extends Phaser.Scene {
                 const returnPos = this.activeZone.spawnInNextScene || null;
 
                 if (this.activeZone.target === 'talkToNPC2') {
+                    const chatAudio = this.sound.add('chataudio');
+                    chatAudio.once('complete', () => chatAudio.destroy());
+                    chatAudio.play();
+                    
                     this.npcDialogue2.play();
                 } else {
                     this.startPageTransition(this.activeZone.target, returnPos);

@@ -93,7 +93,7 @@ export default class Hallway extends Phaser.Scene {
                 "It takes a lot of patience, but seeing that 'aha!' moment in a student's eyes is worth it."
             ],
             {
-                offsetX: -20,
+                offsetX: -40,
                 offsetY: -80,
                 maxWidth: 220,
                 typeDelay: 45,
@@ -336,12 +336,20 @@ export default class Hallway extends Phaser.Scene {
                 const returnPos = this.activeZone.spawnInNextScene || null;
 
                 if (this.activeZone.target === 'talkToNPC3') {
+                    const chatAudio = this.sound.add('chataudio');
+                    chatAudio.once('complete', () => chatAudio.destroy());
+                    chatAudio.play();
+                    
                     this.npcDialogue3.play();
                 } else if (this.activeZone.target === 'talkToNPC4') {
                     this.npc4.setVisible(false);
                     this.staticNpc4.setVisible(true);
-
                     this.npcDialogue4.npc = this.staticNpc4;
+
+                    const chatAudio = this.sound.add('chataudio');
+                    chatAudio.once('complete', () => chatAudio.destroy());
+                    chatAudio.play();
+
                     this.npcDialogue4.play();
                     this.npcDialogue4.onComplete = () => {
                         this.npcDialogue4.resetToIdle();
