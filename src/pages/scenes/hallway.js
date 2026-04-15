@@ -82,7 +82,7 @@ export default class Hallway extends Phaser.Scene {
         );
 
         this.npc4 = new NPC(this, 2970, 400, 'group').setScale(3);
-        this.staticNpc4 = new NPC(this, 2970, 400, 'staticgroup').setScale(3).setVisible(false);
+        this.staticNpc4 = this.add.sprite(2970, 400, 'staticgroup').setScale(3).setVisible(false);
         this.npcDialogue4 = new DialogueBubble(
             this,
             this.npc4,

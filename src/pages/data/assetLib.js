@@ -1,18 +1,18 @@
 export const AssetLib = {
     spritesheets: [
         // Player
-        { key: 'standmale', path: 'assets/Character/StandMale.png', width: 50, height: 50 },
-        { key: 'standfemale', path: 'assets/Character/StandFemale.png', width: 50, height: 50 },
-        { key: 'frontmale', path: 'assets/Character/FrontMale.png', width: 50, height: 50 },
-        { key: 'frontfemale', path: 'assets/Character/FrontFemale.png', width: 50, height: 50 },
-        { key: 'sidemale', path: 'assets/Character/SideMale.png', width: 50, height: 50 },
-        { key: 'sidefemale', path: 'assets/Character/SideFemale.png', width: 50, height: 50 },
-        { key: 'backmale', path: 'assets/Character/BackMale.png', width: 50, height: 50 },
-        { key: 'backfemale', path: 'assets/Character/BackFemale.png', width: 50, height: 50 },
+        { key: 'standmale', path: 'assets/Character/StandMale.png', width: 50, height: 50, end: 3, rate: 2 },
+        { key: 'standfemale', path: 'assets/Character/StandFemale.png', width: 50, height: 50, end: 3, rate: 2 },
+        { key: 'frontmale', path: 'assets/Character/FrontMale.png', width: 50, height: 50, end: 3, rate: 6 },
+        { key: 'frontfemale', path: 'assets/Character/FrontFemale.png', width: 50, height: 50, end: 3, rate: 6 },
+        { key: 'sidemale', path: 'assets/Character/SideMale.png', width: 50, height: 50, end: 5, rate: 6 },
+        { key: 'sidefemale', path: 'assets/Character/SideFemale.png', width: 50, height: 50, end: 5, rate: 6 },
+        { key: 'backmale', path: 'assets/Character/BackMale.png', width: 50, height: 50, end: 3, rate: 6 },
+        { key: 'backfemale', path: 'assets/Character/BackFemale.png', width: 50, height: 50, end: 3, rate: 6 },
 
         // NPC
         { key: 'female1', path: 'assets/Character/NPC/Female1.png', width: 50, height: 50, end: 3 },
-        { key: 'female2', path: 'assets/Character/NPC/Female2.png', width: 50, height: 50, end: 2 },
+        { key: 'female2', path: 'assets/Character/NPC/Female2.png', width: 50, height: 50, end: 1 },
         { key: 'female3', path: 'assets/Character/NPC/Female3.png', width: 50, height: 50, end: 2 },
         { key: 'male1', path: 'assets/Character/NPC/Male1.png', width: 50, height: 50, end: 1 },
         { key: 'male2', path: 'assets/Character/NPC/Male2.png', width: 50, height: 50, end: 2 },

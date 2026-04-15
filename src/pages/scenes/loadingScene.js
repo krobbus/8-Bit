@@ -73,7 +73,6 @@ export default class LoadingScene extends Phaser.Scene {
         } else {
             this.hourglassSprite = this.add.sprite(screenCenterX, screenCenterY - 60, 'hourglass').setScale(0.8).play('hourglassAnim');
         }
-
         this.loadingText.setText("Fetching Player Data...");
         
         try{
@@ -85,25 +84,17 @@ export default class LoadingScene extends Phaser.Scene {
             }
         } catch { console.error(error); }
 
-        const anims = [
-            { key: 'standmale', asset: 'standmale', end: 3, rate: 2},
-            { key: 'standfemale', asset: 'standfemale', end: 3, rate: 2 },
-            { key: 'frontmale', asset: 'frontmale', end: 3, rate: 6 },
-            { key: 'frontfemale', asset: 'frontfemale', end: 3, rate: 6 },
-            { key: 'sidemale', asset: 'sidemale', end: 5, rate: 6 },
-            { key: 'sidefemale', asset: 'sidefemale', end: 5, rate: 6 },
-            { key: 'backmale', asset: 'backmale', end: 3, rate: 6 },
-            { key: 'backfemale', asset: 'backfemale', end: 3, rate: 6 },
-        ];
-
-        anims.forEach(anim => {
-            this.anims.create({
-                key: anim.key,
-                frames: this.anims.generateFrameNumbers(anim.asset, { start: 0, end: anim.end }),
-                frameRate: anim.rate,
-                repeat: -1
+        const playerKeys = ['standmale','standfemale','frontmale','frontfemale','sidemale','sidefemale','backmale','backfemale'];
+        AssetLib.spritesheets
+            .filter(a => playerKeys.includes(a.key))
+            .forEach(a => {
+                this.anims.create({
+                    key: a.key,
+                    frames: this.anims.generateFrameNumbers(a.key, { start: 0, end: a.end }),
+                    frameRate: a.rate,
+                    repeat: -1
+                });
             });
-        });
 
         this.loadingText.setText("Ready!");
         this.time.delayedCall(1000, () => {
