@@ -14,6 +14,8 @@ export default class Classroom extends Phaser.Scene {
         this.isAnswering = false;
         this.assessmentResults = [];
         this.isSettingsOpen = false;
+        this.selectedOptionIndex = 0;
+        this.currentOptions = []; 
     }
 
     init(data) {
@@ -220,6 +222,7 @@ export default class Classroom extends Phaser.Scene {
         const screenCenterY = this.cameras.main.worldView.y + this.cameras.main.height / 2;
 
         this.bg.play(`thinking${this.gender}`);
+        this.questionUI("Connecting to the AI...\nHang tight! This might take a few seconds.");
         this.startThinkingAnimation();
 
         const isAssessment = this.rawType === 'Skill' || this.rawType === 'Personality';
@@ -227,38 +230,54 @@ export default class Classroom extends Phaser.Scene {
         const endpoint = isAssessment ? '/api/generate-skill-pers' : '/api/generate-course-related';
 
         try {
-            const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ 
-                    courseName: this.courseCode,
-                    quizType: this.rawType
-                })
-            });
+            const wakeStart = Date.now();
+            let serverAwake = false;
 
-            if (!response.ok) {
-                const errorData = await response.json().catch(() => ({ error: "Unknown Server Error" }));
-                throw new Error(errorData.error || `Server Error: ${response.status}`);
-            }
-            const data = await response.json();
+            try {
+                const ping = await fetch(`${API_BASE_URL}/`, { method: 'GET' });
+                if (ping.ok) serverAwake = true;
+            } catch {
+                const wakeTime = ((Date.now() - wakeStart) / 1000).toFixed(1);
 
-            if (data.questions && data.questions.length > 0) {
-                this.stopThinkingAnimation();
+                if (!serverAwake) {
+                    this.questionUI("The AI is warming up!\nThis usually takes 20–30 seconds on the first try.\nThank you for your patience!");
+                } else {
+                    this.questionUI(`Almost there! (${wakeTime}s)\nGenerating your questions...`);
+                }
 
-                this.courseQuestions = data.questions;
-                this.currentQuestionIndex = 0;
+                const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ 
+                        courseName: this.courseCode,
+                        quizType: this.rawType
+                    })
+                });
 
-                const firstQ = this.courseQuestions[0];
-                this.questionUI(firstQ.question);
-                this.optionsUI(firstQ.options || []);
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({ error: "Unknown Server Error" }));
+                    throw new Error(errorData.error || `Server Error: ${response.status}`);
+                }
+                const data = await response.json();
 
-                this.bg.play(`default${this.gender}`);
-            } else { 
-                throw new Error("Error: Empty questions list"); 
+                if (data.questions && data.questions.length > 0) {
+                    this.stopThinkingAnimation();
+
+                    this.courseQuestions = data.questions;
+                    this.currentQuestionIndex = 0;
+
+                    const firstQ = this.courseQuestions[0];
+                    this.questionUI(firstQ.question);
+                    this.optionsUI(firstQ.options || []);
+
+                    this.bg.play(`default${this.gender}`);
+                } else { 
+                    throw new Error("Error: Empty questions list"); 
+                }
             }
         } catch (err) {
             this.stopThinkingAnimation();
-            this.questionUI("Oops... The AI is sleeping.");
+            this.questionUI("Oops! The AI took too long to respond.\nPlease try again in a moment.");
             this.optionsUI(["Retry"]);
         }
     }
@@ -372,6 +391,8 @@ export default class Classroom extends Phaser.Scene {
 
     optionsUI(options) {
         if (this.optionsContainer) this.optionsContainer.destroy();
+        this.currentOptions = options;
+        this.selectedOptionIndex = 0; 
 
         const screenHeight = this.scale.height;
         const screenWidth = this.scale.width;
@@ -383,6 +404,8 @@ export default class Classroom extends Phaser.Scene {
             const paddingSide = 24;
             const paddingTopBottom = 14;
             const maxWidth = 300;
+
+            this.optionButtons = [];
 
             options.forEach((optionText) => {
                 let offsetX = 0;
@@ -431,7 +454,9 @@ export default class Classroom extends Phaser.Scene {
 
                 const buttonContainer = this.add.container(offsetX, offsetY, [optionsStyleContainer, optionsText]);
                 this.optionsContainer.add(buttonContainer);
+                this.optionButtons.push({ container: buttonContainer, graphics: optionsStyleContainer, text: optionText, w: finalWidth, h: finalHeight });
             });
+            this.highlightOption(this.selectedOptionIndex);
         } else {          
             this.optionsContainer = this.add.container(120, 0).setDepth(130);
 
@@ -491,7 +516,32 @@ export default class Classroom extends Phaser.Scene {
                 currentY += finalHeight + verticalGap;
             });
             this.optionsContainer.y = screenHeight - currentY - 80;
+            this.highlightOption(this.selectedOptionIndex);
         }
+    }
+
+    highlightOption(index) {
+        if (!this.optionButtons || this.optionButtons.length === 0) return;
+        const isAssessment = this.rawType === 'Skill' || this.rawType === 'Personality';
+
+        this.optionButtons.forEach((btn, i) => {
+            btn.graphics.clear();
+            const isSelected = i === index;
+
+            if (isAssessment) {
+                btn.graphics
+                    .fillStyle(isSelected ? 0x588157 : 0x486947, 1)
+                    .lineStyle(2, isSelected ? 0xffffff : 0xA3B18A, 1)
+                    .fillRoundedRect(-btn.w / 2, -btn.h / 2, btn.w, btn.h, 8)
+                    .strokeRoundedRect(-btn.w / 2, -btn.h / 2, btn.w, btn.h, 8);
+            } else {
+                btn.graphics
+                    .fillStyle(isSelected ? 0x588157 : 0x344E41, 1)
+                    .lineStyle(2, isSelected ? 0xffffff : 0xA3B18A, 1)
+                    .fillRoundedRect(0, 0, btn.w, btn.h, 8)
+                    .strokeRoundedRect(0, 0, btn.w, btn.h, 8);
+            }
+        });
     }
 
     startThinkingAnimation() {
@@ -774,7 +824,39 @@ export default class Classroom extends Phaser.Scene {
         }
     }
 
-    update(){ if (!this.mobileControls) return; }
+    update(){ 
+        if (!this.mobileControls) return; 
+
+        if (this.optionButtons && this.optionButtons.length > 0 && !this.isAnswering && this.currentOptions.length > 0) {
+            const upJustDown =
+                Phaser.Input.Keyboard.JustDown(this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP)) ||
+                Phaser.Input.Keyboard.JustDown(this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W)) ||
+                (this.mobileControls.isDpadUpJustDown ? this.mobileControls.isDpadUpJustDown() : false);
+
+            const downJustDown =
+                Phaser.Input.Keyboard.JustDown(this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN)) ||
+                Phaser.Input.Keyboard.JustDown(this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S)) ||
+                (this.mobileControls.isDpadDownJustDown ? this.mobileControls.isDpadDownJustDown() : false);
+
+            const confirmJustDown =
+                Phaser.Input.Keyboard.JustDown(this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)) ||
+                this.mobileControls.isInteractJustDown();
+
+            if (upJustDown) {
+                this.selectedOptionIndex = (this.selectedOptionIndex - 1 + this.currentOptions.length) % this.currentOptions.length;
+                this.highlightOption(this.selectedOptionIndex);
+            }
+            if (downJustDown) {
+                this.selectedOptionIndex = (this.selectedOptionIndex + 1) % this.currentOptions.length;
+                this.highlightOption(this.selectedOptionIndex);
+            }
+            if (confirmJustDown) {
+                const selected = this.currentOptions[this.selectedOptionIndex];
+                if (selected) selected === "Retry" ? this.loadQuestions() : this.handleAnswer(selected);
+            }
+        }
+    }
+    
     updateMobileUI() { this.mobileControls.setVisible(this.isMobileMode); }
     toggleSettings() { this.settingsPanel.setVisible(!this.settingsPanel.visible); }
 
