@@ -1,3 +1,12 @@
+const VOLUME_LEVELS = {
+    HIGH: 1.0,
+    MEDIUM: 0.5,
+    LOW: 0.2,
+    OFF: 0
+};
+
+const VOLUME_ORDER = ['HIGH', 'MEDIUM', 'LOW', 'OFF'];
+
 export default class SettingsPanel extends Phaser.GameObjects.Container {
     constructor(scene) {
         const { width, height } = scene.scale;
@@ -6,15 +15,8 @@ export default class SettingsPanel extends Phaser.GameObjects.Container {
         const storedMobileMode = localStorage.getItem('mobileMode') === 'true';
         scene.isMobileMode = storedMobileMode;
 
-        const volumes = {
-            HIGH: 1.0,
-            MEDIUM: 0.5,
-            LOW: 0.2,
-            OFF: 0
-        };
-        const volumesOrder = ['HIGH', 'MEDIUM', 'LOW', 'OFF'];
         const storedVolume = localStorage.getItem('volumeLevel') || 'HIGH';
-        scene.sound.volume = volumes[storedVolume];
+        scene.sound.volume = VOLUME_LEVELS[storedVolume];
         scene.sound.mute = storedVolume === 'OFF';
 
         this.scene = scene;
@@ -78,12 +80,12 @@ export default class SettingsPanel extends Phaser.GameObjects.Container {
                     break;
 
                 case 'volume':
-                    const currentLevel = localStorage.getItem('volumes') || 'HIGH';
-                    const currentIndex = volumesOrder.indexOf(currentLevel);
-                    const nextLevel = volumesOrder[(currentIndex + 1) % volumesOrder.length];
+                    const currentLevel = localStorage.getItem('volumeLevel') || 'HIGH';
+                    const currentIndex = VOLUME_ORDER.indexOf(currentLevel);
+                    const nextLevel = VOLUME_ORDER[(currentIndex + 1) % VOLUME_ORDER.length];
 
-                    localStorage.setItem('volumes', nextLevel);
-                    this.scene.sound.volume = volumes[nextLevel];
+                    localStorage.setItem('volumeLevel', nextLevel);
+                    this.scene.sound.volume = VOLUME_LEVELS[nextLevel];
                     this.scene.sound.mute = nextLevel === 'OFF';
 
                     textObj.setText(`Sound: ${nextLevel}`);
@@ -122,7 +124,7 @@ export default class SettingsPanel extends Phaser.GameObjects.Container {
             if (data.temporary) {
                 await db.ref("webGame/" + playerID).remove();
             } else {
-                await updatePlayerData({ lastActive: Date.now(), progress: data.progress || 0 });
+                await updatePlayerData({lastActive: Date.now()});
             }
         }
         localStorage.removeItem("playerID");

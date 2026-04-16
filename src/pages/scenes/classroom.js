@@ -222,7 +222,6 @@ export default class Classroom extends Phaser.Scene {
         const screenCenterY = this.cameras.main.worldView.y + this.cameras.main.height / 2;
 
         this.bg.play(`thinking${this.gender}`);
-        this.questionUI("Connecting to the AI...\nHang tight! This might take a few seconds.");
         this.startThinkingAnimation();
 
         const isAssessment = this.rawType === 'Skill' || this.rawType === 'Personality';
@@ -555,7 +554,7 @@ export default class Classroom extends Phaser.Scene {
                 dotCount = (dotCount + 1) % 4;
                 const dots = ".".repeat(dotCount);
                 
-                this.questionUI(`Thinking questions${dots}`);
+                this.questionUI(`Connecting to the AI...\nHang tight! This might take a few seconds${dots}`);
                 this.optionsUI(Array(placeholderCount).fill(dots));
             },
             loop: true

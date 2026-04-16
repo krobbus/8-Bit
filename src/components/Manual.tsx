@@ -83,7 +83,7 @@ const Manual: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                                 <section id="introductionContainer">
                                     <label className="mainHeader">AN AI-DRIVEN 8-BIT WEB GAME FOR PERSONALIZED COLLEGE PROGRAM MATCHING AND CAREER EXPLORATION</label>
                                     
-                                    <img src="" alt="Introduction art" />
+                                    <img src="public/assets/Background/PLMUN.png" alt="PLMUN background" />
 
                                     <p className="caption">
                                         This user manual is designed to guide players in understanding and navigating the AI-driven 8-bit web game 
@@ -171,8 +171,6 @@ const Manual: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                                     <section id="securityMeasureContainer">
                                         <label className="subHeader">SECURITY MEASURE</label>
 
-                                        <img src="" alt="Security Measure" />
-
                                         <p className="caption">
                                             Protect your progress with integrated security features: multi-step login authentication, 
                                             sensitive data masking for PINs/passwords, and a streamlined recovery process to 
@@ -181,12 +179,10 @@ const Manual: React.FC<ModalProps> = ({ isOpen, onClose }) => {
 
                                         <div className="cardContainer">
                                             <div className="cardWrapper">
-                                                <img src="" alt="Login authentication" />
                                                 <span className="subContent">Login authentication ensures secure access</span>
                                             </div>
 
                                             <div className="cardWrapper">
-                                                <img src="" alt="Account login overview" />
                                                 <span className="subContent">For checking your information, players can hide their password and PIN</span>
                                             </div>
 

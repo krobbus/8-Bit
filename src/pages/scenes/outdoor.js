@@ -42,9 +42,9 @@ export default class Outdoor extends Phaser.Scene {
         const snapshot = await db.ref(`webGame/${playerID}`).once('value');
         const userData = snapshot.val();
         const gender = (userData && userData.gender) ? userData.gender : 'male';
-        const playerName = (userData && userData.name) ? userData.name : "Guest";        
+        this.playerName = (userData && userData.name) ? userData.name : "Guest";        
 
-        this.player = new Player(this, spawnX, spawnY, gender, playerName)                                          // player
+        this.player = new Player(this, spawnX, spawnY, gender, this.playerName)                                          // player
             .setDepth(1)
             .setScale(1.8);
 
@@ -97,6 +97,10 @@ export default class Outdoor extends Phaser.Scene {
             .setOrigin(1, 0)
             .setInteractive({ useHandCursor: true })
             .on("pointerdown", () => {
+                const interactAudio = this.sound.add('interactaudio');
+                interactAudio.once('complete', () => interactAudio.destroy());
+                interactAudio.play();
+
                 if (this.settings.isOpened) this.settings.toggle();
                 this.input.keyboard.resetKeys();
                 window.dispatchEvent(new CustomEvent('openManualModal'));
@@ -111,12 +115,16 @@ export default class Outdoor extends Phaser.Scene {
             .setOrigin(1, 0)
             .setInteractive({ useHandCursor: true })
             .on("pointerdown", () => {
+                const interactAudio = this.sound.add('interactaudio');
+                interactAudio.once('complete', () => interactAudio.destroy());
+                interactAudio.play();
+
                 const isModalOpened = document.querySelector('.modalBackdrop') || document.activeElement.tagName === 'INPUT';
                 if (isModalOpened) return;
                 this.settings.toggle()
             });
 
-        let debugGraphics = this.add.graphics().lineStyle(2, 0x00ff00, 1);
+        let debugGraphics = this.add.graphics();//.lineStyle(2, 0x00ff00, 1);
         this.activeZone = null;
 
         this.zones = [ 
@@ -235,12 +243,25 @@ export default class Outdoor extends Phaser.Scene {
                 const returnPos = this.activeZone.spawnInNextScene || null;
 
                 if (this.activeZone.target === 'talkToNPC1') {
-                    const chatAudio = this.sound.add('chataudio');
-                    chatAudio.once('complete', () => chatAudio.destroy());
-                    chatAudio.play();
+                    this.npcDialogue1.destroy();
+
+                    const interactAudio = this.sound.add('interactaudio');
+                    interactAudio.once('complete', () => interactAudio.destroy());
+                    interactAudio.play();
                     
                     this.npcDialogue1.play();
                 } else {
+                    if (this.activeZone.target === 'Rightwing') {
+                        if (!this.playerName || this.playerName === 'Guest') {
+                            this.showBlockedHint("ENTER THE MAIN DOOR AND\nCREATE PROFILE AND PERSONALIZATION FIRST!");
+                            return;
+                        }
+                    }
+
+                    const interactAudio = this.sound.add('interactaudio');
+                    interactAudio.once('complete', () => interactAudio.destroy());
+                    interactAudio.play();
+
                     this.startPageTransition(this.activeZone.target, returnPos);
                 }
             }
@@ -267,6 +288,29 @@ export default class Outdoor extends Phaser.Scene {
         } else {
             this.hintLabel.setVisible(false);
         }
+    }
+
+    showBlockedHint(message) {
+        if (this.blockedHintText) this.blockedHintText.destroy();
+
+        this.blockedHintText = this.add.text(
+            this.player.x, this.player.y - 80, message, {
+                fontFamily: '"Press Start 2P"',
+                fontSize: "9px",
+                fill: "#ff5555",
+                align: "center",
+                backgroundColor: "#125729",
+                padding: { x: 12, y: 8 },
+                resolution: 2
+            }
+        ).setOrigin(0.5).setDepth(200);
+
+        this.time.delayedCall(2500, () => {
+            if (this.blockedHintText) {
+                this.blockedHintText.destroy();
+                this.blockedHintText = null;
+            }
+        });
     }
 
     applyStairPhysics(isRunning) {

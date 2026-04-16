@@ -117,6 +117,10 @@ export default class RightWing extends Phaser.Scene {
             .setOrigin(1, 0)
             .setInteractive({ useHandCursor: true })
             .on("pointerdown", () => {
+                const interactAudio = this.sound.add('interactaudio');
+                interactAudio.once('complete', () => interactAudio.destroy());
+                interactAudio.play();
+
                 if (this.settings.isOpened) this.settings.toggle();
                 this.input.keyboard.resetKeys();
                 window.dispatchEvent(new CustomEvent('openManualModal'));
@@ -131,6 +135,10 @@ export default class RightWing extends Phaser.Scene {
             .setOrigin(1, 0)
             .setInteractive({ useHandCursor: true })
             .on("pointerdown", () => {
+                const interactAudio = this.sound.add('interactaudio');
+                interactAudio.once('complete', () => interactAudio.destroy());
+                interactAudio.play();
+                
                 const isModalOpened = document.querySelector('.modalBackdrop') || document.activeElement.tagName === 'INPUT';
                 if (isModalOpened) return;
                 this.settings.toggle()
@@ -241,19 +249,28 @@ export default class RightWing extends Phaser.Scene {
 
             if (interactJustDown || mobileInteractDown) {
                 const returnPos = this.activeZone.spawnInNextScene || null;
-                const chatAudio = this.sound.add('chataudio');
 
                 if (this.activeZone.target === 'talkToNPC5') {
-                    chatAudio.once('complete', () => chatAudio.destroy());
-                    chatAudio.play();
+                    this.npcDialogue5.destroy();
+
+                    const interactAudio = this.sound.add('interactaudio');
+                    interactAudio.once('complete', () => interactAudio.destroy());
+                    interactAudio.play();
 
                     this.npcDialogue5.play();
                 } else if (this.activeZone.target === 'talkToNPC6') {
-                    chatAudio.once('complete', () => chatAudio.destroy());
-                    chatAudio.play();
+                    this.npcDialogue6.destroy();
+
+                    const interactAudio = this.sound.add('interactaudio');
+                    interactAudio.once('complete', () => interactAudio.destroy());
+                    interactAudio.play();
                     
                     this.npcDialogue6.play();
                 } else {
+                    const interactAudio = this.sound.add('interactaudio');
+                    interactAudio.once('complete', () => interactAudio.destroy());
+                    interactAudio.play();
+
                     this.startPageTransition(this.activeZone.target, returnPos);
                 }
             }
@@ -287,6 +304,10 @@ export default class RightWing extends Phaser.Scene {
 
     startPageTransition(targetSceneName, lastPosition) {
         if (targetSceneName === 'openLeaderboardModal') {
+            const interactAudio = this.sound.add('interactaudio');
+            interactAudio.once('complete', () => interactAudio.destroy());
+            interactAudio.play();
+
             this.input.keyboard.resetKeys();
             window.dispatchEvent(new CustomEvent('openLeaderboardModal'));
             return;

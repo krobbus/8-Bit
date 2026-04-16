@@ -93,7 +93,7 @@ export default class Hallway extends Phaser.Scene {
                 "It takes a lot of patience, but seeing that 'aha!' moment in a student's eyes is worth it."
             ],
             {
-                offsetX: -40,
+                offsetX: -60,
                 offsetY: -80,
                 maxWidth: 220,
                 typeDelay: 45,
@@ -133,6 +133,10 @@ export default class Hallway extends Phaser.Scene {
             .setScrollFactor(0)
             .setInteractive({ useHandCursor: true })
             .on("pointerdown", () => {
+                const interactAudio = this.sound.add('interactaudio');
+                interactAudio.once('complete', () => interactAudio.destroy());
+                interactAudio.play();
+
                 if (this.settings.isOpened) this.settings.toggle();
                 this.input.keyboard.resetKeys();
                 window.dispatchEvent(new CustomEvent('openManualModal'));
@@ -141,6 +145,7 @@ export default class Hallway extends Phaser.Scene {
 
         this.settings = new Settings(this);                                                                         // settings
         this.settings.setDepth(3000);
+        this.settings.setPosition(viewWidth / 2, viewHeight / 2);
         this.add.sprite(viewWidth - 10, 80, 'settings')
             .setScale(0.3)
             .setDepth(3001)
@@ -148,6 +153,10 @@ export default class Hallway extends Phaser.Scene {
             .setScrollFactor(0)
             .setInteractive({ useHandCursor: true })
             .on("pointerdown", () => {
+                const interactAudio = this.sound.add('interactaudio');
+                interactAudio.once('complete', () => interactAudio.destroy());
+                interactAudio.play();
+
                 const isModalOpened = document.querySelector('.modalBackdrop') || document.activeElement.tagName === 'INPUT';
                 if (isModalOpened) return;
                 this.settings.toggle()
@@ -216,6 +225,8 @@ export default class Hallway extends Phaser.Scene {
         this.mobileControls = createMobileControls(this);
         this.createUIElements();
         this.updateMobileUI();
+
+        this.mobileControls.reposition(viewWidth, viewHeight);
     }
 
     createUIElements(){
@@ -316,17 +327,39 @@ export default class Hallway extends Phaser.Scene {
                     this.menuIndex = 0;
                 }
             } else {
-                if (isUp) this.menuIndex = (this.menuIndex - 1 + this.menuOptions.length) % this.menuOptions.length;
-                if (isDown) this.menuIndex = (this.menuIndex + 1) % this.menuOptions.length;
+                if (isUp) {
+                    const interactAudio = this.sound.add('interactaudio');
+                    interactAudio.once('complete', () => interactAudio.destroy());
+                    interactAudio.play();
+
+                    this.menuIndex = (this.menuIndex - 1 + this.menuOptions.length) % this.menuOptions.length;
+                }
+
+                if (isDown) {
+                    const interactAudio = this.sound.add('interactaudio');
+                    interactAudio.once('complete', () => interactAudio.destroy());
+                    interactAudio.play();
+
+                    this.menuIndex = (this.menuIndex + 1) % this.menuOptions.length;
+                }
 
                 if (isInteracting) {
-                const choice = this.menuOptions[this.menuIndex];
-                if (choice.target === "cancel") {
-                    this.isMenuOpen = false;
-                } else {
-                    this.startPageTransition(choice.target, null, this.activeZone.course, choice.type);
+                    const choice = this.menuOptions[this.menuIndex];
+
+                    if (choice.target === "cancel") {
+                        const interactAudio = this.sound.add('interactaudio');
+                        interactAudio.once('complete', () => interactAudio.destroy());
+                        interactAudio.play();
+
+                        this.isMenuOpen = false;
+                    } else {
+                        const interactAudio = this.sound.add('interactaudio');
+                        interactAudio.once('complete', () => interactAudio.destroy());
+                        interactAudio.play();
+
+                        this.startPageTransition(choice.target, null, this.activeZone.course, choice.type);
+                    }
                 }
-            }
             }
         } else {
             this.menuPointer.setVisible(false);
@@ -336,21 +369,26 @@ export default class Hallway extends Phaser.Scene {
                 const returnPos = this.activeZone.spawnInNextScene || null;
 
                 if (this.activeZone.target === 'talkToNPC3') {
-                    const chatAudio = this.sound.add('chataudio');
-                    chatAudio.once('complete', () => chatAudio.destroy());
-                    chatAudio.play();
+                    this.npcDialogue3.destroy();
+
+                    const interactAudio = this.sound.add('interactaudio');
+                    interactAudio.once('complete', () => interactAudio.destroy());
+                    interactAudio.play();
                     
                     this.npcDialogue3.play();
                 } else if (this.activeZone.target === 'talkToNPC4') {
+                    this.npcDialogue4.destroy();
+
                     this.npc4.setVisible(false);
                     this.staticNpc4.setVisible(true);
                     this.npcDialogue4.npc = this.staticNpc4;
 
-                    const chatAudio = this.sound.add('chataudio');
-                    chatAudio.once('complete', () => chatAudio.destroy());
-                    chatAudio.play();
+                    const interactAudio = this.sound.add('interactaudio');
+                    interactAudio.once('complete', () => interactAudio.destroy());
+                    interactAudio.play();
 
                     this.npcDialogue4.play();
+
                     this.npcDialogue4.onComplete = () => {
                         this.npcDialogue4.resetToIdle();
                         this.staticNpc4.setVisible(false);
@@ -358,6 +396,10 @@ export default class Hallway extends Phaser.Scene {
                         this.npcDialogue4.npc = this.npc4;
                     };
                 } else {
+                    const interactAudio = this.sound.add('interactaudio');
+                    interactAudio.once('complete', () => interactAudio.destroy());
+                    interactAudio.play();
+
                     this.startPageTransition(this.activeZone.target, returnPos);
                 }
             }

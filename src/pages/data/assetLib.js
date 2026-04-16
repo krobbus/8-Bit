@@ -72,7 +72,7 @@ export const AssetLib = {
     audio: [
         { key: 'gamebg', path: 'assets/GameAudio/GameBgMusic.mp3' },
         { key: 'classroombg', path: 'assets/GameAudio/ClassroomBgMusic.mp3' },
-        { key: 'chataudio', path: 'assets/GameAudio/ChatAudio.mp3' },
+        { key: 'interactaudio', path: 'assets/GameAudio/InteractAudio.mp3' },
         { key: 'answeraudio', path: 'assets/GameAudio/AnswerAudio.mp3' },
         { key: 'correctaudio', path: 'assets/GameAudio/CorrectAudio.mp3' },
         { key: 'wrongaudio', path: 'assets/GameAudio/WrongAudio.mp3' }

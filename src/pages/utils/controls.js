@@ -94,7 +94,14 @@ export function createMobileControls(scene) {
     reposition();
 
     return {
-        reposition,
+        reposition: (customWidth, customHeight) => {
+            const viewWidth = customWidth || scene.cameras.main.width;
+            const viewHeight = customHeight || scene.cameras.main.height;
+
+            dpadContainer.setPosition(180, viewHeight - 200);
+            runBtn.setPosition(viewWidth - 130, viewHeight - 280);
+            interactBtn.setPosition(viewWidth - 150, viewHeight - 160);
+        },
         setVisible: (bool) => {
             dpadContainer.setVisible(bool);
             runBtn.setVisible(bool);

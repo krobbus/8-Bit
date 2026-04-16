@@ -42,9 +42,9 @@ export default class LeftWing extends Phaser.Scene {
         const snapshot = await db.ref(`webGame/${playerID}`).once('value');
         const userData = snapshot.val();
         const gender = (userData && userData.gender) ? userData.gender : 'male';
-        const playerName = (userData && userData.name) ? userData.name : "Guest";        
+        this.playerName = (userData && userData.name) ? userData.name : "Guest";        
 
-        this.player = new Player(this, spawnX, spawnY, gender, playerName)                                          // player
+        this.player = new Player(this, spawnX, spawnY, gender, this.playerName)                                          // player
             .setDepth(1)
             .setScale(3);
 
@@ -98,6 +98,10 @@ export default class LeftWing extends Phaser.Scene {
             .setOrigin(1, 0)
             .setInteractive({ useHandCursor: true })
             .on("pointerdown", () => {
+                const interactAudio = this.sound.add('interactaudio');
+                interactAudio.once('complete', () => interactAudio.destroy());
+                interactAudio.play();
+
                 if (this.settings.isOpened) this.settings.toggle();
                 this.input.keyboard.resetKeys();
                 window.dispatchEvent(new CustomEvent('openManualModal'));
@@ -112,6 +116,10 @@ export default class LeftWing extends Phaser.Scene {
             .setOrigin(1, 0)
             .setInteractive({ useHandCursor: true })
             .on("pointerdown", () => {
+                const interactAudio = this.sound.add('interactaudio');
+                interactAudio.once('complete', () => interactAudio.destroy());
+                interactAudio.play();
+
                 const isModalOpened = document.querySelector('.modalBackdrop') || document.activeElement.tagName === 'INPUT';
                 if (isModalOpened) return;
                 this.settings.toggle()
@@ -264,12 +272,38 @@ export default class LeftWing extends Phaser.Scene {
                     this.menuIndex = 0;
                 }
             } else {
-                if (isUp) this.menuIndex = (this.menuIndex - 1 + this.menuOptions.length) % this.menuOptions.length;
-                if (isDown) this.menuIndex = (this.menuIndex + 1) % this.menuOptions.length;
+                if (isUp) {
+                    const interactAudio = this.sound.add('interactaudio');
+                    interactAudio.once('complete', () => interactAudio.destroy());
+                    interactAudio.play();
+
+                    this.menuIndex = (this.menuIndex - 1 + this.menuOptions.length) % this.menuOptions.length;
+                }
+
+                if (isDown) {
+                    const interactAudio = this.sound.add('interactaudio');
+                    interactAudio.once('complete', () => interactAudio.destroy());
+                    interactAudio.play();
+
+                    this.menuIndex = (this.menuIndex + 1) % this.menuOptions.length;
+                }
 
                 if (isInteracting) {
                     const choice = this.menuOptions[this.menuIndex];
-                    choice.target === "cancel" ? (this.isMenuOpen = false) : this.startPageTransition(choice.target);
+
+                    if (choice.target === "cancel") {
+                        const interactAudio = this.sound.add('interactaudio');
+                        interactAudio.once('complete', () => interactAudio.destroy());
+                        interactAudio.play();
+
+                        this.isMenuOpen = false;
+                    } else {
+                        const interactAudio = this.sound.add('interactaudio');
+                        interactAudio.once('complete', () => interactAudio.destroy());
+                        interactAudio.play();
+
+                        this.startPageTransition(choice.target, null, this.activeZone.course, choice.type);
+                    }
                 }
             }
         } else {
@@ -280,18 +314,54 @@ export default class LeftWing extends Phaser.Scene {
                 const returnPos = this.activeZone.spawnInNextScene || null;
 
                 if (this.activeZone.target === 'talkToNPC2') {
-                    const chatAudio = this.sound.add('chataudio');
-                    chatAudio.once('complete', () => chatAudio.destroy());
-                    chatAudio.play();
+                    this.npcDialogue2.destroy();
+
+                    const interactAudio = this.sound.add('interactaudio');
+                    interactAudio.once('complete', () => interactAudio.destroy());
+                    interactAudio.play();
                     
                     this.npcDialogue2.play();
                 } else {
+                    if (this.activeZone.target === 'Hallway') {
+                        if (!this.playerName || this.playerName === 'Guest') {
+                            this.showBlockedHint("GO TO DASHBOARD AND CREATE\nPROFILE AND PERSONALIZATION\nFIRST BEFORE ENTERING!");
+                            return;
+                        }
+                    }
+
+                    const interactAudio = this.sound.add('interactaudio');
+                    interactAudio.once('complete', () => interactAudio.destroy());
+                    interactAudio.play();
+
                     this.startPageTransition(this.activeZone.target, returnPos);
                 }
             }
         }
 
         this.isMenuOpen ? this.renderMenu() : this.renderStandardHint();
+    }
+
+    showBlockedHint(message) {
+        if (this.blockedHintText) this.blockedHintText.destroy();
+
+        this.blockedHintText = this.add.text(
+            this.player.x, this.player.y - 80, message, {
+                fontFamily: '"Press Start 2P"',
+                fontSize: "9px",
+                fill: "#ff5555",
+                align: "center",
+                backgroundColor: "#125729",
+                padding: { x: 12, y: 8 },
+                resolution: 2
+            }
+        ).setOrigin(0.5).setDepth(200);
+
+        this.time.delayedCall(2500, () => {
+            if (this.blockedHintText) {
+                this.blockedHintText.destroy();
+                this.blockedHintText = null;
+            }
+        });
     }
 
     renderStandardHint(){
@@ -364,12 +434,20 @@ export default class LeftWing extends Phaser.Scene {
 
     startPageTransition(targetSceneName, lastPosition) {
         if (targetSceneName === 'openAccountModal') {
+            const interactAudio = this.sound.add('interactaudio');
+            interactAudio.once('complete', () => interactAudio.destroy());
+            interactAudio.play();
+
             this.input.keyboard.resetKeys();
             window.dispatchEvent(new CustomEvent('openAccountManagementModal'));
             return;
         }
 
         if (targetSceneName === 'openDashboardModal') {
+            const interactAudio = this.sound.add('interactaudio');
+            interactAudio.once('complete', () => interactAudio.destroy());
+            interactAudio.play();
+
             this.input.keyboard.resetKeys();
             window.dispatchEvent(new CustomEvent('openDashboardModal'));
             return;
