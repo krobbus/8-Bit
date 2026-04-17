@@ -71,6 +71,10 @@ export default class SettingsPanel extends Phaser.GameObjects.Container {
 
     setupItemEvents(key, textObj) {
         textObj.on('pointerdown', async () => {
+            const interactAudio = this.scene.sound.add('interactaudio');
+            interactAudio.once('complete', () => interactAudio.destroy());
+            interactAudio.play();
+            
             switch (key) {
                 case 'mobile':
                     this.scene.isMobileMode = !this.scene.isMobileMode;

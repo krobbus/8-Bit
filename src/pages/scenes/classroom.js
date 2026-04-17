@@ -15,7 +15,8 @@ export default class Classroom extends Phaser.Scene {
         this.assessmentResults = [];
         this.isSettingsOpen = false;
         this.selectedOptionIndex = 0;
-        this.currentOptions = []; 
+        this.currentOptions = [];
+        this.isLoadingQuestions = false;
     }
 
     init(data) {
@@ -221,6 +222,9 @@ export default class Classroom extends Phaser.Scene {
         const screenCenterX = this.cameras.main.worldView.x + this.cameras.main.width / 2;
         const screenCenterY = this.cameras.main.worldView.y + this.cameras.main.height / 2;
 
+        this.isLoadingQuestions = true;
+        this.disableAllOptions();
+
         this.bg.play(`thinking${this.gender}`);
         this.startThinkingAnimation();
 
@@ -260,6 +264,9 @@ export default class Classroom extends Phaser.Scene {
                 this.questionUI(firstQ.question);
                 this.optionsUI(firstQ.options || []);
 
+                this.isLoadingQuestions = false;
+                this.enableAllOptions();
+
                 this.bg.play(`default${this.gender}`);
             } else { 
                 throw new Error("Error: Empty questions list"); 
@@ -268,6 +275,7 @@ export default class Classroom extends Phaser.Scene {
             this.stopThinkingAnimation();
             this.questionUI("Oops! The AI took too long to respond.\nPlease try again in a moment.");
             this.optionsUI(["Retry"]);
+            this.enableAllOptions(); 
         }
     }
 
@@ -378,6 +386,25 @@ export default class Classroom extends Phaser.Scene {
         ]);
     }
 
+    disableAllOptions() {
+        if (!this.optionButtons) return;
+
+        this.optionButtons.forEach(btn => {
+            btn.graphics.setInteractive(false);
+            btn.container.setAlpha(0.5);
+        });
+    }
+
+    enableAllOptions() {
+        if (!this.optionButtons) return;
+
+        this.optionButtons.forEach(btn => {
+            const hitArea = new Phaser.Geom.Rectangle(0, 0, btn.w, btn.h);
+            btn.graphics.setInteractive(hitArea, Phaser.Geom.Rectangle.Contains);
+            btn.container.setAlpha(1);
+        });
+    }
+
     optionsUI(options) {
         if (this.optionsContainer) this.optionsContainer.destroy();
         this.currentOptions = options;
@@ -428,11 +455,11 @@ export default class Classroom extends Phaser.Scene {
                 const hitArea = new Phaser.Geom.Rectangle(-finalWidth / 2, -finalHeight / 2, finalWidth, finalHeight);    
                 optionsStyleContainer.setInteractive(hitArea, Phaser.Geom.Rectangle.Contains)
                     .on('pointerover', () => {
-                        if (!this.isSettingsOpen) optionsStyleContainer.setAlpha(0.8);
+                        if (!this.isSettingsOpen && !this.isLoadingQuestions) optionsStyleContainer.setAlpha(0.8);
                     })
                     .on('pointerout', () => optionsStyleContainer.setAlpha(1))
                     .on('pointerdown', () => {
-                        if (this.isSettingsOpen) return;
+                        if (this.isSettingsOpen || this.isLoadingQuestions) return;
 
                         if (optionText === "Retry") {
                             this.loadQuestions();
@@ -827,7 +854,7 @@ export default class Classroom extends Phaser.Scene {
     update(){ 
         if (!this.mobileControls) return; 
 
-        if (this.optionButtons && this.optionButtons.length > 0 && !this.isAnswering && this.currentOptions.length > 0) {
+        if (this.optionButtons && this.optionButtons.length > 0 && !this.isAnswering && this.currentOptions.length > 0 && !this.isLoadingQuestions) {
             const upJustDown =
                 Phaser.Input.Keyboard.JustDown(this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP)) ||
                 Phaser.Input.Keyboard.JustDown(this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W)) ||
