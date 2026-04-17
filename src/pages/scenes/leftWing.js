@@ -8,6 +8,8 @@ import Settings from '/src/pages/prefabs/settings.js';
 export default class LeftWing extends Phaser.Scene {
     constructor() {
         super('LeftWing');
+        this.lastInteractionTime = 0;
+        this.interactionCooldown = 300;
     }
 
     async create() {
@@ -92,7 +94,7 @@ export default class LeftWing extends Phaser.Scene {
         this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
         this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
-        this.manual = this.add.sprite(this.scale.width - 120, 80, 'manual')                                         // manual
+        this.manual = this.add.sprite(this.scale.width - 60, 140, 'manual')                                         // manual
             .setScale(0.3)
             .setDepth(3001)
             .setOrigin(1, 0)
@@ -311,10 +313,19 @@ export default class LeftWing extends Phaser.Scene {
             this.isMenuOpen = false;
 
             if (isInteracting) {
+                const currentTime = this.time.now;
+                if (currentTime - this.lastInteractionTime < this.interactionCooldown) {
+                    return;
+                }
+                this.lastInteractionTime = currentTime;
+
                 const returnPos = this.activeZone.spawnInNextScene || null;
 
                 if (this.activeZone.target === 'talkToNPC2') {
-                    this.npcDialogue2.destroy();
+                    if (this.npcDialogue2.isPlaying) {
+                        this.npcDialogue2.stop();
+                        this.npcDialogue2.resetToIdle();
+                    }
 
                     const interactAudio = this.sound.add('interactaudio');
                     interactAudio.once('complete', () => interactAudio.destroy());
@@ -476,7 +487,9 @@ export default class LeftWing extends Phaser.Scene {
                 if (this.gameAudio) {
                     this.gameAudio.stop();
                     this.gameAudio.destroy();
+                    this.gameAudio = null;
                 }
+                
                 this.scene.start(targetSceneName);
             }
         });

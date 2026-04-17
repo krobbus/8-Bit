@@ -98,9 +98,9 @@ export function createMobileControls(scene) {
             const viewWidth = customWidth || scene.cameras.main.width;
             const viewHeight = customHeight || scene.cameras.main.height;
 
-            dpadContainer.setPosition(180, viewHeight - 200);
-            runBtn.setPosition(viewWidth - 130, viewHeight - 280);
-            interactBtn.setPosition(viewWidth - 150, viewHeight - 160);
+            dpadContainer.setPosition(130, viewHeight - 200);
+            runBtn.setPosition(viewWidth - 80, viewHeight - 280);
+            interactBtn.setPosition(viewWidth - 100, viewHeight - 160);
         },
         setVisible: (bool) => {
             dpadContainer.setVisible(bool);

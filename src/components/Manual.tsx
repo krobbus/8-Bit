@@ -83,7 +83,7 @@ const Manual: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                                 <section id="introductionContainer">
                                     <label className="mainHeader">AN AI-DRIVEN 8-BIT WEB GAME FOR PERSONALIZED COLLEGE PROGRAM MATCHING AND CAREER EXPLORATION</label>
                                     
-                                    <img src="public/assets/Background/PLMUN.png" alt="PLMUN background" />
+                                    <img src="assets/Background/PLMUN.png" alt="PLMUN background" />
 
                                     <p className="caption">
                                         This user manual is designed to guide players in understanding and navigating the AI-driven 8-bit web game 
@@ -101,17 +101,14 @@ const Manual: React.FC<ModalProps> = ({ isOpen, onClose }) => {
 
                                     <div className="cardContainer">
                                         <div className="cardWrapper">
-                                            <img src="" alt="Web browser display" />
                                             <span className="subContent">A device with a web browser (Google Chrome, Mozilla Firefox, or Microsoft Edge)</span>
                                         </div>
 
                                         <div className="cardWrapper">
-                                            <img src="" alt="Internet connection display" />
                                             <span className="subContent">Stable internet connection</span>
                                         </div>
 
                                         <div className="cardWrapper">
-                                            <img src="" alt="Devices requirement display" />
                                             <span className="subContent">Desktop, laptop, or mobile device</span>
                                         </div>
                                     </div>
@@ -123,7 +120,7 @@ const Manual: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                                     <section id="loginProcedureContainer">
                                         <label className="subHeader">LOGIN PROCEDURE</label>
 
-                                        <img src="" alt="Login art" />
+                                        <img src="assets/Manual/LoginPage.png" alt="Login page" />
 
                                         <p className="caption">
                                             The login gateway serves as your entry point into the 8-bit world. Allow players to enter 
@@ -133,37 +130,33 @@ const Manual: React.FC<ModalProps> = ({ isOpen, onClose }) => {
 
                                         <div className="cardContainer">
                                             <div className="cardWrapper">
-                                                <img src="" alt="Guest login" />
+                                                <img src="assets/Manual/GuestLogin.png" alt="Guest login" />
 
-                                                <div className="contentWrapper">
-                                                    <span className="mainContent">PLAY AS A GUEST</span>
+                                                <span className="mainContent">PLAY AS A GUEST</span>
 
-                                                    <p className="subContent">
-                                                        Jump straight into the action. Ideal for a quick look at the 8-bit settings, 
-                                                        though progress is stored locally and it will be lost if you leave the game.
-                                                        <br /><br />
-                                                        Click “Play as a Guest” to immediately enter the game. 
-                                                        Guest players can explore the game but may have limited access to saving progress
-                                                    </p>
-                                                </div>
+                                                <p className="subContent">
+                                                    Jump straight into the action. Ideal for a quick look at the 8-bit settings, 
+                                                    though progress is stored locally and it will be lost if you leave the game.
+                                                    <br /><br />
+                                                    Click “Play as a Guest” to immediately enter the game. 
+                                                    Guest players can explore the game but may have limited access to saving progress
+                                                </p>
                                             </div>
 
                                             <div className="cardWrapper">
-                                                <img src="" alt="Account login" />
+                                                <img src="assets/Manual/AccountLogin.png" alt="Account login" />
 
-                                                <div className="contentWrapper">
-                                                    <span className="mainContent">LOGIN WITH EXISTING ACCOUNT</span>
+                                                <span className="mainContent">LOGIN WITH EXISTING ACCOUNT</span>
 
-                                                    <p className="subContent">
-                                                        Securely resume your journey. Enter your unique Player ID/Email,
-                                                        and continue your career matching journey.
-                                                        <br /><br />
-                                                        [1] Select role (Player or Admin) <br /> 
-                                                        [2] Choose "Player" role <br />
-                                                        [3] Enter your Player ID/Email and Password <br />
-                                                        [4] Click “Log In” to proceed
-                                                    </p>
-                                                </div>
+                                                <p className="subContent">
+                                                    Securely resume your journey. Enter your unique Player ID/Email,
+                                                    and continue your career matching journey.
+                                                    <br /><br />
+                                                    [1] Select role (Player or Admin) <br /> 
+                                                    [2] Choose "Player" role <br />
+                                                    [3] Enter your Player ID/Email and Password <br />
+                                                    [4] Click “Log In” to proceed
+                                                </p>
                                             </div>
                                         </div>
                                     </section>
@@ -187,7 +180,12 @@ const Manual: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                                             </div>
 
                                             <div className="cardWrapper">
-                                                <img src="" alt="Forgot password overview" />
+                                                <img src="assets/Manual/ForgotPassword.png" alt="Forgot password" />
+                                                <small>Forgot password button</small>
+
+                                                <img src="assets/Manual/ForgotPasswordOverview.png" alt="Forgot password overview" />
+                                                <small>Forgot password overview</small>
+
                                                 <span className="subContent">Password recovery system assists users who forget credentials</span>
                                             </div>
                                         </div>
@@ -231,7 +229,11 @@ const Manual: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                                     <section id="logoutProcedureContainer">
                                         <label className="subHeader">LOGOUT PROCEDURE</label>
 
-                                        <img src="" alt="Logout art" />
+                                        <img src="assets/Manual/SettingsLogout.png" alt="SettingsLogout" />
+                                        <small>Logout can be found inside the settings panel</small>
+
+                                        <img src="assets/Manual/DashboardLogout.png" alt="DashboardLogout" />
+                                        <small>Logout can be found inside the dashboard modal</small>
 
                                         <p className="caption">
                                             Closing your session correctly ensures that all career matches and game progress 
@@ -261,9 +263,11 @@ const Manual: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                                             </div>
 
                                             <div id="leftWingContainer" className="cardWrapper">
-                                                <img src="" alt="Left wing scene" />
+                                                <img src="assets/Manual/LeftWingOverview.png" alt="Left wing scene" />
                                                 <span className="mainContent">Left Wing Scene (Inside of the campus)</span>
-                                                <p className="subContent"></p>
+                                                <p className="subContent">
+
+                                                </p>
                                             </div>
 
                                             <div id="hallwayContainer" className="cardWrapper">
@@ -291,10 +295,8 @@ const Manual: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                                             <div className="cardWrapper">
                                                 <img src="" alt="Password recovery" />
 
-                                                <div className="contentWrapper">
-                                                    <span className="mainContent">Password Recovery Modal</span>
-                                                    <p className="subContent"></p>
-                                                </div>
+                                                <span className="mainContent">Password Recovery Modal</span>
+                                                <p className="subContent"></p>
                                             </div>
                                         </div>
 
@@ -302,10 +304,8 @@ const Manual: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                                             <div className="cardWrapper">
                                                 <img src="" alt="Dashboard" />
 
-                                                <div className="contentWrapper">
-                                                    <span className="mainContent">Dashboard Modal</span>
-                                                    <p className="mainContent"></p>
-                                                </div>
+                                                <span className="mainContent">Dashboard Modal</span>
+                                                <p className="mainContent"></p>
                                             </div>
                                         </div>
 
@@ -313,10 +313,8 @@ const Manual: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                                             <div className="cardWrapper">
                                                 <img src="" alt="Account management" />
 
-                                                <div className="contentWrapper">
-                                                    <span className="mainContent">Account Management Modal</span>
-                                                    <p className="subContent"></p>
-                                                </div>
+                                                <span className="mainContent">Account Management Modal</span>
+                                                <p className="subContent"></p>
                                             </div>
                                         </div>
 
@@ -324,10 +322,8 @@ const Manual: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                                             <div className="cardWrapper">
                                                 <img src="" alt="Leaderboard" />
 
-                                                <div className="contentWrapper">
-                                                    <span className="mainContent">Leaderboard Modal</span>
-                                                    <p className="subContent"></p>
-                                                </div>
+                                                <span className="mainContent">Leaderboard Modal</span>
+                                                <p className="subContent"></p>
                                             </div>
                                         </div>
                                     </section>

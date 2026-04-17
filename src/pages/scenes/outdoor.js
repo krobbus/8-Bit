@@ -8,6 +8,8 @@ import Settings from '/src/pages/prefabs/settings.js';
 export default class Outdoor extends Phaser.Scene {
     constructor() {
         super('Outdoor');
+        this.lastInteractionTime = 0;
+        this.interactionCooldown = 300;
     }
 
     async create() {
@@ -59,7 +61,7 @@ export default class Outdoor extends Phaser.Scene {
             ],
             {
                 offsetX: -20,
-                offsetY: -80,
+                offsetY: -70,
                 maxWidth: 220,
                 typeDelay: 45,
                 linePause: 2000,
@@ -91,7 +93,7 @@ export default class Outdoor extends Phaser.Scene {
         this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
         this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
                                                                           
-        this.manual = this.add.sprite(this.scale.width - 120, 80, 'manual')                                         // manual
+        this.manual = this.add.sprite(this.scale.width - 60, 140, 'manual')                                         // manual
             .setScale(0.3)
             .setDepth(3001)
             .setOrigin(1, 0)
@@ -240,10 +242,19 @@ export default class Outdoor extends Phaser.Scene {
             const mobileInteractDown = this.mobileControls.isInteractJustDown();
 
             if (interactJustDown || mobileInteractDown) {
+                const currentTime = this.time.now;
+                if (currentTime - this.lastInteractionTime < this.interactionCooldown) {
+                    return;
+                }
+                this.lastInteractionTime = currentTime;
+
                 const returnPos = this.activeZone.spawnInNextScene || null;
 
                 if (this.activeZone.target === 'talkToNPC1') {
-                    this.npcDialogue1.destroy();
+                    if (this.npcDialogue1.isPlaying) {
+                        this.npcDialogue1.stop();
+                        this.npcDialogue1.resetToIdle();
+                    }
 
                     const interactAudio = this.sound.add('interactaudio');
                     interactAudio.once('complete', () => interactAudio.destroy());
@@ -356,7 +367,9 @@ export default class Outdoor extends Phaser.Scene {
                 if (this.gameAudio) {
                     this.gameAudio.stop();
                     this.gameAudio.destroy();
+                    this.gameAudio = null;
                 }
+                
                 this.scene.start(targetSceneName);
             }
         });

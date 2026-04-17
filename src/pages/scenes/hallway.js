@@ -8,6 +8,8 @@ import Settings from '/src/pages/prefabs/settings.js';
 export default class Hallway extends Phaser.Scene {
     constructor() {
         super('Hallway');
+        this.lastInteractionTime = 0;
+        this.interactionCooldown = 300;
     }
 
     async create() {
@@ -126,7 +128,7 @@ export default class Hallway extends Phaser.Scene {
         this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
         this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
-        this.manual = this.add.sprite(viewWidth - 70, 80, 'manual')                                         // manual
+        this.manual = this.add.sprite(viewWidth - 10, 140, 'manual')                                         // manual
             .setScale(0.3)
             .setDepth(3001)
             .setOrigin(1, 0)
@@ -366,10 +368,19 @@ export default class Hallway extends Phaser.Scene {
             this.isMenuOpen = false;
 
             if (isInteracting) {
+                const currentTime = this.time.now;
+                if (currentTime - this.lastInteractionTime < this.interactionCooldown) {
+                    return;
+                }
+                this.lastInteractionTime = currentTime;
+
                 const returnPos = this.activeZone.spawnInNextScene || null;
 
                 if (this.activeZone.target === 'talkToNPC3') {
-                    this.npcDialogue3.destroy();
+                    if (this.npcDialogue3.isPlaying) {
+                        this.npcDialogue3.stop();
+                        this.npcDialogue3.resetToIdle();
+                    }
 
                     const interactAudio = this.sound.add('interactaudio');
                     interactAudio.once('complete', () => interactAudio.destroy());
@@ -377,7 +388,10 @@ export default class Hallway extends Phaser.Scene {
                     
                     this.npcDialogue3.play();
                 } else if (this.activeZone.target === 'talkToNPC4') {
-                    this.npcDialogue4.destroy();
+                    if (this.npcDialogue4.isPlaying) {
+                        this.npcDialogue4.stop();
+                        this.npcDialogue4.resetToIdle();
+                    }
 
                     this.npc4.setVisible(false);
                     this.staticNpc4.setVisible(true);
@@ -500,6 +514,7 @@ export default class Hallway extends Phaser.Scene {
                 if (this.gameAudio) {
                     this.gameAudio.stop();
                     this.gameAudio.destroy();
+                    this.gameAudio = null;
                 }
 
                 this.scene.start(targetSceneName, { 

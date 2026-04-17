@@ -229,52 +229,42 @@ export default class Classroom extends Phaser.Scene {
         const endpoint = isAssessment ? '/api/generate-skill-pers' : '/api/generate-course-related';
 
         try {
-            const wakeStart = Date.now();
-            let serverAwake = false;
-
             try {
                 const ping = await fetch(`${API_BASE_URL}/`, { method: 'GET' });
-                if (ping.ok) serverAwake = true;
             } catch {
-                const wakeTime = ((Date.now() - wakeStart) / 1000).toFixed(1);
-
-                if (!serverAwake) {
-                    this.questionUI("The AI is warming up!\nThis usually takes 20–30 seconds on the first try.\nThank you for your patience!");
-                } else {
-                    this.questionUI(`Almost there! (${wakeTime}s)\nGenerating your questions...`);
-                }
-
-                const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ 
-                        courseName: this.courseCode,
-                        quizType: this.rawType
-                    })
-                });
-
-                if (!response.ok) {
-                    const errorData = await response.json().catch(() => ({ error: "Unknown Server Error" }));
-                    throw new Error(errorData.error || `Server Error: ${response.status}`);
-                }
-                const data = await response.json();
-
-                if (data.questions && data.questions.length > 0) {
-                    this.stopThinkingAnimation();
-
-                    this.courseQuestions = data.questions;
-                    this.currentQuestionIndex = 0;
-
-                    const firstQ = this.courseQuestions[0];
-                    this.questionUI(firstQ.question);
-                    this.optionsUI(firstQ.options || []);
-
-                    this.bg.play(`default${this.gender}`);
-                } else { 
-                    throw new Error("Error: Empty questions list"); 
-                }
+                this.questionUI("The AI is warming up!\nThis usually takes 20–30 seconds on the first try.\nThank you for your patience!");
             }
-        } catch (err) {
+
+            const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ 
+                    courseName: this.courseCode,
+                    quizType: this.rawType
+                })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({ error: "Unknown Server Error" }));
+                throw new Error(errorData.error || `Server Error: ${response.status}`);
+            }
+            const data = await response.json();
+
+            if (data.questions && data.questions.length > 0) {
+                this.stopThinkingAnimation();
+
+                this.courseQuestions = data.questions;
+                this.currentQuestionIndex = 0;
+
+                const firstQ = this.courseQuestions[0];
+                this.questionUI(firstQ.question);
+                this.optionsUI(firstQ.options || []);
+
+                this.bg.play(`default${this.gender}`);
+            } else { 
+                throw new Error("Error: Empty questions list"); 
+            }
+        } catch {
             this.stopThinkingAnimation();
             this.questionUI("Oops! The AI took too long to respond.\nPlease try again in a moment.");
             this.optionsUI(["Retry"]);
@@ -513,6 +503,7 @@ export default class Classroom extends Phaser.Scene {
                 const buttonContainer = this.add.container(currentX, currentY, [optionsStyleContainer, optionsText]);
                 this.optionsContainer.add(buttonContainer);
                 currentY += finalHeight + verticalGap;
+                this.optionButtons.push({ container: buttonContainer, graphics: optionsStyleContainer, text: optionText, w: finalWidth, h: finalHeight });
             });
             this.optionsContainer.y = screenHeight - currentY - 80;
             this.highlightOption(this.selectedOptionIndex);
@@ -894,7 +885,9 @@ export default class Classroom extends Phaser.Scene {
                 if (this.gameAudio) {
                     this.gameAudio.stop();
                     this.gameAudio.destroy();
+                    this.gameAudio = null;
                 }
+
                 this.scene.start(targetSceneName);
             }
         });

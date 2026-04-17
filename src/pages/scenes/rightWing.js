@@ -8,6 +8,8 @@ import Settings from '/src/pages/prefabs/settings.js';
 export default class RightWing extends Phaser.Scene {
     constructor() {
         super('RightWing');
+        this.lastInteractionTime = 0;
+        this.interactionCooldown = 300;
     }
 
     async create() {
@@ -111,7 +113,7 @@ export default class RightWing extends Phaser.Scene {
         this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
         this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
-        this.manual = this.add.sprite(this.scale.width - 120, 80, 'manual')                                         // manual
+        this.manual = this.add.sprite(this.scale.width - 60, 140, 'manual')                                         // manual
             .setScale(0.3)
             .setDepth(3001)
             .setOrigin(1, 0)
@@ -248,10 +250,19 @@ export default class RightWing extends Phaser.Scene {
             const mobileInteractDown = this.mobileControls.isInteractJustDown();
 
             if (interactJustDown || mobileInteractDown) {
+                const currentTime = this.time.now;
+                if (currentTime - this.lastInteractionTime < this.interactionCooldown) {
+                    return;
+                }
+                this.lastInteractionTime = currentTime;
+
                 const returnPos = this.activeZone.spawnInNextScene || null;
 
                 if (this.activeZone.target === 'talkToNPC5') {
-                    this.npcDialogue5.destroy();
+                    if (this.npcDialogue5.isPlaying) {
+                        this.npcDialogue5.stop();
+                        this.npcDialogue5.resetToIdle();
+                    }
 
                     const interactAudio = this.sound.add('interactaudio');
                     interactAudio.once('complete', () => interactAudio.destroy());
@@ -259,7 +270,10 @@ export default class RightWing extends Phaser.Scene {
 
                     this.npcDialogue5.play();
                 } else if (this.activeZone.target === 'talkToNPC6') {
-                    this.npcDialogue6.destroy();
+                    if (this.npcDialogue6.isPlaying) {
+                        this.npcDialogue6.stop();
+                        this.npcDialogue6.resetToIdle();
+                    }
 
                     const interactAudio = this.sound.add('interactaudio');
                     interactAudio.once('complete', () => interactAudio.destroy());
@@ -336,7 +350,9 @@ export default class RightWing extends Phaser.Scene {
                 if (this.gameAudio) {
                     this.gameAudio.stop();
                     this.gameAudio.destroy();
+                    this.gameAudio = null;
                 }
+                
                 this.scene.start(targetSceneName);
             }
         });
