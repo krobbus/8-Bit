@@ -104,7 +104,7 @@ export default class Classroom extends Phaser.Scene {
 
         this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
-        this.manual = this.add.sprite(this.scale.width - 120, 80, 'manual')                                         // manual
+        this.manual = this.add.sprite(this.scale.width - 60, 140, 'manual')                                         // manual
             .setScale(0.3)
             .setDepth(3001)
             .setOrigin(1, 0)
@@ -390,7 +390,8 @@ export default class Classroom extends Phaser.Scene {
         if (!this.optionButtons) return;
 
         this.optionButtons.forEach(btn => {
-            btn.graphics.setInteractive(false);
+            if (!btn.graphics || !btn.graphics.scene) return;
+            btn.graphics.disableInteractive();
             btn.container.setAlpha(0.5);
         });
     }
@@ -399,6 +400,7 @@ export default class Classroom extends Phaser.Scene {
         if (!this.optionButtons) return;
 
         this.optionButtons.forEach(btn => {
+            if (!btn.graphics || !btn.graphics.scene) return;
             const hitArea = new Phaser.Geom.Rectangle(0, 0, btn.w, btn.h);
             btn.graphics.setInteractive(hitArea, Phaser.Geom.Rectangle.Contains);
             btn.container.setAlpha(1);
@@ -408,7 +410,8 @@ export default class Classroom extends Phaser.Scene {
     optionsUI(options) {
         if (this.optionsContainer) this.optionsContainer.destroy();
         this.currentOptions = options;
-        this.selectedOptionIndex = 0; 
+        this.selectedOptionIndex = 0;
+        this.optionButtons = [];
 
         const screenHeight = this.scale.height;
         const screenWidth = this.scale.width;
@@ -484,6 +487,8 @@ export default class Classroom extends Phaser.Scene {
             const startX = 250;
             const offsetStep = 50;
 
+            this.optionButtons = [];
+
             options.forEach((optionText, index) => {
                 const label = String.fromCharCode(65 + index);
                 const currentX = startX - (index * offsetStep);
@@ -514,11 +519,11 @@ export default class Classroom extends Phaser.Scene {
                 const hitArea = new Phaser.Geom.Rectangle(0, 0, finalWidth, finalHeight);    
                 optionsStyleContainer.setInteractive(hitArea, Phaser.Geom.Rectangle.Contains)
                     .on('pointerover', () => {
-                        if (!this.isSettingsOpen) optionsStyleContainer.setAlpha(0.8);
+                        if (!this.isSettingsOpen && !this.isLoadingQuestions) optionsStyleContainer.setAlpha(0.8);
                     })
                     .on('pointerout', () => optionsStyleContainer.setAlpha(1))
                     .on('pointerdown', () => {
-                        if (this.isSettingsOpen) return;
+                        if (this.isSettingsOpen || this.isLoadingQuestions) return;
 
                         if (optionText === "Retry") {
                             this.loadQuestions();
@@ -592,12 +597,15 @@ export default class Classroom extends Phaser.Scene {
 
     handleAnswer(selectedOption) {
         if (this.isAnswering) return;
-        this.isAnswering = true;
 
         const isAssessment = this.rawType === 'Skill' || this.rawType === 'Personality';
         if (this.optionsContainer) this.optionsContainer.setVisible(false);
 
         const currentQ = this.courseQuestions[this.currentQuestionIndex];
+        if (!currentQ) return;
+
+        this.isAnswering = true;
+        this.disableAllOptions();
 
         if (isAssessment) {
             const answerAudio = this.sound.add('answeraudio');
@@ -663,10 +671,6 @@ export default class Classroom extends Phaser.Scene {
             const correctAnswer = currentQ.answer || currentQ.correctAnswer;
             const isCorrect = selectedOption === correctAnswer;
 
-            const resultAudio = this.sound.add(isCorrect ? 'correctaudio' : 'wrongaudio');
-            resultAudio.once('complete', () => resultAudio.destroy());
-            resultAudio.play();
-
             this.assessmentResults.push({
                 question: currentQ.question,
                 options: currentQ.options,
@@ -680,6 +684,10 @@ export default class Classroom extends Phaser.Scene {
             });
 
             this.time.delayedCall(delayTimer + 2000, () => {
+                const resultAudio = this.sound.add(isCorrect ? 'correctaudio' : 'wrongaudio');
+                resultAudio.once('complete', () => resultAudio.destroy());
+                resultAudio.play();
+
                 this.questionUI(`The correct answer is:\n${correctAnswer}`);
                 this.children.list
                     .filter(c => c.name === 'answerBubble')

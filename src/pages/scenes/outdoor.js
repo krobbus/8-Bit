@@ -251,10 +251,7 @@ export default class Outdoor extends Phaser.Scene {
                 const returnPos = this.activeZone.spawnInNextScene || null;
 
                 if (this.activeZone.target === 'talkToNPC1') {
-                    if (this.npcDialogue1.isPlaying) {
-                        this.npcDialogue1.stop();
-                        this.npcDialogue1.resetToIdle();
-                    }
+                    if (this.npcDialogue1.isPlaying || this.npcDialogue1.isResetting) return;
 
                     const interactAudio = this.sound.add('interactaudio');
                     interactAudio.once('complete', () => interactAudio.destroy());

@@ -168,7 +168,7 @@ export default class RightWing extends Phaser.Scene {
             { 
                 x: 700, y: 400, w: 220, h: 40, 
                 hintText1: "DO YOU WANT TO", hintText2: "VIEW LEADERBOARD ?", hintHeight: 50, hintWidth: 230, 
-                /*spawnInNextScene: { x: 50, y: 420 },*/ target: "openLeaderboardModal"
+                target: "openLeaderboardModal"
             },
             {
                 x: 960, y: 420, w: 60, h: 30,
@@ -259,10 +259,7 @@ export default class RightWing extends Phaser.Scene {
                 const returnPos = this.activeZone.spawnInNextScene || null;
 
                 if (this.activeZone.target === 'talkToNPC5') {
-                    if (this.npcDialogue5.isPlaying) {
-                        this.npcDialogue5.stop();
-                        this.npcDialogue5.resetToIdle();
-                    }
+                    if (this.npcDialogue5.isPlaying || this.npcDialogue5.isResetting) return;
 
                     const interactAudio = this.sound.add('interactaudio');
                     interactAudio.once('complete', () => interactAudio.destroy());
@@ -270,10 +267,7 @@ export default class RightWing extends Phaser.Scene {
 
                     this.npcDialogue5.play();
                 } else if (this.activeZone.target === 'talkToNPC6') {
-                    if (this.npcDialogue6.isPlaying) {
-                        this.npcDialogue6.stop();
-                        this.npcDialogue6.resetToIdle();
-                    }
+                    if (this.npcDialogue6.isPlaying || this.npcDialogue6.isResetting) return;
 
                     const interactAudio = this.sound.add('interactaudio');
                     interactAudio.once('complete', () => interactAudio.destroy());

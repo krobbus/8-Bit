@@ -52,6 +52,4 @@
     }
 }
 
-.modalBackdrop.resultBackdrop {
-    z-index: 1100;
-}
+.modalBackdrop.resultBackdrop { z-index: 1100; }

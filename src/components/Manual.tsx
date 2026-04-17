@@ -169,32 +169,10 @@ const Manual: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                                             sensitive data masking for PINs/passwords, and a streamlined recovery process to 
                                             ensure you never lose access to your career exploration journey
                                         </p>
-
-                                        <div className="cardContainer">
-                                            <div className="cardWrapper">
-                                                <span className="subContent">Login authentication ensures secure access</span>
-                                            </div>
-
-                                            <div className="cardWrapper">
-                                                <span className="subContent">For checking your information, players can hide their password and PIN</span>
-                                            </div>
-
-                                            <div className="cardWrapper">
-                                                <img src="assets/Manual/ForgotPassword.png" alt="Forgot password" />
-                                                <small>Forgot password button</small>
-
-                                                <img src="assets/Manual/ForgotPasswordOverview.png" alt="Forgot password overview" />
-                                                <small>Forgot password overview</small>
-
-                                                <span className="subContent">Password recovery system assists users who forget credentials</span>
-                                            </div>
-                                        </div>
                                     </section>
 
                                     <section id="guideForPlayersContainer">
                                         <label className="subHeader">GUIDE FOR PLAYERS</label>
-
-                                        <img src="" alt="Guide art" />
 
                                         <p className="caption">
                                             Success in career matching comes from honesty and exploration. Interact with every NPC, 

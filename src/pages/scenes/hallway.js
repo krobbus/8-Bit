@@ -377,10 +377,7 @@ export default class Hallway extends Phaser.Scene {
                 const returnPos = this.activeZone.spawnInNextScene || null;
 
                 if (this.activeZone.target === 'talkToNPC3') {
-                    if (this.npcDialogue3.isPlaying) {
-                        this.npcDialogue3.stop();
-                        this.npcDialogue3.resetToIdle();
-                    }
+                    if (this.npcDialogue3.isPlaying || this.npcDialogue3.isResetting) return;
 
                     const interactAudio = this.sound.add('interactaudio');
                     interactAudio.once('complete', () => interactAudio.destroy());
@@ -388,10 +385,7 @@ export default class Hallway extends Phaser.Scene {
                     
                     this.npcDialogue3.play();
                 } else if (this.activeZone.target === 'talkToNPC4') {
-                    if (this.npcDialogue4.isPlaying) {
-                        this.npcDialogue4.stop();
-                        this.npcDialogue4.resetToIdle();
-                    }
+                    if (this.npcDialogue4.isPlaying || this.npcDialogue4.isResetting) return;
 
                     this.npc4.setVisible(false);
                     this.staticNpc4.setVisible(true);

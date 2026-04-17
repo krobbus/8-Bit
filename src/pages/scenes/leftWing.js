@@ -68,9 +68,13 @@ export default class LeftWing extends Phaser.Scene {
                 linePause: 2000,
                 loop: false,
                 depth: 200,
-                onComplete: () => this.npcDialogue2.resetToIdle()
+                onComplete: () => {
+                    this.npcDialogue2.resetToIdle();
+                    this.npcInteracted = false;
+                }
             }
         );
+        this.npcInteracted = false;
 
         let existingAudio = this.sound.get('gamebg');                                                          // audio
         if (existingAudio) existingAudio.destroy();
@@ -322,16 +326,17 @@ export default class LeftWing extends Phaser.Scene {
                 const returnPos = this.activeZone.spawnInNextScene || null;
 
                 if (this.activeZone.target === 'talkToNPC2') {
-                    if (this.npcDialogue2.isPlaying) {
-                        this.npcDialogue2.stop();
-                        this.npcDialogue2.resetToIdle();
-                    }
+                    if (this.npcInteracted) return;
 
-                    const interactAudio = this.sound.add('interactaudio');
-                    interactAudio.once('complete', () => interactAudio.destroy());
-                    interactAudio.play();
-                    
-                    this.npcDialogue2.play();
+                    if (isInteracting && this.npcInteracted === false) {
+                        this.npcInteracted = true;
+
+                        const interactAudio = this.sound.add('interactaudio');
+                        interactAudio.once('complete', () => interactAudio.destroy());
+                        interactAudio.play();
+
+                        this.npcDialogue2.play();
+                    }
                 } else {
                     if (this.activeZone.target === 'Hallway') {
                         if (!this.playerName || this.playerName === 'Guest') {

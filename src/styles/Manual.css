@@ -157,6 +157,8 @@
         justify-content: center;
         align-items: center;
         gap: 1.8vmin;
+        width: 100%;
+        box-sizing: border-box;
 
         section{
             display: flex;
@@ -179,9 +181,8 @@
             }
 
             .caption{
-                text-align: left;
                 font-size: 1.8vmin;
-                color: #DAD7CD;
+                text-align: justify;;
             }
 
             .cardContainer{
@@ -215,17 +216,14 @@
                         box-sizing: border-box;
                     }
 
-                    small{ text-align: right; }
-
                     .mainContent{
                         font-size: 1.8vmin; 
-                        text-align: center;
+                        text-align: justify;
                     }
 
                     .subContent{
                         font-size: 1.6vmin;
-                        color: #DAD7CD;
-                        text-align: center;
+                        text-align: justify;
                     }
                 }
             }
