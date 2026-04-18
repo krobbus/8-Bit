@@ -61,7 +61,7 @@ export default class Outdoor extends Phaser.Scene {
             ],
             {
                 offsetX: -20,
-                offsetY: -70,
+                offsetY: -60,
                 maxWidth: 220,
                 typeDelay: 45,
                 linePause: 2000,

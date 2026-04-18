@@ -57,6 +57,7 @@ export default class Classroom extends Phaser.Scene {
 
         const playerID = localStorage.getItem("playerID");
         const snapshot = await db.ref(`webGame/${playerID}`).once('value');
+        if (!this.scene.isActive('Classroom')) return;
         const userData = snapshot.val();
         const playerName = (userData && userData.name) ? userData.name : "Guest";
         this.gender = (userData && userData.gender) ? userData.gender.toLowerCase() : 'male';
@@ -254,6 +255,7 @@ export default class Classroom extends Phaser.Scene {
                 throw new Error(errorData.error || `Server Error: ${response.status}`);
             }
             const data = await response.json();
+            if (!this.scene.isActive('Classroom')) return;
 
             if (data.questions && data.questions.length > 0) {
                 this.stopThinkingAnimation();
@@ -273,6 +275,7 @@ export default class Classroom extends Phaser.Scene {
                 throw new Error("Error: Empty questions list"); 
             }
         } catch {
+            if (!this.scene.isActive('Classroom')) return;
             this.stopThinkingAnimation();
             this.questionUI("Oops! The AI took too long to respond.\nPlease try again in a moment.");
             this.optionsUI(["Retry"]);
@@ -865,6 +868,7 @@ export default class Classroom extends Phaser.Scene {
         if (!this.mobileControls) return; 
 
         if (this.optionButtons && this.optionButtons.length > 0 && !this.isAnswering && this.currentOptions.length > 0 && !this.isLoadingQuestions) {
+            const isAssessment = this.rawType === 'Skill' || this.rawType === 'Personality';
             const upJustDown =
                 Phaser.Input.Keyboard.JustDown(this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP)) ||
                 Phaser.Input.Keyboard.JustDown(this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W)) ||
