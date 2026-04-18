@@ -99,6 +99,31 @@
         }
     }
 
+    .instructionContainer{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background-color: #3a5a40;
+        padding: 1.8vmin;
+        border-radius: 1.2vmin;
+        gap: 1.8vmin;
+        width: 100%;
+        box-sizing: border-box;
+
+        .instructions{
+            font-size: 1.6vmin;
+            text-align: justify;
+            text-transform: uppercase;
+
+            .highlight{ 
+                border-radius: 1.2vmin;
+                padding: 1.2vmin;
+                color: #a3b18a;
+            }
+        }
+    }
+
     .sliderViewport {
         width: 100%;
         overflow: hidden;

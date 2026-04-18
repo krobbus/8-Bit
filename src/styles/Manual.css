@@ -216,15 +216,22 @@
                         box-sizing: border-box;
                     }
 
-                    .mainContent{
-                        font-size: 1.8vmin; 
-                        text-align: justify;
+                    small{ 
+                        font-size: 1.2vmin;
+                        color: #dad7cd; 
                     }
 
-                    .subContent{
-                        font-size: 1.6vmin;
-                        text-align: justify;
+                    .mainContent{
+                        font-size: 1.8vmin; 
+                        text-align: center;
                     }
+
+                    .cardContent, .subContent{
+                        font-size: 1.6vmin;
+                        text-align: center;
+                    }
+
+                    .subContent{ text-align: justify; }
                 }
             }
         }

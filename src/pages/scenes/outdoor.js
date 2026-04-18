@@ -101,7 +101,7 @@ export default class Outdoor extends Phaser.Scene {
         this.manual = this.add.sprite(this.scale.width - 60, 140, 'manual')                                         // manual
             .setScale(0.3)
             .setDepth(3001)
-            .setOrigin(1, 0)
+            .setOrigin(0.5, 0.5)
             .setInteractive({ useHandCursor: true })
             .on("pointerdown", () => {
                 const interactAudio = this.sound.add('interactaudio');
@@ -269,9 +269,9 @@ export default class Outdoor extends Phaser.Scene {
                         this.npcDialogue1.play();
                     }
                 } else {
-                    if (this.activeZone.target === 'Rightwing') {
+                    if (this.activeZone.target === 'RightWing') {
                         if (!this.playerName || this.playerName === 'Guest') {
-                            this.showBlockedHint("ENTER THE MAIN DOOR AND\nCREATE PROFILE AND PERSONALIZATION FIRST!");
+                            this.showBlockedHint("ENTER THE MAIN DOOR AND CREATE\nPROFILE AND PERSONALIZATION FIRST!");
                             return;
                         }
                     }
@@ -312,18 +312,19 @@ export default class Outdoor extends Phaser.Scene {
         if (this.blockedHintText) this.blockedHintText.destroy();
 
         this.blockedHintText = this.add.text(
-            this.player.x, this.player.y - 80, message, {
+            this.player.x - 50, this.player.y - 90, message, {
                 fontFamily: '"Press Start 2P"',
-                fontSize: "9px",
-                fill: "#ff5555",
+                fontSize: "10px",
+                fill: "#ffa5a5",
                 align: "center",
                 backgroundColor: "#125729",
                 padding: { x: 12, y: 8 },
+                lineHeight: 4,
                 resolution: 2
             }
         ).setOrigin(0.5).setDepth(200);
 
-        this.time.delayedCall(2500, () => {
+        this.time.delayedCall(5000, () => {
             if (this.blockedHintText) {
                 this.blockedHintText.destroy();
                 this.blockedHintText = null;

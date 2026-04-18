@@ -84,7 +84,6 @@ const Manual: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                                     <label className="mainHeader">AN AI-DRIVEN 8-BIT WEB GAME FOR PERSONALIZED COLLEGE PROGRAM MATCHING AND CAREER EXPLORATION</label>
                                     
                                     <img src="assets/Background/PLMUN.png" alt="PLMUN background" />
-
                                     <p className="caption">
                                         This user manual is designed to guide players in understanding and navigating the AI-driven 8-bit web game 
                                         for personalized college program matching and career exploration. The game uses an interactive, retro-style 
@@ -101,15 +100,15 @@ const Manual: React.FC<ModalProps> = ({ isOpen, onClose }) => {
 
                                     <div className="cardContainer">
                                         <div className="cardWrapper">
-                                            <span className="subContent">A device with a web browser (Google Chrome, Mozilla Firefox, or Microsoft Edge)</span>
+                                            <span className="cardContent">A device with a web browser (Google Chrome, Mozilla Firefox, or Microsoft Edge)</span>
                                         </div>
 
                                         <div className="cardWrapper">
-                                            <span className="subContent">Stable internet connection</span>
+                                            <span className="cardContent">Stable internet connection</span>
                                         </div>
 
                                         <div className="cardWrapper">
-                                            <span className="subContent">Desktop, laptop, or mobile device</span>
+                                            <span className="cardContent">Desktop, laptop, or mobile device</span>
                                         </div>
                                     </div>
                                 </section>
@@ -133,7 +132,6 @@ const Manual: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                                                 <img src="assets/Manual/GuestLogin.png" alt="Guest login" />
 
                                                 <span className="mainContent">PLAY AS A GUEST</span>
-
                                                 <p className="subContent">
                                                     Jump straight into the action. Ideal for a quick look at the 8-bit settings, 
                                                     though progress is stored locally and it will be lost if you leave the game.
@@ -147,7 +145,6 @@ const Manual: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                                                 <img src="assets/Manual/AccountLogin.png" alt="Account login" />
 
                                                 <span className="mainContent">LOGIN WITH EXISTING ACCOUNT</span>
-
                                                 <p className="subContent">
                                                     Securely resume your journey. Enter your unique Player ID/Email,
                                                     and continue your career matching journey.
@@ -183,23 +180,23 @@ const Manual: React.FC<ModalProps> = ({ isOpen, onClose }) => {
 
                                         <div className="cardContainer">
                                             <div className="cardWrapper">
-                                                <span className="subContent">Answer questions honestly to receive accurate AI recommendations</span>
+                                                <span className="cardContent">Answer questions honestly to receive accurate AI recommendations</span>
                                             </div>
 
                                             <div className="cardWrapper">
-                                                <span className="subContent">Explore different game paths to discover various career options</span>
+                                                <span className="cardContent">Explore different game paths to discover various career options</span>
                                             </div>
 
                                             <div className="cardWrapper">
-                                                <span className="subContent">Review statistics on dashboard to track progress and improvement</span>
+                                                <span className="cardContent">Review statistics on dashboard to track progress and improvement</span>
                                             </div>
 
                                             <div className="cardWrapper">
-                                                <span className="subContent">Define your actual skills and personality traits to ensure accurate and correct results</span>
+                                                <span className="cardContent">Define your actual skills and personality traits to ensure accurate and correct results</span>
                                             </div>
 
                                             <div className="cardWrapper">
-                                                <span className="subContent">Verify that your selected traits accurately reflect your strengths for a more personalized career analysis</span>
+                                                <span className="cardContent">Verify that your selected traits accurately reflect your strengths for a more personalized career analysis</span>
                                             </div>
                                         </div>
                                     </section>
@@ -235,13 +232,15 @@ const Manual: React.FC<ModalProps> = ({ isOpen, onClose }) => {
 
                                         <div className="cardContainer">
                                             <div id="outdoorContainer" className="cardWrapper">
-                                                <img src="" alt="Outdoor scene" />
+                                                <img src="assets/Manual/Outdoor.png" alt="Outdoor scene" />
                                                 <span className="mainContent">Outdoor Scene (Outside of the campus)</span>
-                                                <p className="subContent"></p>
+                                                <p className="subContent">
+
+                                                </p>
                                             </div>
 
                                             <div id="leftWingContainer" className="cardWrapper">
-                                                <img src="assets/Manual/LeftWingOverview.png" alt="Left wing scene" />
+                                                <img src="assets/Manual/LeftWing.png" alt="Left wing scene" />
                                                 <span className="mainContent">Left Wing Scene (Inside of the campus)</span>
                                                 <p className="subContent">
 
@@ -249,15 +248,19 @@ const Manual: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                                             </div>
 
                                             <div id="hallwayContainer" className="cardWrapper">
-                                                <img src="" alt="Hallway scene" />
+                                                <img src="assets/Manual/Hallway.png" alt="Hallway scene" />
                                                 <span className="mainContent">Hallway Scene (Inside of the campus)</span>
-                                                <p className="subContent"></p>
+                                                <p className="subContent">
+                                                    
+                                                </p>
                                             </div>
 
                                             <div id="rightWingContainer" className="cardWrapper">
-                                                <img src="" alt="Right wing scene" />
+                                                <img src="assets/Manual/RightWing.png" alt="Right wing scene" />
                                                 <span className="mainContent">Right Wing Scene (Inside of the campus)</span>
-                                                <p className="subContent"></p>
+                                                <p className="subContent">
+
+                                                </p>
                                             </div>
                                         </div>
                                     </section>
@@ -271,37 +274,45 @@ const Manual: React.FC<ModalProps> = ({ isOpen, onClose }) => {
 
                                         <div className="cardContainer">
                                             <div className="cardWrapper">
-                                                <img src="" alt="Password recovery" />
+                                                <img src="assets/Manual/ForgotPassword.png" alt="Password recovery" />
 
                                                 <span className="mainContent">Password Recovery Modal</span>
-                                                <p className="subContent"></p>
+                                                <p className="subContent">
+
+                                                </p>
                                             </div>
                                         </div>
 
                                         <div className="cardContainer">
                                             <div className="cardWrapper">
-                                                <img src="" alt="Dashboard" />
+                                                <img src="assets/Manual/Dashboard.png" alt="Dashboard" />
 
                                                 <span className="mainContent">Dashboard Modal</span>
-                                                <p className="mainContent"></p>
+                                                <p className="subContent">
+
+                                                </p>
                                             </div>
                                         </div>
 
                                         <div className="cardContainer">
                                             <div className="cardWrapper">
-                                                <img src="" alt="Account management" />
+                                                <img src="assets/Manual/AccountManagement.png" alt="Account management" />
 
                                                 <span className="mainContent">Account Management Modal</span>
-                                                <p className="subContent"></p>
+                                                <p className="subContent">
+
+                                                </p>
                                             </div>
                                         </div>
 
                                         <div className="cardContainer">
                                             <div className="cardWrapper">
-                                                <img src="" alt="Leaderboard" />
+                                                <img src="assets/Manual/Leaderboard.png" alt="Leaderboard" />
 
                                                 <span className="mainContent">Leaderboard Modal</span>
-                                                <p className="subContent"></p>
+                                                <p className="subContent">
+
+                                                </p>
                                             </div>
                                         </div>
                                     </section>

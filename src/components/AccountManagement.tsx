@@ -339,6 +339,24 @@ const AccountManagement: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                                     </button>
                                 </nav>
 
+                                <div className="instructionContainer">
+                                    <label className="mainHeader">INSTRUCTION</label>
+
+                                    <p className="instructions">
+                                        To begin, you must complete the <span className="highlight">Profile</span> 
+                                        and <span className="highlight">Preferences</span> so we can tailor the assessment to your needs. Please note that during 
+                                        this phase, you can explore the campus and try out all features freely without needing to register. However, please be aware 
+                                        that while your progress is temporarily saved, it is not permanent. If you leave the site, you will not be able to access 
+                                        your data or progress upon your return. 
+                                    </p>
+
+                                    <p className="instructions">
+                                        To ensure your journey and assessment results are permanently saved and accessible for your next visit, you have the option 
+                                        to create an <span className="highlight">Account</span>. This allows you to pick up exactly where you left off, even after 
+                                        leaving the page. Explore at your own pace, and create an account only when you're ready to save your legacy!
+                                    </p>
+                                </div>
+
                                 <div className="sliderViewport">
                                     <div className={`sliderWrapper ${view}`}>
                                         <div className={`page characterPage ${view === 'character' ? 'activePage' : ''}`}>

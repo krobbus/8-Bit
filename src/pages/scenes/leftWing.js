@@ -362,18 +362,19 @@ export default class LeftWing extends Phaser.Scene {
         if (this.blockedHintText) this.blockedHintText.destroy();
 
         this.blockedHintText = this.add.text(
-            this.player.x, this.player.y - 80, message, {
+            this.player.x - 120, this.player.y - 100, message, {
                 fontFamily: '"Press Start 2P"',
-                fontSize: "9px",
-                fill: "#ff5555",
+                fontSize: "10px",
+                fill: "#ffa5a5",
                 align: "center",
                 backgroundColor: "#125729",
                 padding: { x: 12, y: 8 },
+                lineHeight: 4,
                 resolution: 2
             }
         ).setOrigin(0.5).setDepth(200);
 
-        this.time.delayedCall(2500, () => {
+        this.time.delayedCall(5000, () => {
             if (this.blockedHintText) {
                 this.blockedHintText.destroy();
                 this.blockedHintText = null;
