@@ -83,15 +83,15 @@ export default class Classroom extends Phaser.Scene {
         this.nameContainer.add([this.nameBg, this.nameText]);
         this.nameContainer.setDepth(110);
         
-        let existingAudio = this.sound.get('classroombg');                                                          // audio
-        if (existingAudio) existingAudio.destroy();
-        this.gameAudio = this.sound.add('classroombg', { loop: true });
+        this.sound.stopAll();
+        this.sound.removeAll();
 
         const startAudio = () => {
-            if (this.sound.context.state === 'suspended') this.sound.context.resume(); 
-            if (!this.gameAudio.isPlaying) this.gameAudio.play();
+            if (this.gameAudio && this.gameAudio.isPlaying) return;
+            if (this.sound.context.state === 'suspended') this.sound.context.resume();
+            this.gameAudio = this.sound.add('classroombg', { loop: true });
+            this.gameAudio.play();
         };
-        startAudio();
 
         this.input.once('pointerdown', startAudio);
         this.input.keyboard.once('keydown', startAudio);
@@ -99,6 +99,7 @@ export default class Classroom extends Phaser.Scene {
             if (this.gameAudio) {
                 this.gameAudio.stop();
                 this.gameAudio.destroy();
+                this.gameAudio = null;
             }
         });
 
@@ -431,10 +432,11 @@ export default class Classroom extends Phaser.Scene {
                 let offsetY = 0;
 
                 const textCheck = optionText.toUpperCase().trim();
-                if (textCheck.includes("STRONGLY AGREE")) { offsetX = -100; offsetY = -50; }
-                else if (textCheck.includes("STRONGLY DISAGREE")) { offsetX = 100; offsetY = 50; }
-                else if (textCheck.includes("DISAGREE")) { offsetX = -100; offsetY = 50; }
-                else if (textCheck.includes("AGREE")) { offsetX = 100; offsetY = -50; }
+                if (textCheck.includes("STRONGLY DISAGREE")) { offsetX = 105; offsetY = 50; }
+                else if (textCheck.includes("STRONGLY AGREE")) { offsetX = -105; offsetY = -50; }
+                else if (textCheck.includes("DISAGREE")) { offsetX = -105; offsetY = 50; }
+                else if (textCheck.includes("AGREE")) { offsetX = 105; offsetY = -50; }
+                else if (textCheck.includes("NEUTRAL")) { offsetX = 0; offsetY: 0; }
                 else { offsetX = 0; offsetY = 0; }
 
                 const optionsText = this.add.text(0, 0, optionText, {
@@ -879,14 +881,20 @@ export default class Classroom extends Phaser.Scene {
                 this.mobileControls.isInteractJustDown();
 
             if (upJustDown) {
-                this.selectedOptionIndex = (this.selectedOptionIndex - 1 + this.currentOptions.length) % this.currentOptions.length;
+                this.selectedOptionIndex = isAssessment
+                    ? (this.selectedOptionIndex + 1) % this.currentOptions.length
+                    : (this.selectedOptionIndex - 1 + this.currentOptions.length) % this.currentOptions.length;
                 this.highlightOption(this.selectedOptionIndex);
             }
+
             if (downJustDown) {
-                this.selectedOptionIndex = (this.selectedOptionIndex + 1) % this.currentOptions.length;
+                this.selectedOptionIndex = isAssessment
+                    ? (this.selectedOptionIndex - 1 + this.currentOptions.length) % this.currentOptions.length
+                    : (this.selectedOptionIndex + 1) % this.currentOptions.length;
                 this.highlightOption(this.selectedOptionIndex);
             }
-            if (confirmJustDown) {
+
+            if (confirmJustDown || this.isLoadingQuestions) {
                 const selected = this.currentOptions[this.selectedOptionIndex];
                 if (selected) selected === "Retry" ? this.loadQuestions() : this.handleAnswer(selected);
             }

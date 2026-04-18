@@ -87,19 +87,23 @@ export default class RightWing extends Phaser.Scene {
                 linePause: 2000,
                 loop: false,
                 depth: 200,
-                onComplete: () => this.npcDialogue6.resetToIdle()
+                onComplete: () => {
+                    this.npcDialogue6.resetToIdle();
+                    this.npcInteracted = false;
+                }
             }
         );
+        this.npcInteracted = false;
 
-        let existingAudio = this.sound.get('gamebg');                                                          // audio
-        if (existingAudio) existingAudio.destroy();
-        this.gameAudio = this.sound.add('gamebg', { loop: true });
+        this.sound.stopAll();
+        this.sound.removeAll();
 
         const startAudio = () => {
-            if (this.sound.context.state === 'suspended') this.sound.context.resume(); 
-            if (!this.gameAudio.isPlaying) this.gameAudio.play();
+            if (this.gameAudio && this.gameAudio.isPlaying) return;
+            if (this.sound.context.state === 'suspended') this.sound.context.resume();
+            this.gameAudio = this.sound.add('gamebg', { loop: true });
+            this.gameAudio.play();
         };
-        startAudio();
 
         this.input.once('pointerdown', startAudio);
         this.input.keyboard.once('keydown', startAudio);
@@ -107,6 +111,7 @@ export default class RightWing extends Phaser.Scene {
             if (this.gameAudio) {
                 this.gameAudio.stop();
                 this.gameAudio.destroy();
+                this.gameAudio = null;
             }
         });
 
@@ -248,6 +253,7 @@ export default class RightWing extends Phaser.Scene {
             const spaceJustDown = Phaser.Input.Keyboard.JustDown(this.spaceKey);
             const interactJustDown = enterJustDown || spaceJustDown;
             const mobileInteractDown = this.mobileControls.isInteractJustDown();
+            const isInteracting = interactJustDown || mobileInteractDown;
 
             if (interactJustDown || mobileInteractDown) {
                 const currentTime = this.time.now;
@@ -259,21 +265,29 @@ export default class RightWing extends Phaser.Scene {
                 const returnPos = this.activeZone.spawnInNextScene || null;
 
                 if (this.activeZone.target === 'talkToNPC5') {
-                    if (this.npcDialogue5.isPlaying || this.npcDialogue5.isResetting) return;
+                    if (isInteracting) {
+                        if (this.npcInteracted && this.npcDialogue5.isPlaying) return;
 
-                    const interactAudio = this.sound.add('interactaudio');
-                    interactAudio.once('complete', () => interactAudio.destroy());
-                    interactAudio.play();
+                        this.npcInteracted = true;
 
-                    this.npcDialogue5.play();
+                        const interactAudio = this.sound.add('interactaudio');
+                        interactAudio.once('complete', () => interactAudio.destroy());
+                        interactAudio.play();
+
+                        this.npcDialogue5.play();
+                    }
                 } else if (this.activeZone.target === 'talkToNPC6') {
-                    if (this.npcDialogue6.isPlaying || this.npcDialogue6.isResetting) return;
+                    if (isInteracting) {
+                        if (this.npcInteracted && this.npcDialogue6.isPlaying) return;
 
-                    const interactAudio = this.sound.add('interactaudio');
-                    interactAudio.once('complete', () => interactAudio.destroy());
-                    interactAudio.play();
-                    
-                    this.npcDialogue6.play();
+                        this.npcInteracted = true;
+
+                        const interactAudio = this.sound.add('interactaudio');
+                        interactAudio.once('complete', () => interactAudio.destroy());
+                        interactAudio.play();
+                        
+                        this.npcDialogue6.play();
+                    }
                 } else {
                     const interactAudio = this.sound.add('interactaudio');
                     interactAudio.once('complete', () => interactAudio.destroy());

@@ -50,7 +50,8 @@ export default class DialogueBubble {
     }
 
     play() {
-        if (this.destroyed) return;
+        if (this.destroyed || this.isPlaying) return;
+        this.isPlaying = true;
         this.lineIndex = 0;
         this.typeCurrentLine();
     }
@@ -143,6 +144,7 @@ export default class DialogueBubble {
     resetToIdle() {
         if (this.destroyed) return;
         if (this.timer) this.timer.remove(false);
+        this.isPlaying = false;
         
         this.textObj.setText("•••");
         this.redrawBg(this.textObj.width, this.textObj.height);

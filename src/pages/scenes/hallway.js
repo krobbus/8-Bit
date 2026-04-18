@@ -79,9 +79,13 @@ export default class Hallway extends Phaser.Scene {
                 linePause: 2000,
                 loop: false,
                 depth: 200,
-                onComplete: () => this.npcDialogue3.resetToIdle()
+                onComplete: () => {
+                    this.npcDialogue3.resetToIdle();
+                    this.npcInteracted = false;
+                }
             }
         );
+        this.npcInteracted = false;
 
         this.npc4 = new NPC(this, 2970, 400, 'group').setScale(3);
         this.staticNpc4 = this.add.sprite(2970, 400, 'staticgroup').setScale(3).setVisible(false);
@@ -106,15 +110,15 @@ export default class Hallway extends Phaser.Scene {
             }
         );
 
-        let existingAudio = this.sound.get('gamebg');                                                          // audio
-        if (existingAudio) existingAudio.destroy();
-        this.gameAudio = this.sound.add('gamebg', { loop: true });
+        this.sound.stopAll();
+        this.sound.removeAll();
 
         const startAudio = () => {
-            if (this.sound.context.state === 'suspended') this.sound.context.resume(); 
-            if (!this.gameAudio.isPlaying) this.gameAudio.play();
+            if (this.gameAudio && this.gameAudio.isPlaying) return;
+            if (this.sound.context.state === 'suspended') this.sound.context.resume();
+            this.gameAudio = this.sound.add('gamebg', { loop: true });
+            this.gameAudio.play();
         };
-        startAudio();
 
         this.input.once('pointerdown', startAudio);
         this.input.keyboard.once('keydown', startAudio);
@@ -122,11 +126,16 @@ export default class Hallway extends Phaser.Scene {
             if (this.gameAudio) {
                 this.gameAudio.stop();
                 this.gameAudio.destroy();
+                this.gameAudio = null;
             }
         });
 
         this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
         this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+        this.upKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
+        this.wKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
+        this.downKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
+        this.sKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
 
         this.manual = this.add.sprite(viewWidth - 10, 140, 'manual')                                         // manual
             .setScale(0.3)
@@ -293,13 +302,8 @@ export default class Hallway extends Phaser.Scene {
         const enterJustDown = Phaser.Input.Keyboard.JustDown(this.enterKey);
         const spaceJustDown = Phaser.Input.Keyboard.JustDown(this.spaceKey);
         const interactJustDown = enterJustDown || spaceJustDown;
-
-        const upJustDown = 
-            Phaser.Input.Keyboard.JustDown(this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP)) ||
-            Phaser.Input.Keyboard.JustDown(this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W));
-        const downJustDown = 
-            Phaser.Input.Keyboard.JustDown(this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN)) ||
-            Phaser.Input.Keyboard.JustDown(this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S));
+        const upJustDown = Phaser.Input.Keyboard.JustDown(this.upKey) || Phaser.Input.Keyboard.JustDown(this.wKey);
+        const downJustDown = Phaser.Input.Keyboard.JustDown(this.downKey) || Phaser.Input.Keyboard.JustDown(this.sKey);
 
         this.activeZone = this.zones.find(z => {
             return (
@@ -377,32 +381,40 @@ export default class Hallway extends Phaser.Scene {
                 const returnPos = this.activeZone.spawnInNextScene || null;
 
                 if (this.activeZone.target === 'talkToNPC3') {
-                    if (this.npcDialogue3.isPlaying || this.npcDialogue3.isResetting) return;
+                    if (isInteracting) {
+                        if (this.npcInteracted && this.npcDialogue3.isPlaying) return;
 
-                    const interactAudio = this.sound.add('interactaudio');
-                    interactAudio.once('complete', () => interactAudio.destroy());
-                    interactAudio.play();
-                    
-                    this.npcDialogue3.play();
+                        this.npcInteracted = true;
+
+                        const interactAudio = this.sound.add('interactaudio');
+                        interactAudio.once('complete', () => interactAudio.destroy());
+                        interactAudio.play();
+                        
+                        this.npcDialogue3.play();
+                    }
                 } else if (this.activeZone.target === 'talkToNPC4') {
-                    if (this.npcDialogue4.isPlaying || this.npcDialogue4.isResetting) return;
+                    if (isInteracting) {
+                        if (this.npcInteracted && this.npcDialogue4.isPlaying) return;
 
-                    this.npc4.setVisible(false);
-                    this.staticNpc4.setVisible(true);
-                    this.npcDialogue4.npc = this.staticNpc4;
+                        this.npcInteracted = true;
 
-                    const interactAudio = this.sound.add('interactaudio');
-                    interactAudio.once('complete', () => interactAudio.destroy());
-                    interactAudio.play();
+                        this.npc4.setVisible(false);
+                        this.staticNpc4.setVisible(true);
+                        this.npcDialogue4.npc = this.staticNpc4;
 
-                    this.npcDialogue4.play();
+                        const interactAudio = this.sound.add('interactaudio');
+                        interactAudio.once('complete', () => interactAudio.destroy());
+                        interactAudio.play();
 
-                    this.npcDialogue4.onComplete = () => {
-                        this.npcDialogue4.resetToIdle();
-                        this.staticNpc4.setVisible(false);
-                        this.npc4.setVisible(true);
-                        this.npcDialogue4.npc = this.npc4;
-                    };
+                        this.npcDialogue4.play();
+
+                        this.npcDialogue4.onComplete = () => {
+                            this.npcDialogue4.resetToIdle();
+                            this.staticNpc4.setVisible(false);
+                            this.npc4.setVisible(true);
+                            this.npcDialogue4.npc = this.npc4;
+                        };
+                    }
                 } else {
                     const interactAudio = this.sound.add('interactaudio');
                     interactAudio.once('complete', () => interactAudio.destroy());

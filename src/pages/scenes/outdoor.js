@@ -67,19 +67,23 @@ export default class Outdoor extends Phaser.Scene {
                 linePause: 2000,
                 loop: false,
                 depth: 200,
-                onComplete: () => this.npcDialogue1.resetToIdle()
+                onComplete: () => {
+                    this.npcDialogue1.resetToIdle();
+                    this.npcInteracted = false;
+                }
             }
         );
+        this.npcInteracted = false;
 
-        let existingAudio = this.sound.get('gamebg');                                                          // audio
-        if (existingAudio) existingAudio.destroy();
-        this.gameAudio = this.sound.add('gamebg', { loop: true });
+        this.sound.stopAll();
+        this.sound.removeAll();
 
         const startAudio = () => {
-            if (this.sound.context.state === 'suspended') this.sound.context.resume(); 
-            if (!this.gameAudio.isPlaying) this.gameAudio.play();
+            if (this.gameAudio && this.gameAudio.isPlaying) return;
+            if (this.sound.context.state === 'suspended') this.sound.context.resume();
+            this.gameAudio = this.sound.add('gamebg', { loop: true });
+            this.gameAudio.play();
         };
-        startAudio();
 
         this.input.once('pointerdown', startAudio);
         this.input.keyboard.once('keydown', startAudio);
@@ -87,6 +91,7 @@ export default class Outdoor extends Phaser.Scene {
             if (this.gameAudio) {
                 this.gameAudio.stop();
                 this.gameAudio.destroy();
+                this.gameAudio = null;
             }
         });
 
@@ -240,6 +245,7 @@ export default class Outdoor extends Phaser.Scene {
             const spaceJustDown = Phaser.Input.Keyboard.JustDown(this.spaceKey);
             const interactJustDown = enterJustDown || spaceJustDown;
             const mobileInteractDown = this.mobileControls.isInteractJustDown();
+            const isInteracting = interactJustDown || mobileInteractDown;
 
             if (interactJustDown || mobileInteractDown) {
                 const currentTime = this.time.now;
@@ -251,13 +257,17 @@ export default class Outdoor extends Phaser.Scene {
                 const returnPos = this.activeZone.spawnInNextScene || null;
 
                 if (this.activeZone.target === 'talkToNPC1') {
-                    if (this.npcDialogue1.isPlaying || this.npcDialogue1.isResetting) return;
+                    if (isInteracting) {
+                        if (this.npcInteracted && this.npcDialogue1.isPlaying) return;
 
-                    const interactAudio = this.sound.add('interactaudio');
-                    interactAudio.once('complete', () => interactAudio.destroy());
-                    interactAudio.play();
-                    
-                    this.npcDialogue1.play();
+                        this.npcInteracted = true;
+
+                        const interactAudio = this.sound.add('interactaudio');
+                        interactAudio.once('complete', () => interactAudio.destroy());
+                        interactAudio.play();
+                        
+                        this.npcDialogue1.play();
+                    }
                 } else {
                     if (this.activeZone.target === 'Rightwing') {
                         if (!this.playerName || this.playerName === 'Guest') {

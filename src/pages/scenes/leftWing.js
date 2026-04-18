@@ -76,15 +76,15 @@ export default class LeftWing extends Phaser.Scene {
         );
         this.npcInteracted = false;
 
-        let existingAudio = this.sound.get('gamebg');                                                          // audio
-        if (existingAudio) existingAudio.destroy();
-        this.gameAudio = this.sound.add('gamebg', { loop: true });
+        this.sound.stopAll();
+        this.sound.removeAll();
 
         const startAudio = () => {
-            if (this.sound.context.state === 'suspended') this.sound.context.resume(); 
-            if (!this.gameAudio.isPlaying) this.gameAudio.play();
+            if (this.gameAudio && this.gameAudio.isPlaying) return;
+            if (this.sound.context.state === 'suspended') this.sound.context.resume();
+            this.gameAudio = this.sound.add('gamebg', { loop: true });
+            this.gameAudio.play();
         };
-        startAudio();
 
         this.input.once('pointerdown', startAudio);
         this.input.keyboard.once('keydown', startAudio);
@@ -92,11 +92,16 @@ export default class LeftWing extends Phaser.Scene {
             if (this.gameAudio) {
                 this.gameAudio.stop();
                 this.gameAudio.destroy();
+                this.gameAudio = null;
             }
         });
 
         this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
         this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+        this.upKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
+        this.wKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
+        this.downKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
+        this.sKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
 
         this.manual = this.add.sprite(this.scale.width - 60, 140, 'manual')                                         // manual
             .setScale(0.3)
@@ -243,12 +248,8 @@ export default class LeftWing extends Phaser.Scene {
         const enterJustDown = Phaser.Input.Keyboard.JustDown(this.enterKey);
         const spaceJustDown = Phaser.Input.Keyboard.JustDown(this.spaceKey);
         const interactJustDown = enterJustDown || spaceJustDown;
-        const upJustDown = 
-            Phaser.Input.Keyboard.JustDown(this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP)) ||
-            Phaser.Input.Keyboard.JustDown(this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W));
-        const downJustDown = 
-            Phaser.Input.Keyboard.JustDown(this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN)) ||
-            Phaser.Input.Keyboard.JustDown(this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S));
+        const upJustDown = Phaser.Input.Keyboard.JustDown(this.upKey) || Phaser.Input.Keyboard.JustDown(this.wKey);
+        const downJustDown = Phaser.Input.Keyboard.JustDown(this.downKey) || Phaser.Input.Keyboard.JustDown(this.sKey);
 
         this.activeZone = this.zones.find(z => {
             return (
@@ -326,9 +327,9 @@ export default class LeftWing extends Phaser.Scene {
                 const returnPos = this.activeZone.spawnInNextScene || null;
 
                 if (this.activeZone.target === 'talkToNPC2') {
-                    if (this.npcInteracted) return;
+                    if (isInteracting && this.npcInteracted) return;
 
-                    if (isInteracting && this.npcInteracted === false) {
+                    if (isInteracting) {
                         this.npcInteracted = true;
 
                         const interactAudio = this.sound.add('interactaudio');
