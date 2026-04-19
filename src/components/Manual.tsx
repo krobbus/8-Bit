@@ -23,6 +23,17 @@ const Manual: React.FC<ModalProps> = ({ isOpen, onClose }) => {
         }
     };
 
+    const handleScrollBack = () => {
+        const element = document.getElementById('manualContainer');
+        
+        if (element) {
+            element.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+        }
+    };
+
     if (!isOpen) return;  
 
     return(
@@ -146,13 +157,9 @@ const Manual: React.FC<ModalProps> = ({ isOpen, onClose }) => {
 
                                                 <span className="mainContent">LOGIN WITH EXISTING ACCOUNT</span>
                                                 <p className="subContent">
-                                                    Securely resume your journey. Enter your unique Player ID/Email,
-                                                    and continue your career matching journey.
-                                                    <br /><br />
-                                                    [1] Select role (Player or Admin) <br /> 
-                                                    [2] Choose "Player" role <br />
-                                                    [3] Enter your Player ID/Email and Password <br />
-                                                    [4] Click “Log In” to proceed
+                                                    Securely resume your journey. Enter your registered Player ID or Email along 
+                                                    with your password, and click login to proceed. You will directly spawn right 
+                                                    at the Left Wing to continue your career matching adventure.
                                                 </p>
                                             </div>
                                         </div>
@@ -204,11 +211,17 @@ const Manual: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                                     <section id="logoutProcedureContainer">
                                         <label className="subHeader">LOGOUT PROCEDURE</label>
 
-                                        <img src="assets/Manual/SettingsLogout.png" alt="SettingsLogout" />
-                                        <small>Logout can be found inside the settings panel</small>
+                                        <div className="imgGroup">
+                                            <div className="imgWrapper">
+                                                <img src="assets/Manual/SettingsLogout.png" alt="SettingsLogout" />
+                                                <small>Logout can be found<br />inside the settings panel</small>
+                                            </div>
 
-                                        <img src="assets/Manual/DashboardLogout.png" alt="DashboardLogout" />
-                                        <small>Logout can be found inside the dashboard modal</small>
+                                            <div className="imgWrapper">
+                                                <img src="assets/Manual/DashboardLogout.png" alt="DashboardLogout" />
+                                                <small>Logout can be found<br />inside the dashboard modal</small>
+                                            </div>
+                                        </div>
 
                                         <p className="caption">
                                             Closing your session correctly ensures that all career matches and game progress 
@@ -226,40 +239,70 @@ const Manual: React.FC<ModalProps> = ({ isOpen, onClose }) => {
 
                                         <p className="caption">
                                             A lively scenery inside and outside of the main campus serves a unique purpose in 
-                                            your career discovery. Use map overview as guide to understand the map layout 
-                                            and identify key locations for exploration.
+                                            your career discovery. Explore every area carefully — from the campus grounds outside 
+                                            to the halls within — as each location holds something valuable to help you find the 
+                                            right college program and career path for you.
                                         </p>
 
                                         <div className="cardContainer">
                                             <div id="outdoorContainer" className="cardWrapper">
                                                 <img src="assets/Manual/Outdoor.png" alt="Outdoor scene" />
+
                                                 <span className="mainContent">Outdoor Scene (Outside of the campus)</span>
                                                 <p className="subContent">
-
+                                                    The outdoor area serves as the starting point of your journey. Explore 
+                                                    the campus grounds and find your way inside through two entry points — 
+                                                    the main door at the front of the building leads you into the Left Wing, 
+                                                    while heading to the right side past the first staircase will bring you 
+                                                    directly into the Right Wing. This is where your career exploration 
+                                                    adventure begins.
                                                 </p>
                                             </div>
 
                                             <div id="leftWingContainer" className="cardWrapper">
                                                 <img src="assets/Manual/LeftWing.png" alt="Left wing scene" />
+
                                                 <span className="mainContent">Left Wing Scene (Inside of the campus)</span>
                                                 <p className="subContent">
-
+                                                    The left wing is your central hub for account and progress 
+                                                    management. Access the Dashboard Modal to review your career 
+                                                    matching statistics and progress, or open the Account Management 
+                                                    Modal to update your player profile and settings. On the right side 
+                                                    of this wing lies the doorway leading into the Hallway — your path 
+                                                    deeper into the campus. Head downstairs to return to the Outdoor area.
                                                 </p>
                                             </div>
 
                                             <div id="hallwayContainer" className="cardWrapper">
                                                 <img src="assets/Manual/Hallway.png" alt="Hallway scene" />
+
                                                 <span className="mainContent">Hallway Scene (Inside of the campus)</span>
                                                 <p className="subContent">
-                                                    
+                                                    The hallway is the core of your career assessment experience. 
+                                                    Discover 8 doors in total, each representing a different 
+                                                    college course — CITCS, CAS, CBA, CCJ, IPPG, ISW, CTE, and 
+                                                    COM. Choose a course that interests you and then select from 
+                                                    3 different types of assessments: Skill, Personality, and 
+                                                    Course-Related — each designed to evaluate a unique aspect 
+                                                    of your strengths and suitability for that program. On the 
+                                                    left side is the doorway back to the Left Wing, while the 
+                                                    right side leads you into the Right Wing.
                                                 </p>
                                             </div>
 
                                             <div id="rightWingContainer" className="cardWrapper">
                                                 <img src="assets/Manual/RightWing.png" alt="Right wing scene" />
+
                                                 <span className="mainContent">Right Wing Scene (Inside of the campus)</span>
                                                 <p className="subContent">
-
+                                                    The right wing is where you can track and compare 
+                                                    performance across all players. Access the Leaderboard 
+                                                    Modal to view rankings for every course — see who 
+                                                    answered, who achieved the highest scores, and how 
+                                                    quickly they completed their assessments. On the left 
+                                                    side of this wing is the doorway leading back to the 
+                                                    Hallway, and heading downstairs will return you to 
+                                                    the Outdoor area.
                                                 </p>
                                             </div>
                                         </div>
@@ -269,7 +312,12 @@ const Manual: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                                         <label className="subHeader">MODALS</label>
 
                                         <p className="caption">
-
+                                            Modals are interactive pop-up panels that appear on top of the game world, 
+                                            giving you access to key features without leaving the scene. Each modal serves 
+                                            a specific purpose — from managing your account and tracking your career 
+                                            assessment progress, to recovering your credentials and competing on the 
+                                            leaderboard. These panels are accessible at designated points throughout the 
+                                            campus and are designed to keep your journey organized, secure, and personalized.
                                         </p>
 
                                         <div className="cardContainer">
@@ -278,7 +326,9 @@ const Manual: React.FC<ModalProps> = ({ isOpen, onClose }) => {
 
                                                 <span className="mainContent">Password Recovery Modal</span>
                                                 <p className="subContent">
-
+                                                    A 3-step flow: find account via Player ID or email (with a live "found" confirmation 
+                                                    card), verify your 4-digit PIN for security, then set a new password. Steps 2 and 3 
+                                                    are visually locked until the prior step clears.
                                                 </p>
                                             </div>
                                         </div>
@@ -289,7 +339,12 @@ const Manual: React.FC<ModalProps> = ({ isOpen, onClose }) => {
 
                                                 <span className="mainContent">Dashboard Modal</span>
                                                 <p className="subContent">
-
+                                                    It shows the player's profile information, summary stats — list of courses 
+                                                    (assessments played/done, course-related total score), course progression 
+                                                    (selected/preferred & not selected), selected skill and personality tags, 
+                                                    an AI comment and suggestions/analysis box (only shown when all 3 assessments 
+                                                    are complete), and action/danger buttons for reset/delete. A search bar lets you 
+                                                    look up other player dashboards.
                                                 </p>
                                             </div>
                                         </div>
@@ -300,7 +355,11 @@ const Manual: React.FC<ModalProps> = ({ isOpen, onClose }) => {
 
                                                 <span className="mainContent">Account Management Modal</span>
                                                 <p className="subContent">
-
+                                                    Automatically adopt between Registration (if you're a new player) and Manage Account. 
+                                                    Registration collects profile data, account information, and preference selections 
+                                                    (course preferred, current skills, and interests) that tailor the AI analysis. Manage 
+                                                    Account pre-fills existing data for updating. Include an instructions and purposes about 
+                                                    account creation being optional.
                                                 </p>
                                             </div>
                                         </div>
@@ -311,12 +370,18 @@ const Manual: React.FC<ModalProps> = ({ isOpen, onClose }) => {
 
                                                 <span className="mainContent">Leaderboard Modal</span>
                                                 <p className="subContent">
-
+                                                    A podium display for top 3 players with colored blocks by rank, then a 
+                                                    full ranked list showing player ID, player name, course, assessment type, 
+                                                    score, and time of completion. Dropdowns filter by course and assessment type.
                                                 </p>
                                             </div>
                                         </div>
                                     </section>
                                 </section>
+
+                                <div className="btnWrapper">
+                                    <button id="scrollBackButton" onClick={handleScrollBack}>SCROLL BACK TO TOP</button>
+                                </div>
                             </>
                         </main>
                     </section>

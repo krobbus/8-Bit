@@ -55,9 +55,15 @@ export default class Outdoor extends Phaser.Scene {
             this,
             this.npc1,
             [
-                "Hello there, welcome to the campus!",
-                "Your journey starts with a single step.",
-                "Check the manual at the top of the screen."
+                "Hello there, welcome to the campus! Your journey starts with a single step.",
+                "Check the manual at the top-right of the screen if you need guidance.",
+                "This campus has a lot to explore — make sure to check every corner!",
+                 "The hallway inside has 8 doors, each leading to a different college course.",
+                "You can take three types of assessments per course — Skill, Personality, and Course-Related.",
+                "Answer every question honestly — the AI uses your responses to match you with the right program.",
+                "Once you complete all three assessments for a course, the AI will generate an analysis just for you!",
+                "Oh, and do not forget to visit the Left Wing — you can manage your profile and track your progress there.",
+                "The Right Wing has the Leaderboard — see how you rank against other students!"
             ],
             {
                 offsetX: -20,
@@ -67,13 +73,35 @@ export default class Outdoor extends Phaser.Scene {
                 linePause: 2000,
                 loop: false,
                 depth: 200,
-                onComplete: () => {
-                    this.npcDialogue1.resetToIdle();
-                    this.npcInteracted = false;
-                }
+                onComplete: () => this.npcDialogue1.resetToIdle()
             }
         );
-        this.npcInteracted = false;
+
+        this.professor = new NPC(this, 800, 320, 'professor').setScale(1.8);
+        this.npcDialogueProfessor = new DialogueBubble(
+            this,
+            this.professor,
+            [
+                "Welcome, student. I'm your AI Professor, your guide in this career exploration journey.",
+                "Before you proceed, I highly encourage you to create your profile and define your preferences first.",
+                "It includes your personal information, preferred course, current skills, and interests.",
+                "These details will be used by our AI to tailor its analysis and recommendations specifically for you.",
+                "Without a profile, the AI cannot generate a personalized career and program suggestion.",
+                "You may create your account through the Account Management found in the Left Wing.",
+                "Remember! the more honest and accurate your inputs are, the better your results will be.",
+                "Good luck on your journey, student. The campus awaits you!"
+            ],
+            {
+                offsetX: -20,
+                offsetY: -60,
+                maxWidth: 220,
+                typeDelay: 45,
+                linePause: 2000,
+                loop: false,
+                depth: 200,
+                onComplete: () => this.npcDialogueProfessor.resetToIdle()
+            }
+        );
 
         this.sound.stopAll();
         this.sound.removeAll();
@@ -101,7 +129,7 @@ export default class Outdoor extends Phaser.Scene {
         this.manual = this.add.sprite(this.scale.width - 60, 140, 'manual')                                         // manual
             .setScale(0.3)
             .setDepth(3001)
-            .setOrigin(0.5, 0.5)
+            .setOrigin(1, 0)
             .setInteractive({ useHandCursor: true })
             .on("pointerdown", () => {
                 const interactAudio = this.sound.add('interactaudio');
@@ -140,6 +168,12 @@ export default class Outdoor extends Phaser.Scene {
                 hintText1: "DO YOU WANT TO", hintText2: "ENTER LEFT WING ?",
                 hintHeight: 50, hintWidth: 210, gapY: 15,
                 spawnInNextScene: { x: 870, y: 430 }, target: 'LeftWing'
+            },
+            {
+                x: 770, y: 330, w: 60, h: 30,
+                hintText1: "APPROACH THE PROFESSOR ?",
+                hintHeight: 30, hintWidth: 280, gapY: 0,
+                target: 'talkToProf'
             },
             { 
                 x: 1050, y: 300, w: 60, h: 100,
@@ -258,15 +292,21 @@ export default class Outdoor extends Phaser.Scene {
 
                 if (this.activeZone.target === 'talkToNPC1') {
                     if (isInteracting) {
-                        if (this.npcInteracted && this.npcDialogue1.isPlaying) return;
-
-                        this.npcInteracted = true;
-
+                        if (this.npcDialogue1.isPlaying) return;
                         const interactAudio = this.sound.add('interactaudio');
                         interactAudio.once('complete', () => interactAudio.destroy());
                         interactAudio.play();
                         
                         this.npcDialogue1.play();
+                    }
+                } else if (this.activeZone.target === 'talkToProf'){
+                    if (isInteracting) {
+                        if (this.npcDialogueProfessor.isPlaying) return;
+                        const interactAudio = this.sound.add('interactaudio');
+                        interactAudio.once('complete', () => interactAudio.destroy());
+                        interactAudio.play();
+                        
+                        this.npcDialogueProfessor.play();
                     }
                 } else {
                     if (this.activeZone.target === 'RightWing') {

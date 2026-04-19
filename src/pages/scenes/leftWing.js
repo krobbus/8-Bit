@@ -68,13 +68,9 @@ export default class LeftWing extends Phaser.Scene {
                 linePause: 2000,
                 loop: false,
                 depth: 200,
-                onComplete: () => {
-                    this.npcDialogue2.resetToIdle();
-                    this.npcInteracted = false;
-                }
+                onComplete: () => this.npcDialogue2.resetToIdle()
             }
         );
-        this.npcInteracted = false;
 
         this.sound.stopAll();
         this.sound.removeAll();
@@ -327,11 +323,8 @@ export default class LeftWing extends Phaser.Scene {
                 const returnPos = this.activeZone.spawnInNextScene || null;
 
                 if (this.activeZone.target === 'talkToNPC2') {
-                    if (isInteracting && this.npcInteracted) return;
-
-                    if (isInteracting) {
-                        this.npcInteracted = true;
-
+                    if (isInteracting){
+                        if (this.npcDialogue2.isPlaying) return;
                         const interactAudio = this.sound.add('interactaudio');
                         interactAudio.once('complete', () => interactAudio.destroy());
                         interactAudio.play();

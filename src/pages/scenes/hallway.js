@@ -79,13 +79,9 @@ export default class Hallway extends Phaser.Scene {
                 linePause: 2000,
                 loop: false,
                 depth: 200,
-                onComplete: () => {
-                    this.npcDialogue3.resetToIdle();
-                    this.npcInteracted = false;
-                }
+                onComplete: () => this.npcDialogue3.resetToIdle()
             }
         );
-        this.npcInteracted = false;
 
         this.npc4 = new NPC(this, 2970, 400, 'group').setScale(3);
         this.staticNpc4 = this.add.sprite(2970, 400, 'staticgroup').setScale(3).setVisible(false);
@@ -382,10 +378,7 @@ export default class Hallway extends Phaser.Scene {
 
                 if (this.activeZone.target === 'talkToNPC3') {
                     if (isInteracting) {
-                        if (this.npcInteracted && this.npcDialogue3.isPlaying) return;
-
-                        this.npcInteracted = true;
-
+                        if (this.npcDialogue3.isPlaying) return;
                         const interactAudio = this.sound.add('interactaudio');
                         interactAudio.once('complete', () => interactAudio.destroy());
                         interactAudio.play();
@@ -394,10 +387,7 @@ export default class Hallway extends Phaser.Scene {
                     }
                 } else if (this.activeZone.target === 'talkToNPC4') {
                     if (isInteracting) {
-                        if (this.npcInteracted && this.npcDialogue4.isPlaying) return;
-
-                        this.npcInteracted = true;
-
+                        if (this.npcDialogue4.isPlaying) return;
                         this.npc4.setVisible(false);
                         this.staticNpc4.setVisible(true);
                         this.npcDialogue4.npc = this.staticNpc4;

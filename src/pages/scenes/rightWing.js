@@ -87,13 +87,9 @@ export default class RightWing extends Phaser.Scene {
                 linePause: 2000,
                 loop: false,
                 depth: 200,
-                onComplete: () => {
-                    this.npcDialogue6.resetToIdle();
-                    this.npcInteracted = false;
-                }
+                onComplete: () => this.npcDialogue6.resetToIdle()
             }
         );
-        this.npcInteracted = false;
 
         this.sound.stopAll();
         this.sound.removeAll();
@@ -266,10 +262,7 @@ export default class RightWing extends Phaser.Scene {
 
                 if (this.activeZone.target === 'talkToNPC5') {
                     if (isInteracting) {
-                        if (this.npcInteracted && this.npcDialogue5.isPlaying) return;
-
-                        this.npcInteracted = true;
-
+                        if (this.npcDialogue5.isPlaying) return;
                         const interactAudio = this.sound.add('interactaudio');
                         interactAudio.once('complete', () => interactAudio.destroy());
                         interactAudio.play();
@@ -278,10 +271,7 @@ export default class RightWing extends Phaser.Scene {
                     }
                 } else if (this.activeZone.target === 'talkToNPC6') {
                     if (isInteracting) {
-                        if (this.npcInteracted && this.npcDialogue6.isPlaying) return;
-
-                        this.npcInteracted = true;
-
+                        if (this.npcDialogue6.isPlaying) return;
                         const interactAudio = this.sound.add('interactaudio');
                         interactAudio.once('complete', () => interactAudio.destroy());
                         interactAudio.play();

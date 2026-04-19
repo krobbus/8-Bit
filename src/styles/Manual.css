@@ -173,11 +173,34 @@
             box-sizing: border-box;
 
             img{
-                height: 46vmin;
+                flex: 1;
+                height: auto;
                 width: 100%;
                 border-radius: 1.2vmin;
                 border: 1px solid #fff;
                 box-sizing: border-box;
+            }
+
+            .imgGroup{
+                display: flex;
+                flex-direction: row;
+                justify-content: space-evenly;
+                align-items: center;
+                gap: 1.8vmin;
+
+                .imgWrapper{
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                    gap: 1.8vmin;
+
+                    small{ 
+                        font-size: 1.2vmin;
+                        color: #dad7cd;
+                        text-align: center;
+                    }
+                }
             }
 
             .caption{
@@ -209,16 +232,12 @@
                     box-sizing: border-box;
 
                     img{
-                        height: 46vmin;
+                        flex: 1;
+                        height: auto;
                         width: 100%;
                         border-radius: 1.2vmin;
                         border: 1px solid #fff;
                         box-sizing: border-box;
-                    }
-
-                    small{ 
-                        font-size: 1.2vmin;
-                        color: #dad7cd; 
                     }
 
                     .mainContent{
@@ -232,6 +251,29 @@
                     }
 
                     .subContent{ text-align: justify; }
+                }
+            }
+        }
+
+        .btnWrapper{
+            width: 100%;
+            box-sizing: border-box;
+
+            #scrollBackButton{
+                font-family: "Jersey 10";
+                font-size: 1.9vmin;
+                color: #588157;
+                background-color: #fff;
+                border: 0.5vmin solid #a3b18a;
+                box-shadow: 1.2vmin 1.2vmin 0.8vmin rgba(0, 0, 0, 0.1);
+                padding: 1.8vmin;
+                width: 100%;
+                box-sizing: border-box;
+
+                &:hover{
+                    color: #fff;
+                    background-color: #a3b18a;
+                    border: 0.5vmin solid #fff;
                 }
             }
         }
