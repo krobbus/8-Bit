@@ -58,7 +58,7 @@ export default class Outdoor extends Phaser.Scene {
                 "Hello there, welcome to the campus! Your journey starts with a single step.",
                 "Check the manual at the top-right of the screen if you need guidance.",
                 "This campus has a lot to explore — make sure to check every corner!",
-                 "The hallway inside has 8 doors, each leading to a different college course.",
+                "The hallway inside has 8 doors, each leading to a different college course.",
                 "You can take three types of assessments per course — Skill, Personality, and Course-Related.",
                 "Answer every question honestly — the AI uses your responses to match you with the right program.",
                 "Once you complete all three assessments for a course, the AI will generate an analysis just for you!",
@@ -158,6 +158,13 @@ export default class Outdoor extends Phaser.Scene {
                 if (isModalOpened) return;
                 this.settings.toggle()
             });
+        
+        this.time.delayedCall(0, () => {
+            if (this.manual && this.manual.postFX) 
+                this.manual.postFX.addShadow(2, 4, 0.06, 1, 0x000000, 6, 1);
+            if (settingsIcon && settingsIcon.postFX) 
+                settingsIcon.postFX.addShadow(2, 4, 0.06, 1, 0x000000, 6, 1);
+        });
 
         let debugGraphics = this.add.graphics();//.lineStyle(2, 0x00ff00, 1);
         this.activeZone = null;

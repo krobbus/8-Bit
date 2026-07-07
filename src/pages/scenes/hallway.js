@@ -168,6 +168,13 @@ export default class Hallway extends Phaser.Scene {
                 if (isModalOpened) return;
                 this.settings.toggle()
             });
+        
+        this.time.delayedCall(0, () => {
+            if (this.manual && this.manual.postFX) 
+                this.manual.postFX.addShadow(2, 4, 0.06, 1, 0x000000, 6, 1);
+            if (settingsIcon && settingsIcon.postFX) 
+                settingsIcon.postFX.addShadow(2, 4, 0.06, 1, 0x000000, 6, 1);
+        });
 
         let debugGraphics = this.add.graphics();//.lineStyle(2, 0x00ff00, 1);
         this.activeZone = null;
