@@ -55,8 +55,8 @@ export const AssetLib = {
         { key: 'staticgroup', path: 'assets/Character/NPC/StaticGroup.png', width: 50, height: 50 },
 
         // game assets
-        { key: 'settings', path: 'assets/GameAssets/Settings.svg' },
-        { key: 'manual', path: 'assets/GameAssets/Manual.svg' },
+        { key: 'settings', path: 'assets/GameAssets/Settings.png' },
+        { key: 'manual', path: 'assets/GameAssets/Manual.png' },
         { key: 'spacebar', path: 'assets/GameAssets/Spacebar.png' },
 
         // controls
