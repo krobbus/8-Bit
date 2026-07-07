@@ -132,14 +132,7 @@ export default class Classroom extends Phaser.Scene {
             });
         
         this.activeZone = null;
-        
-        this.time.delayedCall(0, () => {
-            if (this.manual && this.manual.postFX) 
-                this.manual.postFX.addShadow(2, 4, 0.06, 1, 0x000000, 6, 1);
-            if (settingsIcon && settingsIcon.postFX) 
-                settingsIcon.postFX.addShadow(2, 4, 0.06, 1, 0x000000, 6, 1);
-        });
-        
+
         const savedMode = localStorage.getItem('mobileMode');
         if (savedMode === null) {
             this.isMobileMode = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
