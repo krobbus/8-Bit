@@ -55,15 +55,9 @@ export const AssetLib = {
         { key: 'staticgroup', path: 'assets/Character/NPC/StaticGroup.png', width: 50, height: 50 },
 
         // game assets
-        { key: 'settings', path: 'assets/GameAssets/Settings.png?v=2' },
-        { 
-            key: 'settings', 
-            path: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAmklEQVR4nO2ZUQqAIBAFrUvWbaLb1CnrXyiVFgZt5jdceb6Xi5qSsEzRBdd9ud6+H9sZOuccWYxAATTVecyznWe5lP2c0vjaf2V8B1pXNpqSE+M6QK98zpMT3TugABp3IRoF0IT3gVJmo+uO48DX3ab1pBU1X/cOKIBGATQKoLET03geoFEAjfdCNAqgsQ/Q+EJD4zsxjQLk79wPflBMZcSO4QAAAABJRU5ErkJggg=='
-        },
-        { 
-            key: 'manual', 
-            path: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAvElEQVR4nO2ZQQ6AIAwE0fhH+I3xN/pKPOEBYxAsrIWds6luhyApxhAsk1Qht1mf8/y+HiLvniWKICnuQm7HU5QaGceAdMdTvDXSv4HWnY9JmejXALrzMU8m1BtYahWOO1bLaH8G/rb2A+G7YrP9GZCilUn1Bq71JNWxp/261ulVvQHxAG6zvuVORgNoGAANA6BhADTqA9zOLV//oqkpgnR99QYYAA3nQmgYAA2n02h4Q4OGt5RoeFNPRucEs9JJD7zAllQAAAAASUVORK5CYII='
-        },
+        { key: 'settings', path: 'assets/GameAssets/Settings.png' },
+        { key: 'manual', path: 'assets/GameAssets/Manual.png' },
+        { key: 'spacebar', path: 'assets/GameAssets/Spacebar.png' },
 
         // controls
         { key: 'interactunselected', path: 'assets/GameAssets/Controls/InteractUnselected.png' },
