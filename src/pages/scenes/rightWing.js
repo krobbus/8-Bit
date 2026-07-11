@@ -115,7 +115,6 @@ export default class RightWing extends Phaser.Scene {
         this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
         this.manual = this.add.sprite(this.scale.width - 60, 140, 'manual')                                         // manual
-            .setScale(0.225)
             .setDepth(3001)
             .setOrigin(1, 0)
             .setInteractive({ useHandCursor: true })
@@ -133,7 +132,6 @@ export default class RightWing extends Phaser.Scene {
         this.settings = new Settings(this);                                                                         // settings
         this.settings.setDepth(3000);
         this.add.sprite(this.scale.width - 60, 80, 'settings')
-            .setScale(0.225)
             .setDepth(3001)
             .setOrigin(1, 0)
             .setInteractive({ useHandCursor: true })

@@ -77,7 +77,7 @@ export default class Outdoor extends Phaser.Scene {
             }
         );
 
-        this.professor = new NPC(this, 800, 320, 'professor').setScale(1.8);
+        this.professor = new NPC(this, 760, 290, 'professor').setScale(1.8);
         this.npcDialogueProfessor = new DialogueBubble(
             this,
             this.professor,
@@ -127,7 +127,6 @@ export default class Outdoor extends Phaser.Scene {
         this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
                                                                           
         this.manual = this.add.sprite(this.scale.width - 60, 140, 'manual')                                         // manual
-            .setScale(0.225)
             .setDepth(3001)
             .setOrigin(1, 0)
             .setInteractive({ useHandCursor: true })
@@ -145,7 +144,6 @@ export default class Outdoor extends Phaser.Scene {
         this.settings = new Settings(this);                                                                         // settings
         this.settings.setDepth(3000);
         this.add.sprite(this.scale.width - 60, 80, 'settings')
-            .setScale(0.225)
             .setDepth(3001)
             .setOrigin(1, 0)
             .setInteractive({ useHandCursor: true })
@@ -170,7 +168,7 @@ export default class Outdoor extends Phaser.Scene {
                 spawnInNextScene: { x: 870, y: 430 }, target: 'LeftWing'
             },
             {
-                x: 770, y: 330, w: 60, h: 30,
+                x: 730, y: 300, w: 60, h: 30,
                 hintText1: "APPROACH THE PROFESSOR ?",
                 hintHeight: 30, hintWidth: 280, gapY: 0,
                 target: 'talkToProf'
@@ -218,6 +216,7 @@ export default class Outdoor extends Phaser.Scene {
         });
         this.physics.add.collider(this.player, this.obstacleGroup);                                     // collider
         this.physics.add.collider(this.player, this.npc1);
+        this.physics.add.collider(this.player, this.professor);
 
         this.stairZones = [                                                                             // stairs
             new Phaser.Geom.Rectangle(730, 230, 380, 70),
