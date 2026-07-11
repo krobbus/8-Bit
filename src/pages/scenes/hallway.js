@@ -134,7 +134,7 @@ export default class Hallway extends Phaser.Scene {
         this.sKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
 
         this.manual = this.add.sprite(viewWidth - 10, 140, 'manual')                                         // manual
-            .setScale(0.3)
+            .setScale(0.225)
             .setDepth(3001)
             .setOrigin(1, 0)
             .setScrollFactor(0)
@@ -154,7 +154,7 @@ export default class Hallway extends Phaser.Scene {
         this.settings.setDepth(3000);
         this.settings.setPosition(viewWidth / 2, viewHeight / 2);
         this.add.sprite(viewWidth - 10, 80, 'settings')
-            .setScale(0.3)
+            .setScale(0.225)
             .setDepth(3001)
             .setOrigin(1, 0)
             .setScrollFactor(0)

@@ -100,7 +100,7 @@ export default class LeftWing extends Phaser.Scene {
         this.sKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
 
         this.manual = this.add.sprite(this.scale.width - 60, 140, 'manual')                                         // manual
-            .setScale(0.3)
+            .setScale(0.225)
             .setDepth(3001)
             .setOrigin(1, 0)
             .setInteractive({ useHandCursor: true })
@@ -118,7 +118,7 @@ export default class LeftWing extends Phaser.Scene {
         this.settings = new Settings(this);                                                                         // settings
         this.settings.setDepth(3000);
         this.add.sprite(this.scale.width - 60, 80, 'settings')
-            .setScale(0.3)
+            .setScale(0.225)
             .setDepth(3001)
             .setOrigin(1, 0)
             .setInteractive({ useHandCursor: true })
